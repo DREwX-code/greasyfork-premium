@@ -57,7 +57,7 @@ For feature requests or bug reports, you can contact me via:
   https://github.com/DREwX-code/greasyfork-premium/issues
 
 - GreasyFork discussions (after script publication):  
-  https://greasyfork.org/
+  https://greasyfork.org/fr/scripts/562938-greasyfork-premium
 
 ---
 
