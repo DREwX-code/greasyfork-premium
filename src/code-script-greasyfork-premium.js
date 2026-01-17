@@ -30,7 +30,7 @@
 // @description:it     Miglioramento premium dell’interfaccia GreasyFork: design moderno, cambio immediato tema chiaro/scuro, maggiore leggibilità e accesso rapido alle azioni principali.
 // @description:th     การปรับปรุง UI ระดับพรีเมียมสำหรับ GreasyFork: ดีไซน์ทันสมัย สลับโหมดสว่าง/มืดได้ทันที อ่านง่ายขึ้น และเข้าถึงฟังก์ชันสำคัญได้รวดเร็ว
 
-// @icon         https://raw.githubusercontent.com/DREwX-code/prenium-greasyfork/refs/heads/main/assets/icon/Icon_NeuraVeil_Script.png
+// @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @version      1.0.0
 // @author       Dℝ∃wX
