@@ -58,25 +58,27 @@ Everything runs directly on GreasyFork without page reloads or performance impac
 
 ---
 
-## Feedback
+## Feedback & Contribution
 
-Suggestions are welcome.  
-For feature requests or bug reports, you can contact me via:
+Suggestions, feature requests, bug reports, and contributions are welcome.
 
-- GitHub Issues:  
-  https://github.com/DREwX-code/greasyfork-premium/issues
+You can reach me through:
 
-- GreasyFork discussions:
-  https://greasyfork.org/scripts/562938-greasyfork-premium/feedback
+- **[GitHub Issues](https://github.com/DREwX-code/greasyfork-premium/issues)**
+- **[GreasyFork Discussions](https://greasyfork.org/scripts/562938-greasyfork-premium/feedback)**
+
+Please provide a clear and detailed description of the issue, including steps to reproduce it when applicable.
 
 ---
 
 ## Author
 
-Developed and maintained by <strong>Dℝ∃wX</strong> (<strong><a href="https://github.com/DREwX-code">DREwX-code</a></strong>).
+Developed and maintained by **Dℝ∃wX** (GitHub: [DREwX-code](https://github.com/DREwX-code)).  
 
 ---
 
 ## License
 
 This project is licensed under the <strong>Apache License 2.0</strong>.
+
+You are free to use, modify, and distribute this project in accordance with the terms of the license.e to use, modify, and distribute this project in accordance with the terms of the license.
