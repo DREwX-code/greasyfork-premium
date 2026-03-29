@@ -22,7 +22,7 @@ The script focuses exclusively on the interface and user experience, without alt
 - Improves overall readability and page design
 - Adds interface features designed for regular developer usage
 
-Everything runs directly on GreasyFork without page reloads or performance impact.
+Runs efficiently without affecting the browsing experience.
 
 ---
 
@@ -31,21 +31,20 @@ Everything runs directly on GreasyFork without page reloads or performance impac
 ### Interface
 
 - Light and dark themes
-- Cleaner and more consistent interface
-- Improved spacing and alignment
-- **Removal of link underlines**
+- Refined layout for better visual consistency
+- Improved spacing and alignment across pages 
+- Script icons for quicker visual navigation
 
 ### Navigation and quick actions
 
-- **Script icons display** for immediate visual identification  
-- **Settings and script edit buttons added directly to the page**  
-- **Faster access to essential actions**, without unnecessary navigation
+- Faster access to essential actions
+- Settings and script edit buttons directly accessible
+- Replaced logout text link with a modern icon
 
 ### Code readability
 
-- Improved presentation of script code blocks
-- Syntax highlighting via **Highlight.js**
-- Better readability of scripts and code snippets
+- Improved code block presentation
+- Syntax highlighting for better readability
 
 ---
 
