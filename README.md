@@ -6,49 +6,46 @@
 [![GitHub license](https://img.shields.io/github/license/DREwX-code/greasyfork-premium?style=flat-square)](./LICENSE)
 
 
-<strong>[GreasyFork Premium](https://greasyfork.org/scripts/562938-greasyfork-premium)</strong> is a userscript that modernizes and improves the GreasyFork interface to make daily usage more fluid, more readable, and more efficient.
+<strong>[GreasyFork Premium](https://greasyfork.org/scripts/562938-greasyfork-premium)</strong> is a userscript that transforms the GreasyFork interface to make daily usage more fluid, more readable, and more efficient.
 <p align="center">
   <img src="https://github.com/DREwX-code/greasyfork-premium/blob/main/assets/media/script-preview.png" 
        alt="GreasyFork Premium Preview"
        width="100%">
 </p>
-The script focuses exclusively on the interface and user experience, without altering GreasyFork’s internal behavior.
-
----
-
-## What GreasyFork Premium does
-
-- Modernizes the GreasyFork interface
-- Improves overall readability and page design
-- Adds interface features designed for regular developer usage
-
-Runs efficiently without affecting the browsing experience.
-
+The script focuses exclusively on UI and UX improvements, without altering GreasyFork’s core behavior.
 ---
 
 ## Main features
 
-### Interface
+### ⚡ Productivity Boost
 
-- Light and dark themes
-- Refined layout for better visual consistency
-- Improved spacing and alignment across pages 
-- Script icons for quicker visual navigation
+- One-click favorites directly from script cards
+- Redesigned favorites management (faster, cleaner, more intuitive)
+- Direct install button without opening the script page
 
-### Navigation and quick actions
+### 🎨 Interface & Experience
 
-- Faster access to essential actions
+- Modernized interface with improved visual hierarchy
+- Cleaner layout with improved visual consistency
+- Improved spacing and layout consistency
+- Light and dark themes with instant toggle
+
+### 🧭 Navigation and quick actions
+
+- Immediate access to essential actions
 - Settings and script edit buttons directly accessible
 - Replaced logout text link with a modern icon
+- Reduced number of clicks for common actions
 
-### Code readability
+### 💻 Code Readability
 
-- Improved code block presentation
-- Syntax highlighting for better readability
+- Improved code block rendering
+- Syntax highlighting via **Highlight.js**
+- Better readability for scripts and snippets
 
 ---
 
-## Third-party library
+## 📦 Third-party library
 
 - **Highlight.js**  
   Used for syntax highlighting of code blocks.  
@@ -57,7 +54,7 @@ Runs efficiently without affecting the browsing experience.
 
 ---
 
-## Feedback & Contribution
+## 💬 Feedback & Contribution
 
 Suggestions, feature requests, bug reports, and contributions are welcome.
 
@@ -70,14 +67,14 @@ Please provide a clear and detailed description of the issue, including steps to
 
 ---
 
-## Author
+## 👤 Author
 
-Developed and maintained by **Dℝ∃wX** (GitHub: [DREwX-code](https://github.com/DREwX-code)).  
+Developed and maintained by **Dℝ∃wX**  
+GitHub: [DREwX-code](https://github.com/DREwX-code)
 
 ---
 
-## License
+## 📄 License
 
 This project is licensed under the <strong>Apache License 2.0</strong>.
-
-You are free to use, modify, and distribute this project in accordance with the terms of the license.e to use, modify, and distribute this project in accordance with the terms of the license.
+You are free to use, modify, and distribute this project in accordance with the terms of the license.
