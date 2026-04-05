@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name         GreasyFork Premium
 // @name:zh-CN   GreasyFork 高级版
+// @name:zh-TW   GreasyFork 高級版
 // @name:hi      GreasyFork प्रीमियम
 // @name:es      GreasyFork Premium
 // @name:ar      GreasyFork بريميوم
@@ -14,25 +15,45 @@
 // @name:tr      GreasyFork Premium
 // @name:it      GreasyFork Premium
 // @name:th      GreasyFork Premium
-// @description        Premium UI enhancement for GreasyFork: modernized interface, instant light/dark theme toggle, improved readability, cleaner layout, and faster access to essential actions.
-// @description:zh-CN  GreasyFork 的高级界面增强：现代化界面设计，即时浅色/深色主题切换，提升可读性、优化布局，并更快捷地访问核心功能。
-// @description:hi     GreasyFork के लिए प्रीमियम UI सुधार: आधुनिक इंटरफ़ेस, तुरंत लाइट/डार्क थीम स्विच, बेहतर पठनीयता, साफ़ लेआउट और आवश्यक फ़ंक्शनों तक तेज़ पहुँच।
-// @description:es     Mejora premium de la interfaz de GreasyFork: diseño modernizado, cambio instantáneo de tema claro/oscuro, mejor legibilidad y acceso más rápido a las acciones clave.
-// @description:ar     تحسين واجهة GreasyFork بشكل احترافي: تصميم حديث، تبديل فوري بين الثيم الفاتح/الغامق، قراءة أوضح، تخطيط أنظف، ووصول أسرع للإجراءات الأساسية.
-// @description:fr     Amélioration premium de l’interface GreasyFork : design modernisé, bascule instantanée thème clair/sombre, meilleure lisibilité et accès rapide aux actions essentielles.
-// @description:bn     GreasyFork-এর জন্য প্রিমিয়াম UI উন্নয়ন: আধুনিক ইন্টারফেস, তাৎক্ষণিক লাইট/ডার্ক থিম সুইচ, উন্নত পাঠযোগ্যতা ও গুরুত্বপূর্ণ ফিচারে দ্রুত প্রবেশ।
-// @description:pt     Melhoria premium da interface do GreasyFork: design modernizado, alternância instantânea de tema claro/escuro, melhor legibilidade e acesso rápido às ações essenciais.
-// @description:ru     Премиальное улучшение интерфейса GreasyFork: современный дизайн, мгновенное переключение светлой/тёмной темы, улучшенная читаемость и быстрый доступ к действиям.
-// @description:ja     GreasyFork 向けプレミアム UI 改善：モダンなデザイン、ライト／ダークテーマの即時切替、可読性の向上と主要操作への高速アクセス。
-// @description:ur     GreasyFork کے لیے پریمیئم UI بہتری: جدید ڈیزائن، فوری لائٹ/ڈارک تھیم سوئچ، بہتر readability اور ضروری فیچرز تک تیز رسائی۔
-// @description:ml     GreasyFork നായി പ്രീമിയം UI മെച്ചപ്പെടുത്തൽ: ആധുനിക ഡിസൈൻ, തൽക്ഷണ ലൈറ്റ്/ഡാർക്ക് തീം സ്വിച്ച്, മെച്ചപ്പെട്ട വായനാസൗകര്യം, പ്രധാന പ്രവർത്തനങ്ങളിലേക്ക് വേഗത്തിലുള്ള പ്രവേശനം.
-// @description:tr     GreasyFork için premium arayüz geliştirmesi: modern tasarım, anında açık/karanlık tema geçişi, gelişmiş okunabilirlik ve temel işlemlere hızlı erişim.
-// @description:it     Miglioramento premium dell’interfaccia GreasyFork: design moderno, cambio immediato tema chiaro/scuro, maggiore leggibilità e accesso rapido alle azioni principali.
-// @description:th     การปรับปรุง UI ระดับพรีเมียมสำหรับ GreasyFork: ดีไซน์ทันสมัย สลับโหมดสว่าง/มืดได้ทันที อ่านง่ายขึ้น และเข้าถึงฟังก์ชันสำคัญได้รวดเร็ว
+// @name:de      GreasyFork Premium
+// @name:ko      GreasyFork 프리미엄
+// @name:pl      GreasyFork Premium
+// @name:nl      GreasyFork Premium
+// @name:sv      GreasyFork Premium
+// @name:ro      GreasyFork Premium
+// @name:vi      GreasyFork Premium
+// @name:id      GreasyFork Premium
+// @name:ms      GreasyFork Premium
+
+// @description        Advanced GreasyFork enhancement: modern UI, one-click favorites system, direct install button, light/dark theme, and optimized navigation for faster actions.
+// @description:zh-CN  GreasyFork 高级增强：现代化界面、一键收藏系统、直接安装按钮、浅色/深色主题切换，以及更高效的导航体验。
+// @description:zh-TW  GreasyFork 高級強化：現代化介面、一鍵收藏系統、直接安裝按鈕、淺色/深色主題，以及更快速的導航體驗。
+// @description:hi     GreasyFork के लिए उन्नत सुधार: आधुनिक इंटरफ़ेस, एक-क्लिक पसंदीदा प्रणाली, सीधे इंस्टॉल बटन, लाइट/डार्क थीम और तेज़ नेविगेशन।
+// @description:es     Mejora avanzada de GreasyFork: interfaz moderna, sistema de favoritos en un clic, botón de instalación directa, tema claro/oscuro y navegación optimizada.
+// @description:ar     تحسين متقدم لـ GreasyFork: واجهة حديثة، نظام مفضلة بنقرة واحدة، زر تثبيت مباشر، وضع فاتح/داكن، وتنقل أسرع وأكثر كفاءة.
+// @description:fr     Amélioration avancée de GreasyFork : interface modernisée, système de favoris en un clic, bouton d’installation direct, thème clair/sombre et navigation optimisée.
+// @description:bn     GreasyFork-এর উন্নত সংস্করণ: আধুনিক ইন্টারফেস, এক-ক্লিক ফেভারিট সিস্টেম, সরাসরি ইনস্টল বাটন, লাইট/ডার্ক থিম এবং দ্রুত নেভিগেশন।
+// @description:pt     Melhoria avançada do GreasyFork: interface moderna, sistema de favoritos com um clique, botão de instalação direta, tema claro/escuro e navegação otimizada.
+// @description:ru     Расширенное улучшение GreasyFork: современный интерфейс, система избранного в один клик, кнопка быстрой установки, светлая/тёмная тема и улучшенная навигация.
+// @description:ja     GreasyFork の高度な改善：モダンなUI、ワンクリックお気に入り、直接インストールボタン、ライト/ダークテーマ、高速なナビゲーション。
+// @description:ur     GreasyFork کے لیے جدید بہتری: ماڈرن انٹرفیس، ایک کلک فیورٹ سسٹم، ڈائریکٹ انسٹال بٹن، لائٹ/ڈارک تھیم اور تیز نیویگیشن۔
+// @description:ml     GreasyFork ന്റെ മെച്ചപ്പെടുത്തിയ പതിപ്പ്: ആധുനിക UI, ഒറ്റ ക്ലിക്ക് ഫേവറിറ്റ് സിസ്റ്റം, നേരിട്ട് ഇൻസ്റ്റാൾ ബട്ടൺ, ലൈറ്റ്/ഡാർക്ക് തീം, വേഗത്തിലുള്ള നാവിഗേഷൻ。
+// @description:tr     GreasyFork için gelişmiş geliştirme: modern arayüz, tek tık favori sistemi, doğrudan yükleme butonu, açık/koyu tema ve hızlı gezinme。
+// @description:it     Miglioramento avanzato di GreasyFork: interfaccia moderna, sistema preferiti con un clic, pulsante di installazione diretta, tema chiaro/scuro e navigazione ottimizzata.
+// @description:th     การปรับปรุง GreasyFork ขั้นสูง: อินเทอร์เฟซทันสมัย ระบบรายการโปรดคลิกเดียว ปุ่มติดตั้งทันที โหมดสว่าง/มืด และการนำทางที่รวดเร็ว
+// @description:de     Erweiterte Verbesserung für GreasyFork: moderne Benutzeroberfläche, Ein-Klick-Favoritensystem, direkter Installationsbutton, Hell/Dunkel-Modus und optimierte Navigation.
+// @description:ko     GreasyFork 고급 개선: 현대적인 UI, 원클릭 즐겨찾기 시스템, 직접 설치 버튼, 라이트/다크 테마 및 빠른 탐색.
+// @description:pl     Zaawansowane ulepszenie GreasyFork: nowoczesny interfejs, system ulubionych jednym kliknięciem, przycisk bezpośredniej instalacji, tryb jasny/ciemny i zoptymalizowana nawigacja.
+// @description:nl     Geavanceerde verbetering voor GreasyFork: moderne interface, favorietensysteem met één klik, directe installatieknop, licht/donker thema en geoptimaliseerde navigatie.
+// @description:sv     Avancerad förbättring för GreasyFork: modernt gränssnitt, favoritsystem med ett klick, direkt installationsknapp, ljust/mörkt tema och optimerad navigering.
+// @description:ro     Îmbunătățire avansată pentru GreasyFork: interfață modernă, sistem de favorite cu un singur clic, buton de instalare directă, temă deschis/închis și navigare optimizată.
+// @description:vi     Nâng cấp nâng cao cho GreasyFork: giao diện hiện đại, hệ thống yêu thích một lần nhấp, nút cài đặt trực tiếp, chế độ sáng/tối và điều hướng tối ưu.
+// @description:id     Peningkatan lanjutan untuk GreasyFork: antarmuka modern, sistem favorit sekali klik, tombol instal langsung, tema terang/gelap, dan navigasi yang dioptimalkan.
+// @description:ms     Penambahbaikan lanjutan untuk GreasyFork: antara muka moden, sistem kegemaran satu klik, butang pemasangan terus, tema terang/gelap dan navigasi dioptimumkan.
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.0.1
+// @version      1.1.0
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -41,6 +62,8 @@
 // @run-at       document-start
 // @grant        none
 
+// @downloadURL https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js
+// @updateURL https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.meta.js
 // ==/UserScript==
 
 /*
@@ -74,6 +97,10 @@ License: BSD 3-Clause
 
 (function () {
     'use strict';
+
+    if (window.top !== window.self) {
+        return;
+    }
 
     const STORAGE_KEY = 'gfplus-theme';
     const LOADING_ATTR = 'data-gfplus-loading';
@@ -148,29 +175,29 @@ License: BSD 3-Clause
 
     const buildCriticalLoadingCss = () => `
     html[${LOADING_ATTR}] {
-    background: var(--gfplus-preload-bg, #f5f7fb) !important;
-    color: var(--gfplus-preload-text, #111827) !important;
+        background: var(--gfplus-preload-bg, #f5f7fb) !important;
+        color: var(--gfplus-preload-text, #111827) !important;
     }
     html[${LOADING_ATTR}] body {
-    background: transparent !important;
-    color: inherit !important;
+        background: transparent !important;
+        color: inherit !important;
     }
-    html[${LOADING_ATTR}] *,
-    html[${LOADING_ATTR}] *::before,
-    html[${LOADING_ATTR}] *::after {
-    transition: none !important;
-    animation: none !important;
+        html[${LOADING_ATTR}] *,
+        html[${LOADING_ATTR}] *::before,
+        html[${LOADING_ATTR}] *::after {
+        transition: none !important;
+        animation: none !important;
     }
-    html[${LOADING_ATTR}] body > :not(#main-header):not(script):not(style) {
-    visibility: hidden !important;
-    opacity: 0 !important;
+        html[${LOADING_ATTR}] body > :not(#main-header):not(script):not(style) {
+        visibility: hidden !important;
+        opacity: 0 !important;
     }
-    html[${LOADING_ATTR}][${HANDHELD_ATTR}] body,
-    html[${LOADING_ATTR}][${HANDHELD_ATTR}] body > :not(script):not(style),
-    html[${LOADING_ATTR}][${HANDHELD_ATTR}][${INTERNAL_LOADING_ATTR}] body,
-    html[${LOADING_ATTR}][${HANDHELD_ATTR}][${INTERNAL_LOADING_ATTR}] body > :not(script):not(style) {
-    visibility: hidden !important;
-    opacity: 0 !important;
+        html[${LOADING_ATTR}][${HANDHELD_ATTR}] body,
+        html[${LOADING_ATTR}][${HANDHELD_ATTR}] body > :not(script):not(style),
+        html[${LOADING_ATTR}][${HANDHELD_ATTR}][${INTERNAL_LOADING_ATTR}] body,
+        html[${LOADING_ATTR}][${HANDHELD_ATTR}][${INTERNAL_LOADING_ATTR}] body > :not(script):not(style) {
+        visibility: hidden !important;
+        opacity: 0 !important;
     }
     `;
 
@@ -245,7 +272,7 @@ License: BSD 3-Clause
 
         try {
             sessionStorage.setItem(INTERNAL_NAV_FLAG_KEY, '1');
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const isInternalPageNavigation = (href) => {
@@ -794,6 +821,12 @@ License: BSD 3-Clause
 
     .text-content.text-content-compact {
         padding: clamp(.85rem, 1.5vw, 1.2rem);
+    }
+
+    html[data-gfplus-set-editor-page] .text-content > p:first-of-type {
+        font-size: 1.3rem;
+        line-height: 1.72;
+        margin-top: 0;
     }
 
     .user-list {
@@ -2299,11 +2332,13 @@ License: BSD 3-Clause
         text-align: end;
         position: absolute;
         top: calc(100% + 4px);
-        right: -0.4rem;
-        width: min(22rem, calc(100vw - 0.7rem));
-        max-width: calc(100vw - 0.7rem);
+        right: calc((100vw - 100%) / -2);
+        width: min(22rem, calc(100vw - 0.8rem));
+        max-width: calc(100vw - 0.8rem);
+        max-height: calc(100vh - 0.75rem);
         box-sizing: border-box;
         overflow-x: hidden;
+        overflow-y: auto;
         background-color: #900;
         z-index: 1000;
         border-radius: 0 0 0 5px;
@@ -2474,6 +2509,12 @@ License: BSD 3-Clause
             display:none
         }
 
+        #main-header,
+        #main-header .width-constraint,
+        #mobile-nav {
+            overflow: visible;
+        }
+
         #mobile-nav {
             display: block
         }
@@ -2599,7 +2640,10 @@ License: BSD 3-Clause
     }
 
     #install-area {
-        margin-bottom: 1em
+        margin-bottom: 1em;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap
     }
 
     #install-area .install-link:hover,#install-area .install-link:focus,#install-area .install-help-link:hover,#install-area .install-help-link:focus {
@@ -2712,6 +2756,18 @@ License: BSD 3-Clause
     .log-table td .possibly-long-text {
         max-width: 500px;
         overflow-wrap: break-word
+    }
+
+    @media screen and (max-width: 820px) {
+        html[data-gfplus-moderator-actions-page] .width-constraint {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: .25rem;
+        }
+
+        html[data-gfplus-moderator-actions-page] .width-constraint > .log-table {
+            min-width: 48rem;
+        }
     }
 
     .modal__overlay {
@@ -3123,6 +3179,145 @@ License: BSD 3-Clause
         margin-bottom: 1em
     }
 
+    .gf-script-card-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.55rem;
+        margin-top: 0.9rem;
+    }
+
+    #install-area .gf-script-card-actions,
+    #script-links .gf-script-card-actions {
+        justify-content: flex-start;
+        margin-top: 0.75rem;
+    }
+
+    #install-area > .gf-script-star-button {
+        margin-left: .45rem;
+        min-width: 2.4rem;
+        min-height: 2.4rem;
+    }
+
+    #install-area > .gf-script-star-button svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .gf-script-install-button,
+    .gf-script-star-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 2.2rem;
+        border-radius: 999px;
+        border: 1px solid var(--content-border-color);
+        background: linear-gradient(180deg, rgba(79, 70, 229, 0.12), rgba(79, 70, 229, 0.06));
+        color: var(--overall-text-color) !important;
+        text-decoration: none;
+        box-sizing: border-box;
+        transition: transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base), color var(--transition-base);
+    }
+
+    .gf-script-install-button,
+    .gf-script-install-button:visited,
+    .gf-script-install-button:hover,
+    .gf-script-install-button:focus-visible {
+        text-decoration: none !important;
+    }
+
+    .gf-script-install-button {
+        gap: 0.45rem;
+        padding: 0 0.95rem;
+        font-size: 0.92rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+    }
+
+    .gf-script-star-button {
+        width: auto;
+        height: auto;
+        padding: 0;
+        margin-left: 0;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
+        border: none;
+        background: transparent;
+        color: var(--overall-text-color) !important;
+        box-shadow: none;
+        line-height: 0;
+        transform: none;
+        transition: color var(--transition-base);
+    }
+
+    .gf-script-install-button svg,
+    .gf-script-star-button svg {
+        width: 19px;
+        height: 19px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex: none;
+        transition: fill var(--transition-base), stroke var(--transition-base), stroke-width var(--transition-base);
+    }
+
+    .gf-script-install-button:hover,
+    .gf-script-install-button:focus-visible {
+        border-color: var(--link-color);
+        color: var(--link-color) !important;
+        box-shadow: 0 10px 20px rgba(79, 70, 229, 0.14);
+        outline: none;
+    }
+
+    .gf-script-star-button:hover,
+    .gf-script-star-button:focus,
+    .gf-script-star-button:focus-visible,
+    .gf-script-star-button[data-active="true"],
+    .gf-script-star-button[data-active="true"]:hover,
+    .gf-script-star-button[data-active="true"]:focus,
+    .gf-script-star-button[data-active="true"]:focus-visible {
+        background: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+        outline: none !important;
+        transform: none !important;
+    }
+
+    .gf-script-star-button:hover,
+    .gf-script-star-button:focus,
+    .gf-script-star-button:focus-visible {
+        color: var(--overall-text-color) !important;
+    }
+
+    .gf-script-star-button:hover svg,
+    .gf-script-star-button:focus-visible svg {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+    }
+
+    .gf-script-star-button[data-active="true"] {
+        color: #f4b400 !important;
+    }
+
+    .gf-script-star-button[data-active="true"] svg {
+        stroke: #f4b400;
+        fill: rgba(244, 180, 0, 0.18);
+        stroke-width: 2.1;
+        width: 21px;
+        height: 21px;
+    }
+
+    .gf-script-star-button[data-active="true"]:hover,
+    .gf-script-star-button[data-active="true"]:focus,
+    .gf-script-star-button[data-active="true"]:focus-visible {
+        color: #f4b400 !important;
+    }
+
     .inline-script-stats {
         align-items: center;
     }
@@ -3222,7 +3417,7 @@ License: BSD 3-Clause
     }
 
     .change-script-set .selection-box {
-        width: 45%;
+        width: 100%;
         display: inline-block;
         vertical-align: top;
         margin-bottom: 1em
@@ -3236,6 +3431,161 @@ License: BSD 3-Clause
 
     .change-script-set select[multiple] {
         width: 100%
+    }
+
+    .change-script-set {
+        display: grid;
+        gap: 1.25rem;
+        padding: 1.25rem;
+        background: linear-gradient(180deg, rgba(79, 70, 229, .05), rgba(255, 255, 255, .96));
+        border: 1px solid var(--content-border-color);
+        border-radius: var(--border-radius-medium);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .change-script-set section {
+        margin: 0;
+    }
+
+    .change-script-set button {
+        margin-left: 0;
+    }
+
+    .change-script-set #script-set-scripts {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .change-script-set .selection-box,
+    .change-script-set #script-set-scripts > .form-control:not(.selection-box) {
+        margin-bottom: 0;
+        padding: 1rem;
+        background-color: var(--content-background-color);
+        border: 1px solid var(--content-border-color);
+        border-radius: var(--border-radius-medium);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 10px 24px rgba(15, 23, 42, .06);
+    }
+
+    .change-script-set.gf-set-editor-enhanced select[name="remove-scripts-included[]"],
+    .change-script-set.gf-set-editor-enhanced button[name="remove-selected-scripts"] {
+        display: none !important;
+    }
+
+    .gf-set-script-list-panel {
+        display: grid;
+        gap: .85rem;
+    }
+
+    .gf-set-script-list-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+    }
+
+    .gf-set-script-list-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--overall-text-color);
+    }
+
+    .gf-set-script-list-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2rem;
+        padding: .25rem .65rem;
+        border-radius: 999px;
+        background: rgba(79, 70, 229, .12);
+        color: var(--link-color);
+        font-size: .82rem;
+        font-weight: 700;
+    }
+
+    .gf-set-script-list {
+        display: grid;
+        gap: .6rem;
+    }
+
+    .gf-set-script-row {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        padding: .8rem .9rem;
+        background: linear-gradient(180deg, rgba(79, 70, 229, .05), rgba(79, 70, 229, .02));
+        border: 1px solid rgba(79, 70, 229, .12);
+        border-radius: var(--border-radius-small);
+        transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+    }
+
+    .gf-set-script-row:hover {
+        border-color: rgba(79, 70, 229, .28);
+        box-shadow: 0 10px 20px rgba(79, 70, 229, .08);
+        transform: translateY(-1px);
+    }
+
+    .gf-set-script-name {
+        flex: 1;
+        min-width: 0;
+        color: var(--overall-text-color);
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .gf-set-script-remove {
+        width: 2rem;
+        height: 2rem;
+        min-width: 2rem;
+        padding: 0;
+        border-radius: 999px;
+        background: rgba(220, 38, 38, .08);
+        color: #b91c1c !important;
+        box-shadow: none;
+    }
+
+    .gf-set-script-remove:hover,
+    .gf-set-script-remove:focus-visible {
+        background: rgba(220, 38, 38, .16);
+        color: #991b1b !important;
+        box-shadow: 0 8px 18px rgba(220, 38, 38, .15);
+    }
+
+    .gf-set-script-remove svg {
+        width: 15px;
+        height: 15px;
+        stroke: currentColor;
+        stroke-width: 2.25;
+        fill: none;
+    }
+
+    .gf-set-script-empty {
+        padding: .95rem 1rem;
+        background: rgba(148, 163, 184, .08);
+        border: 1px dashed rgba(100, 116, 139, .28);
+        border-radius: var(--border-radius-small);
+        color: var(--texty-link-visited-color);
+    }
+
+    .gf-set-editor-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: .75rem;
+        padding-top: .25rem;
+    }
+
+    .gf-set-editor-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: .85rem;
+    }
+
+    @media screen and (max-width: 820px) {
+        .change-script-set #script-set-scripts {
+            grid-template-columns: 1fr;
+        }
     }
 
     .add-script-set label {
@@ -4611,6 +4961,12 @@ License: BSD 3-Clause
     .text-content.text-content-compact {
         padding: clamp(.85rem, 1.5vw, 1.2rem);
         margin-top: 0px
+    }
+
+    html[data-gfplus-set-editor-page] .text-content > p:first-of-type {
+        font-size: 1.3rem;
+        line-height: 1.72;
+        margin-top: 0;
     }
 
     .user-list {
@@ -6337,11 +6693,13 @@ License: BSD 3-Clause
         text-align: end;
         position: absolute;
         top: calc(100% + 4px);
-        right: -0.4rem;
-        width: min(22rem, calc(100vw - 0.7rem));
-        max-width: calc(100vw - 0.7rem);
+        right: calc((100vw - 100%) / -2);
+        width: min(22rem, calc(100vw - 0.8rem));
+        max-width: calc(100vw - 0.8rem);
+        max-height: calc(100vh - 0.75rem);
         box-sizing: border-box;
         overflow-x: hidden;
+        overflow-y: auto;
         background-color: #22194a;
         background-image: linear-gradient(180deg, #22194a, #21194a);
         z-index: 1000;
@@ -6513,6 +6871,12 @@ License: BSD 3-Clause
             display:none
         }
 
+        #main-header,
+        #main-header .width-constraint,
+        #mobile-nav {
+            overflow: visible;
+        }
+
         #mobile-nav {
             display: block
         }
@@ -6638,7 +7002,10 @@ License: BSD 3-Clause
     }
 
     #install-area {
-        margin-bottom: 1em
+        margin-bottom: 1em;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap
     }
 
     #install-area .install-link:hover,#install-area .install-link:focus,#install-area .install-help-link:hover,#install-area .install-help-link:focus {
@@ -6751,6 +7118,18 @@ License: BSD 3-Clause
     .log-table td .possibly-long-text {
         max-width: 500px;
         overflow-wrap: break-word
+    }
+
+    @media screen and (max-width: 820px) {
+        html[data-gfplus-moderator-actions-page] .width-constraint {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: .25rem;
+        }
+
+        html[data-gfplus-moderator-actions-page] .width-constraint > .log-table {
+            min-width: 48rem;
+        }
     }
 
     .modal__overlay {
@@ -7164,6 +7543,145 @@ License: BSD 3-Clause
         margin-bottom: 1em
     }
 
+    .gf-script-card-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.55rem;
+        margin-top: 0.9rem;
+    }
+
+    #install-area .gf-script-card-actions,
+    #script-links .gf-script-card-actions {
+        justify-content: flex-start;
+        margin-top: 0.75rem;
+    }
+
+    #install-area > .gf-script-star-button {
+        margin-left: .45rem;
+        min-width: 2.4rem;
+        min-height: 2.4rem;
+    }
+
+    #install-area > .gf-script-star-button svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .gf-script-install-button,
+    .gf-script-star-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 2.2rem;
+        border-radius: 999px;
+        border: 1px solid var(--content-border-color);
+        background: linear-gradient(180deg, rgba(139, 92, 246, 0.22), rgba(139, 92, 246, 0.1));
+        color: var(--overall-text-color) !important;
+        text-decoration: none;
+        box-sizing: border-box;
+        transition: transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base), color var(--transition-base);
+    }
+
+    .gf-script-install-button,
+    .gf-script-install-button:visited,
+    .gf-script-install-button:hover,
+    .gf-script-install-button:focus-visible {
+        text-decoration: none !important;
+    }
+
+    .gf-script-install-button {
+        gap: 0.45rem;
+        padding: 0 0.95rem;
+        font-size: 0.92rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+    }
+
+    .gf-script-star-button {
+        width: auto;
+        height: auto;
+        padding: 0;
+        margin-left: 0;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
+        border: none;
+        background: transparent;
+        color: var(--overall-text-color) !important;
+        box-shadow: none;
+        line-height: 0;
+        transform: none;
+        transition: color var(--transition-base);
+    }
+
+    .gf-script-install-button svg,
+    .gf-script-star-button svg {
+        width: 19px;
+        height: 19px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex: none;
+        transition: fill var(--transition-base), stroke var(--transition-base), stroke-width var(--transition-base);
+    }
+
+    .gf-script-install-button:hover,
+    .gf-script-install-button:focus-visible {
+        border-color: var(--link-color);
+        color: var(--link-color) !important;
+        box-shadow: 0 12px 24px rgba(139, 92, 246, 0.2);
+        outline: none;
+    }
+
+    .gf-script-star-button:hover,
+    .gf-script-star-button:focus,
+    .gf-script-star-button:focus-visible,
+    .gf-script-star-button[data-active="true"],
+    .gf-script-star-button[data-active="true"]:hover,
+    .gf-script-star-button[data-active="true"]:focus,
+    .gf-script-star-button[data-active="true"]:focus-visible {
+        background: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+        outline: none !important;
+        transform: none !important;
+    }
+
+    .gf-script-star-button:hover,
+    .gf-script-star-button:focus,
+    .gf-script-star-button:focus-visible {
+        color: var(--overall-text-color) !important;
+    }
+
+    .gf-script-star-button:hover svg,
+    .gf-script-star-button:focus-visible svg {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+    }
+
+    .gf-script-star-button[data-active="true"] {
+        color: #f4b400 !important;
+    }
+
+    .gf-script-star-button[data-active="true"] svg {
+        stroke: #f4b400;
+        fill: rgba(244, 180, 0, 0.18);
+        stroke-width: 2.1;
+        width: 21px;
+        height: 21px;
+    }
+
+    .gf-script-star-button[data-active="true"]:hover,
+    .gf-script-star-button[data-active="true"]:focus,
+    .gf-script-star-button[data-active="true"]:focus-visible {
+        color: #f4b400 !important;
+    }
+
     .inline-script-stats {
         align-items: center;
     }
@@ -7263,7 +7781,7 @@ License: BSD 3-Clause
     }
 
     .change-script-set .selection-box {
-        width: 45%;
+        width: 100%;
         display: inline-block;
         vertical-align: top;
         margin-bottom: 1em
@@ -7277,6 +7795,161 @@ License: BSD 3-Clause
 
     .change-script-set select[multiple] {
         width: 100%
+    }
+
+    .change-script-set {
+        display: grid;
+        gap: 1.25rem;
+        padding: 1.25rem;
+        background: linear-gradient(180deg, rgba(139, 92, 246, .08), rgba(17, 24, 39, .55));
+        border: 1px solid var(--content-border-color);
+        border-radius: var(--border-radius-medium);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .change-script-set section {
+        margin: 0;
+    }
+
+    .change-script-set button {
+        margin-left: 0;
+    }
+
+    .change-script-set #script-set-scripts {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        gap: 1rem;
+        align-items: start;
+    }
+
+    .change-script-set .selection-box,
+    .change-script-set #script-set-scripts > .form-control:not(.selection-box) {
+        margin-bottom: 0;
+        padding: 1rem;
+        background-color: var(--content-background-color);
+        border: 1px solid var(--content-border-color);
+        border-radius: var(--border-radius-medium);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 10px 24px rgba(15, 23, 42, .18);
+    }
+
+    .change-script-set.gf-set-editor-enhanced select[name="remove-scripts-included[]"],
+    .change-script-set.gf-set-editor-enhanced button[name="remove-selected-scripts"] {
+        display: none !important;
+    }
+
+    .gf-set-script-list-panel {
+        display: grid;
+        gap: .85rem;
+    }
+
+    .gf-set-script-list-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+    }
+
+    .gf-set-script-list-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--overall-text-color);
+    }
+
+    .gf-set-script-list-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2rem;
+        padding: .25rem .65rem;
+        border-radius: 999px;
+        background: rgba(139, 92, 246, .18);
+        color: #ddd6fe;
+        font-size: .82rem;
+        font-weight: 700;
+    }
+
+    .gf-set-script-list {
+        display: grid;
+        gap: .6rem;
+    }
+
+    .gf-set-script-row {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        padding: .8rem .9rem;
+        background: linear-gradient(180deg, rgba(139, 92, 246, .12), rgba(139, 92, 246, .06));
+        border: 1px solid rgba(167, 139, 250, .22);
+        border-radius: var(--border-radius-small);
+        transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+    }
+
+    .gf-set-script-row:hover {
+        border-color: rgba(196, 181, 253, .34);
+        box-shadow: 0 12px 22px rgba(15, 23, 42, .2);
+        transform: translateY(-1px);
+    }
+
+    .gf-set-script-name {
+        flex: 1;
+        min-width: 0;
+        color: var(--overall-text-color);
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .gf-set-script-remove {
+        width: 2rem;
+        height: 2rem;
+        min-width: 2rem;
+        padding: 0;
+        border-radius: 999px;
+        background: rgba(248, 113, 113, .12);
+        color: #fecaca !important;
+        box-shadow: none;
+    }
+
+    .gf-set-script-remove:hover,
+    .gf-set-script-remove:focus-visible {
+        background: rgba(248, 113, 113, .2);
+        color: #fee2e2 !important;
+        box-shadow: 0 8px 18px rgba(248, 113, 113, .14);
+    }
+
+    .gf-set-script-remove svg {
+        width: 15px;
+        height: 15px;
+        stroke: currentColor;
+        stroke-width: 2.25;
+        fill: none;
+    }
+
+    .gf-set-script-empty {
+        padding: .95rem 1rem;
+        background: rgba(148, 163, 184, .08);
+        border: 1px dashed rgba(148, 163, 184, .25);
+        border-radius: var(--border-radius-small);
+        color: var(--texty-link-visited-color);
+    }
+
+    .gf-set-editor-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: .75rem;
+        padding-top: .25rem;
+    }
+
+    .gf-set-editor-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: .85rem;
+    }
+
+    @media screen and (max-width: 820px) {
+        .change-script-set #script-set-scripts {
+            grid-template-columns: 1fr;
+        }
     }
 
     .add-script-set label {
@@ -8310,7 +8983,11 @@ License: BSD 3-Clause
 
     const initMobileNavLayout = () => {
         const mobileNav = document.querySelector('#mobile-nav nav');
-        if (!mobileNav || document.getElementById('gf-mobile-primary-nav-item')) {
+        if (!mobileNav) {
+            return;
+        }
+
+        if (document.getElementById('gf-mobile-primary-nav-item')) {
             return;
         }
 
@@ -8392,6 +9069,202 @@ License: BSD 3-Clause
         if (container) {
             container.classList.add('text-content-compact');
         }
+    };
+
+    const MODERATOR_ACTIONS_PAGE_ATTR = 'data-gfplus-moderator-actions-page';
+    const initModeratorActionsLayout = () => {
+        if (window.location.pathname.includes('/moderator_actions')) {
+            root.setAttribute(MODERATOR_ACTIONS_PAGE_ATTR, 'true');
+        } else {
+            root.removeAttribute(MODERATOR_ACTIONS_PAGE_ATTR);
+        }
+    };
+
+    const SCRIPT_SET_EDITOR_ATTR = 'data-gfplus-set-editor';
+    const SCRIPT_SET_EDITOR_PAGE_ATTR = 'data-gfplus-set-editor-page';
+
+    const getScriptSetEditorI18n = (locale) => locale === 'fr'
+        ? {
+            currentScripts: 'Scripts inclus',
+            emptyScripts: 'Aucun script dans cette liste pour le moment.',
+            removeScript: 'Retirer ce script',
+            addActions: 'Actions',
+            save: 'Sauver'
+        }
+        : {
+            currentScripts: 'Included scripts',
+            emptyScripts: 'No scripts in this list yet.',
+            removeScript: 'Remove this script',
+            addActions: 'Actions',
+            save: 'Save'
+        };
+
+    const collectScriptSetEntries = (form, select) => {
+        const entries = new Map();
+
+        Array.from(select?.options || []).forEach((option) => {
+            const id = String(option.value || '').trim();
+            if (!id) {
+                return;
+            }
+
+            entries.set(id, {
+                id,
+                title: (option.textContent || '').trim() || `#${id}`
+            });
+        });
+
+        form.querySelectorAll('input[name="scripts-included[]"]').forEach((input) => {
+            const id = String(input.value || '').trim();
+            if (!id || entries.has(id)) {
+                return;
+            }
+
+            entries.set(id, {
+                id,
+                title: input.getAttribute('data-script-title') || `#${id}`
+            });
+        });
+
+        return Array.from(entries.values());
+    };
+
+    const syncScriptSetHiddenInputs = (form, entries, anchor) => {
+        form.querySelectorAll('input[name="scripts-included[]"]').forEach((input) => input.remove());
+
+        entries.forEach(({ id, title }) => {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'scripts-included[]';
+            hiddenInput.value = id;
+            hiddenInput.setAttribute('data-script-title', title);
+            anchor.appendChild(hiddenInput);
+        });
+    };
+
+    const enhanceScriptSetEditor = (form) => {
+        if (!form || form.getAttribute(SCRIPT_SET_EDITOR_ATTR) === 'done') {
+            return;
+        }
+
+        const locale = getCurrentLocale();
+        const i18n = getScriptSetEditorI18n(locale);
+        const scriptsSection = form.querySelector('#script-set-scripts');
+        const selectionBox = scriptsSection?.querySelector('.selection-box');
+        const select = selectionBox?.querySelector('select[name="remove-scripts-included[]"], select[name*="remove-scripts-included"]');
+        const removeSelectedButton = selectionBox?.querySelector('button[name="remove-selected-scripts"]');
+        const addControl = scriptsSection?.querySelector('.form-control:not(.selection-box)');
+        const includeButton = scriptsSection?.querySelector('button[name="script-action"]');
+        const saveButton = form.querySelector('button[name="save"]');
+
+        if (!scriptsSection || !selectionBox || !select) {
+            return;
+        }
+
+        form.setAttribute(SCRIPT_SET_EDITOR_ATTR, 'done');
+        form.classList.add('gf-set-editor-enhanced');
+        root.setAttribute(SCRIPT_SET_EDITOR_PAGE_ATTR, 'true');
+
+        const listPanel = document.createElement('div');
+        listPanel.className = 'gf-set-script-list-panel';
+
+        const listHeader = document.createElement('div');
+        listHeader.className = 'gf-set-script-list-header';
+
+        const listTitle = document.createElement('div');
+        listTitle.className = 'gf-set-script-list-title';
+        listTitle.textContent = i18n.currentScripts;
+
+        const listCount = document.createElement('span');
+        listCount.className = 'gf-set-script-list-count';
+
+        const listBody = document.createElement('div');
+        listBody.className = 'gf-set-script-list';
+
+        const emptyState = document.createElement('div');
+        emptyState.className = 'gf-set-script-empty';
+        emptyState.textContent = i18n.emptyScripts;
+
+        listHeader.appendChild(listTitle);
+        listHeader.appendChild(listCount);
+        listPanel.appendChild(listHeader);
+        listPanel.appendChild(listBody);
+        listPanel.appendChild(emptyState);
+        selectionBox.prepend(listPanel);
+
+        if (removeSelectedButton) {
+            removeSelectedButton.hidden = true;
+            removeSelectedButton.disabled = true;
+        }
+
+        if (addControl && includeButton) {
+            const actions = document.createElement('div');
+            actions.className = 'gf-set-editor-actions';
+            includeButton.parentNode?.insertBefore(actions, includeButton);
+            actions.appendChild(includeButton);
+        }
+
+        if (saveButton && !saveButton.closest('.gf-set-editor-footer')) {
+            const footer = document.createElement('div');
+            footer.className = 'gf-set-editor-footer';
+            saveButton.textContent = i18n.save;
+            saveButton.parentNode?.insertBefore(footer, saveButton);
+            footer.appendChild(saveButton);
+        }
+
+        const renderEntries = () => {
+            const entries = collectScriptSetEntries(form, select);
+            listBody.innerHTML = '';
+            listCount.textContent = String(entries.length);
+            emptyState.hidden = entries.length > 0;
+
+            entries.forEach(({ id, title }) => {
+                const row = document.createElement('div');
+                row.className = 'gf-set-script-row';
+                row.setAttribute('data-script-id', id);
+
+                const name = document.createElement('div');
+                name.className = 'gf-set-script-name';
+                name.textContent = title;
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'gf-set-script-remove';
+                removeButton.setAttribute('aria-label', `${i18n.removeScript}: ${title}`);
+                removeButton.innerHTML = `
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
+                `;
+                removeButton.addEventListener('click', () => {
+                    Array.from(select.options)
+                        .filter((option) => String(option.value || '').trim() === id)
+                        .forEach((option) => option.remove());
+
+                    form.querySelectorAll('input[name="scripts-included[]"]').forEach((input) => {
+                        if (String(input.value || '').trim() === id) {
+                            input.remove();
+                        }
+                    });
+
+                    syncScriptSetHiddenInputs(form, collectScriptSetEntries(form, select), scriptsSection);
+                    renderEntries();
+                });
+
+                row.appendChild(name);
+                row.appendChild(removeButton);
+                listBody.appendChild(row);
+            });
+
+            syncScriptSetHiddenInputs(form, entries, scriptsSection);
+        };
+
+        renderEntries();
+    };
+
+    const initScriptSetEditor = () => {
+        document.querySelectorAll(FAVORITE_FORM_SELECTOR).forEach(enhanceScriptSetEditor);
     };
 
     const HIGHLIGHT_ATTR = 'data-gfplus-hljs';
@@ -8767,9 +9640,741 @@ License: BSD 3-Clause
         scriptLogoObserver.observe(document.body, { childList: true, subtree: true });
     };
 
+    const SCRIPT_CARD_ACTIONS_ATTR = 'data-gfplus-actions';
+    const SCRIPT_DETAIL_ACTIONS_ATTR = 'data-gfplus-detail-actions';
+    const SCRIPT_DETAIL_ACTIONS_CONTAINER_ID = 'gfplus-script-detail-actions';
+    const FAVORITES_IDS_STORAGE_KEY = 'gfplus-favorites-ids-v1';
+    const FAVORITE_SET_NAME_PATTERN = /\bfavor(?:it(?:e|es|o|os|a|as)?|is?)\b/i;
+    const FAVORITE_FORM_SELECTOR = 'form.change-script-set, form[id^="edit_script_set"], form[id^="new_script_set"]';
+    let scriptCardActionsObserver = null;
+    let favoriteIdsCache = null;
+    let favoriteIdsPromise = null;
+    let favoriteSetMetaCache = null;
+    let favoriteSetMissingConfirmed = false;
+    let favoriteMutationQueue = Promise.resolve();
+    const favoriteBusyScriptIds = new Set();
+
+    const getCurrentLocale = () => (window.location.pathname.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)(?:\/|$)/) || [null, 'en'])[1];
+    const buildFavoriteHtmlHeaders = () => ({
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    });
+    const extractCurrentUserProfilePath = () => {
+        const selectors = [
+            '#nav-user-info .user-profile-link a[href*="/users/"]',
+            '#nav-user-info a[href*="/users/"][href*="/notification_settings"]',
+            '#nav-user-info a[href*="/users/"][href*="/notifications"]',
+            '#nav-user-info a[href*="/users/"][href*="/sets/"][href*="/edit"]',
+            '#nav-user-info a[href*="/users/"]:not([href*="/sign_in"]):not([href*="/sign_out"])',
+            '#mobile-nav .user-profile-link a[href*="/users/"]',
+            '#mobile-nav a[href*="/users/"][href*="/notification_settings"]',
+            '#mobile-nav a[href*="/users/"][href*="/notifications"]',
+            '#mobile-nav a[href*="/users/"][href*="/sets/"][href*="/edit"]',
+            '#mobile-nav a[href*="/users/"]:not([href*="/sign_in"]):not([href*="/sign_out"])',
+            '.user-profile-link a[href*="/users/"]',
+            '.gf-user-panel a[href*="/users/"][href*="/notification_settings"]',
+            '.gf-user-panel a[href*="/users/"][href*="/notifications"]'
+        ];
+
+        for (const selector of selectors) {
+            const href = document.querySelector(selector)?.getAttribute('href') || '';
+            const match = href.match(/^(\/[a-z]{2}(?:-[A-Z]{2})?\/users\/\d+(?:-[^/?#]+)?)/);
+            if (match) {
+                return match[1];
+            }
+        }
+
+        return null;
+    };
+    const readStoredFavoriteIds = () => {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(FAVORITES_IDS_STORAGE_KEY) || '[]');
+            return new Set(Array.isArray(parsed) ? parsed.map((id) => String(id).trim()).filter(Boolean) : []);
+        } catch {
+            return new Set();
+        }
+    };
+    const writeStoredFavoriteIds = (favoriteIds) => {
+        try {
+            localStorage.setItem(FAVORITES_IDS_STORAGE_KEY, JSON.stringify(Array.from(favoriteIds instanceof Set ? favoriteIds : new Set())));
+        } catch {
+        }
+    };
+    const clearStoredFavoriteIds = () => {
+        favoriteIdsCache = new Set();
+        favoriteSetMetaCache = null;
+        try {
+            localStorage.removeItem(FAVORITES_IDS_STORAGE_KEY);
+        } catch {
+        }
+    };
+    const findFavoriteSetLinkInDocument = (doc, baseUrl = window.location.origin) => {
+        const currentUrl = new URL(window.location.href);
+        const currentHeading = document.querySelector('.sidebarred-main-content h1, .sidebarred-main-content h2, .sidebarred-main-content h3, .text-content h1, .text-content h2, .text-content h3')?.textContent || '';
+        if (currentUrl.searchParams.get('set') && FAVORITE_SET_NAME_PATTERN.test(currentHeading)) {
+            return currentUrl.toString();
+        }
+
+        const links = Array.from(doc.querySelectorAll([
+            '#script-list-set a[href*="set="]',
+            '#user-script-sets a[href*="set="]',
+            '.sidebarred-main-content a[href*="set="]',
+            '.text-content a[href*="set="]'
+        ].join(', ')));
+        const favoriteLink = links.find((link) => FAVORITE_SET_NAME_PATTERN.test(link.textContent || ''));
+        return favoriteLink?.href ? new URL(favoriteLink.href, baseUrl).toString() : null;
+    };
+    const resolveFavoriteSetUrl = async () => {
+        if (favoriteSetMetaCache?.viewUrl) {
+            favoriteSetMissingConfirmed = false;
+            return favoriteSetMetaCache.viewUrl;
+        }
+
+        const currentSetUrl = findFavoriteSetLinkInDocument(document);
+        if (currentSetUrl) {
+            favoriteSetMissingConfirmed = false;
+            return currentSetUrl;
+        }
+
+        const profilePath = extractCurrentUserProfilePath();
+        if (!profilePath) {
+            return null;
+        }
+
+        const response = await fetch(new URL(profilePath, window.location.origin).toString(), {
+            credentials: 'include',
+            cache: 'no-store'
+        });
+        if (!response.ok) {
+            return null;
+        }
+
+        const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
+        const favoriteSetUrl = findFavoriteSetLinkInDocument(doc, response.url);
+        if (favoriteSetUrl) {
+            favoriteSetMissingConfirmed = false;
+            return favoriteSetUrl;
+        }
+
+        favoriteSetMissingConfirmed = true;
+        clearStoredFavoriteIds();
+        return null;
+    };
+    const getAllFavoritesIds = async ({ force = false } = {}) => {
+        if (!force && favoriteIdsCache instanceof Set) {
+            return new Set(favoriteIdsCache);
+        }
+
+        if (!force && favoriteIdsPromise) {
+            return favoriteIdsPromise.then((favoriteIds) => new Set(favoriteIds));
+        }
+
+        const storedFavoriteIds = readStoredFavoriteIds();
+        if (!force && storedFavoriteIds.size) {
+            favoriteIdsCache = new Set(storedFavoriteIds);
+        }
+
+        const loadPromise = (async () => {
+            const setUrl = await resolveFavoriteSetUrl();
+            if (!setUrl) {
+                if (favoriteSetMissingConfirmed) {
+                    return new Set();
+                }
+
+                favoriteIdsCache = new Set(storedFavoriteIds);
+                return new Set(storedFavoriteIds);
+            }
+
+            const baseUrl = new URL(setUrl, window.location.origin);
+            baseUrl.searchParams.set('filter_locale', '0');
+
+            const allIds = new Set();
+            let page = 1;
+            let fetchedExistingSet = false;
+
+            while (true) {
+                baseUrl.searchParams.set('page', String(page));
+
+                const response = await fetch(baseUrl.href, {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                if (!response.ok) {
+                    break;
+                }
+
+                fetchedExistingSet = true;
+                const html = await response.text();
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const ids = Array.from(doc.querySelectorAll('li[data-script-id]'))
+                    .map((element) => String(element.getAttribute('data-script-id') || '').trim())
+                    .filter(Boolean);
+
+                if (!ids.length) {
+                    break;
+                }
+
+                ids.forEach((id) => allIds.add(id));
+                page += 1;
+            }
+
+            if (allIds.size) {
+                favoriteSetMissingConfirmed = false;
+                favoriteIdsCache = new Set(allIds);
+                writeStoredFavoriteIds(allIds);
+                return allIds;
+            }
+
+            if (fetchedExistingSet) {
+                favoriteSetMissingConfirmed = false;
+                favoriteIdsCache = new Set();
+                writeStoredFavoriteIds([]);
+                return new Set();
+            }
+
+            if (favoriteSetMissingConfirmed) {
+                return new Set();
+            }
+
+            favoriteIdsCache = new Set(storedFavoriteIds);
+            return new Set(storedFavoriteIds);
+        })().finally(() => {
+            if (favoriteIdsPromise === loadPromise) {
+                favoriteIdsPromise = null;
+            }
+        });
+
+        favoriteIdsPromise = loadPromise;
+        return loadPromise.then((favoriteIds) => new Set(favoriteIds));
+    };
+    const getFavoriteSetMeta = async () => {
+        if (favoriteSetMetaCache?.editUrl) {
+            return favoriteSetMetaCache;
+        }
+
+        const viewUrl = await resolveFavoriteSetUrl();
+        if (!viewUrl) {
+            return null;
+        }
+
+        const view = new URL(viewUrl, window.location.origin);
+        const setId = view.searchParams.get('set');
+        if (!setId) {
+            return null;
+        }
+
+        const directEditLink = document.querySelector(`a[href*="/sets/${setId}/edit"]`)?.getAttribute('href') || '';
+        const profilePath = extractCurrentUserProfilePath();
+        const editUrl = directEditLink
+            ? new URL(directEditLink, window.location.origin).toString()
+            : (profilePath ? new URL(`${profilePath}/sets/${setId}/edit`, window.location.origin).toString() : null);
+
+        if (!editUrl) {
+            return null;
+        }
+
+        favoriteSetMetaCache = {
+            setId: String(setId),
+            viewUrl: view.toString(),
+            editUrl
+        };
+
+        return favoriteSetMetaCache;
+    };
+    const fetchFavoriteDocument = async (url, options = {}) => {
+        const response = await fetch(url, {
+            credentials: 'include',
+            cache: 'no-store',
+            headers: {
+                ...buildFavoriteHtmlHeaders(),
+                ...(options.headers || {})
+            },
+            ...options
+        });
+
+        if (!response.ok) {
+            throw new Error(`Favorite request failed (${response.status})`);
+        }
+
+        const html = await response.text();
+        return {
+            response,
+            doc: new DOMParser().parseFromString(html, 'text/html')
+        };
+    };
+    const formDataToUrlEncodedBody = (formData) => {
+        const params = new URLSearchParams();
+        for (const [key, value] of formData.entries()) {
+            params.append(key, typeof value === 'string' ? value : String(value));
+        }
+        return params.toString();
+    };
+    const setFirstMatchingFormValue = (formData, candidateNames, value) => {
+        const fieldName = candidateNames.find((name) => formData.has(name)) || candidateNames[0];
+        formData.set(fieldName, value);
+        return fieldName;
+    };
+    const extractFavoriteSetMetaFromDocument = (doc, fallbackUrl = '') => {
+        const form = doc.querySelector(FAVORITE_FORM_SELECTOR);
+        const actionUrl = form?.getAttribute('action')
+            ? new URL(form.getAttribute('action'), fallbackUrl || window.location.href).toString()
+            : String(fallbackUrl || '');
+        const editLink = doc.querySelector('a[href*="/sets/"][href*="/edit"]')?.getAttribute('href') || '';
+        const candidateUrl = actionUrl || (editLink ? new URL(editLink, fallbackUrl || window.location.href).toString() : '');
+        const setId = candidateUrl.match(/\/sets\/(\d+)/)?.[1]
+            || editLink.match(/\/sets\/(\d+)/)?.[1]
+            || '';
+
+        if (!setId) {
+            return null;
+        }
+
+        const locale = getCurrentLocale();
+        const viewUrl = new URL(`/${locale}/scripts?set=${setId}`, window.location.origin).toString();
+        const editUrl = candidateUrl.includes('/edit')
+            ? candidateUrl
+            : new URL(`${extractCurrentUserProfilePath() || `/${locale}/users`}/sets/${setId}/edit`, window.location.origin).toString();
+
+        return {
+            setId: String(setId),
+            viewUrl,
+            editUrl
+        };
+    };
+    const extractFavoriteIdsFromForm = (form) => {
+        const ids = new Set();
+        if (!form) {
+            return ids;
+        }
+
+        form.querySelectorAll([
+            'input[name="scripts-included[]"]',
+            'input[name*="scripts-included"]',
+            'input[name="remove-scripts-included[]"]',
+            'input[name*="remove-scripts-included"]',
+            'select[name="scripts-included[]"] option',
+            'select[name*="scripts-included"] option',
+            'select[name="remove-scripts-included[]"] option',
+            'select[name*="remove-scripts-included"] option'
+        ].join(', ')).forEach((element) => {
+            const rawValue = ('value' in element ? element.value : element.getAttribute('value')) || '';
+            const id = String(rawValue).trim().match(/^(\d+)$/)?.[1] || '';
+            if (id) {
+                ids.add(id);
+            }
+        });
+
+        return ids;
+    };
+    const createFavoriteSaveFormData = (doc, form, favoriteIds) => {
+        const formData = new FormData(form);
+        const csrfToken = doc.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (csrfToken) {
+            formData.set('authenticity_token', csrfToken);
+        }
+
+        Array.from(formData.keys()).forEach((key) => {
+            if (
+                key === 'save'
+                || key === 'add-script'
+                || key === 'script-action'
+                || key === 'remove-selected-scripts'
+                || key.includes('scripts-included')
+                || key.includes('remove-scripts-included')
+            ) {
+                formData.delete(key);
+            }
+        });
+
+        Array.from(favoriteIds)
+            .map((id) => String(id).trim())
+            .filter(Boolean)
+            .sort((left, right) => Number(left) - Number(right))
+            .forEach((id) => {
+                formData.append('scripts-included[]', id);
+            });
+
+        if (formData.has('script_set[favorite]')) {
+            formData.set('script_set[favorite]', '1');
+        }
+        if (formData.has('favorite')) {
+            formData.set('favorite', '1');
+        }
+        formData.set('save', '1');
+
+        return formData;
+    };
+    const createFavoriteSet = async () => {
+        const profilePath = extractCurrentUserProfilePath();
+        if (!profilePath) {
+            throw new Error('Authentication required.');
+        }
+
+        const locale = getCurrentLocale();
+        const newSetUrl = new URL(`${profilePath}/sets/new?fav=1`, window.location.origin).toString();
+        const { response: newSetResponse, doc: newSetDoc } = await fetchFavoriteDocument(newSetUrl);
+        if (newSetResponse.url.includes('/users/sign_in')) {
+            throw new Error('Authentication required.');
+        }
+
+        const form = newSetDoc.querySelector(FAVORITE_FORM_SELECTOR);
+        if (!form) {
+            throw new Error('Favorite creation form not found.');
+        }
+
+        const formData = new FormData(form);
+        const csrfToken = newSetDoc.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (csrfToken) {
+            formData.set('authenticity_token', csrfToken);
+        }
+
+        setFirstMatchingFormValue(formData, ['script_set[name]', 'name'], locale === 'fr' ? 'Favoris' : 'Favorite');
+        setFirstMatchingFormValue(formData, ['script_set[favorite]', 'favorite'], '1');
+        formData.set('save', '1');
+
+        const actionUrl = form.getAttribute('action')
+            ? new URL(form.getAttribute('action'), newSetResponse.url).toString()
+            : newSetResponse.url;
+        const { response: createResponse, doc: createDoc } = await fetchFavoriteDocument(actionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: formDataToUrlEncodedBody(formData)
+        });
+
+        if (createResponse.url.includes('/users/sign_in')) {
+            throw new Error('Authentication required.');
+        }
+
+        const favoriteSetMeta = extractFavoriteSetMetaFromDocument(createDoc, createResponse.url);
+        if (!favoriteSetMeta?.editUrl) {
+            throw new Error('Favorite set creation failed.');
+        }
+
+        favoriteSetMissingConfirmed = false;
+        favoriteSetMetaCache = favoriteSetMeta;
+        return favoriteSetMeta;
+    };
+    const saveFavoritesToRemote = async (favoriteIds) => {
+        let favoriteSetMeta = await getFavoriteSetMeta();
+        if (!favoriteSetMeta?.editUrl) {
+            favoriteSetMeta = await createFavoriteSet();
+        }
+
+        const { response: editResponse, doc: editDoc } = await fetchFavoriteDocument(favoriteSetMeta.editUrl);
+        if (editResponse.url.includes('/users/sign_in')) {
+            throw new Error('Authentication required.');
+        }
+
+        const form = editDoc.querySelector(FAVORITE_FORM_SELECTOR);
+        if (!form) {
+            throw new Error('Favorite edit form not found.');
+        }
+
+        const actionUrl = form.getAttribute('action')
+            ? new URL(form.getAttribute('action'), editResponse.url).toString()
+            : editResponse.url;
+        const formData = createFavoriteSaveFormData(editDoc, form, favoriteIds);
+        const { response: saveResponse, doc: saveDoc } = await fetchFavoriteDocument(actionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: formDataToUrlEncodedBody(formData)
+        });
+
+        if (saveResponse.url.includes('/users/sign_in')) {
+            throw new Error('Authentication required.');
+        }
+
+        const savedMeta = extractFavoriteSetMetaFromDocument(saveDoc, saveResponse.url);
+        if (savedMeta?.editUrl) {
+            favoriteSetMissingConfirmed = false;
+            favoriteSetMetaCache = savedMeta;
+        }
+
+        const savedForm = saveDoc.querySelector(FAVORITE_FORM_SELECTOR);
+        const savedIds = extractFavoriteIdsFromForm(savedForm);
+        return savedForm ? savedIds : new Set(favoriteIds);
+    };
+    const enqueueFavoriteMutation = (task) => {
+        const queuedTask = favoriteMutationQueue.catch(() => undefined).then(task);
+        favoriteMutationQueue = queuedTask.catch(() => undefined);
+        return queuedTask;
+    };
+    const setFavoriteButtonsBusy = (scriptId, isBusy) => {
+        document.querySelectorAll(`.gf-script-star-button[data-script-id="${scriptId}"]`).forEach((starButton) => {
+            starButton.disabled = isBusy;
+            starButton.setAttribute('aria-busy', String(isBusy));
+        });
+    };
+    const setStarButtonState = (starButton, isActive, locale) => {
+        starButton.setAttribute('data-active', String(isActive));
+        starButton.setAttribute('aria-pressed', String(isActive));
+        starButton.classList.toggle('active', isActive);
+        starButton.setAttribute('aria-label', locale === 'fr'
+            ? (isActive ? 'Retirer des favoris' : 'Ajouter aux favoris')
+            : (isActive ? 'Remove from favorites' : 'Add to favorites'));
+    };
+    const setFavoriteStateForScript = (scriptId, isActive, locale) => {
+        document.querySelectorAll(`.gf-script-star-button[data-script-id="${scriptId}"]`).forEach((starButton) => {
+            setStarButtonState(starButton, isActive, locale);
+        });
+    };
+    const syncFavoriteStarsWithSet = async ({ force = false } = {}) => {
+        const locale = getCurrentLocale();
+        const applyFavoriteIds = (favoriteIds) => {
+            const visibleScriptIds = new Set();
+
+            document.querySelectorAll('li[data-script-id]').forEach((scriptElement) => {
+                const scriptId = String(scriptElement.getAttribute('data-script-id') || '').trim();
+                if (scriptId) {
+                    visibleScriptIds.add(scriptId);
+                }
+            });
+
+            document.querySelectorAll('.gf-script-star-button[data-script-id]').forEach((starButton) => {
+                const scriptId = String(starButton.getAttribute('data-script-id') || '').trim();
+                if (scriptId) {
+                    visibleScriptIds.add(scriptId);
+                }
+            });
+
+            const currentPageScriptId = getCurrentPageScriptId();
+            if (Number.isFinite(currentPageScriptId)) {
+                visibleScriptIds.add(String(currentPageScriptId));
+            }
+
+            visibleScriptIds.forEach((scriptId) => {
+                setFavoriteStateForScript(scriptId, favoriteIds.has(scriptId), locale);
+            });
+        };
+
+        const storedFavoriteIds = readStoredFavoriteIds();
+        if (storedFavoriteIds.size) {
+            applyFavoriteIds(storedFavoriteIds);
+        }
+
+        applyFavoriteIds(await getAllFavoritesIds({ force }));
+    };
+    const createScriptInstallButton = (codeUrl, locale) => {
+        const installLabel = (USER_NAV_I18N[locale] || USER_NAV_I18N.en).install || 'Install';
+        const installButton = document.createElement('a');
+        installButton.className = 'gf-script-install-button';
+        installButton.href = codeUrl;
+        installButton.textContent = installLabel;
+        installButton.setAttribute('aria-label', installLabel);
+
+        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        icon.setAttribute('viewBox', '0 0 24 24');
+        icon.setAttribute('aria-hidden', 'true');
+        icon.innerHTML = `
+            <path d="M12 3v11"></path>
+            <path d="m7 11 5 5 5-5"></path>
+            <path d="M5 20h14"></path>
+        `;
+        installButton.prepend(icon);
+
+        return installButton;
+    };
+    const extractGreasyForkCodeUrl = (value) => {
+        const match = String(value || '').match(/https:\/\/update\.greasyfork\.org\/scripts\/\d+\/[^\s"'<>]+/);
+        return match ? match[0] : null;
+    };
+    const getCurrentPageScriptId = () => {
+        const pathnameMatch = window.location.pathname.match(/\/scripts\/(\d+)(?:-|$)/);
+        const pathnameScriptId = Number.parseInt(pathnameMatch?.[1] || '', 10);
+        if (Number.isFinite(pathnameScriptId)) {
+            return pathnameScriptId;
+        }
+
+        const installLink = document.querySelector('a.install-link[href*="/scripts/"], a[href*="/scripts/"][data-install-format]');
+        const linkMatch = installLink?.href.match(/\/scripts\/(\d+)(?:-|$)/);
+        const linkScriptId = Number.parseInt(linkMatch?.[1] || '', 10);
+        return Number.isFinite(linkScriptId) ? linkScriptId : null;
+    };
+    const getCurrentPageCodeUrl = () => {
+        const installLink = document.querySelector('a.install-link[href], a[href][data-install-format]');
+        if (installLink?.href) {
+            return installLink.href;
+        }
+
+        const currentPageScriptId = getCurrentPageScriptId();
+        const currentListItemCodeUrl = currentPageScriptId
+            ? document.querySelector(`li[data-script-id="${currentPageScriptId}"][data-code-url]`)?.getAttribute('data-code-url')
+            : '';
+        if (currentListItemCodeUrl) {
+            return currentListItemCodeUrl;
+        }
+
+        const candidateValues = Array.from(document.querySelectorAll('#script-content code, #script-info code, #script-content a[href], #script-info a[href]'))
+            .flatMap((node) => [node.textContent || '', node.getAttribute?.('href') || '']);
+        for (const candidateValue of candidateValues) {
+            const codeUrl = extractGreasyForkCodeUrl(candidateValue);
+            if (codeUrl) {
+                return codeUrl;
+            }
+        }
+
+        return extractGreasyForkCodeUrl(document.querySelector('#script-content')?.textContent || '');
+    };
+    const getScriptDetailActionsContainer = () => {
+        const installArea = document.getElementById('install-area');
+        if (installArea) {
+            return installArea;
+        }
+
+        const existingContainer = document.getElementById(SCRIPT_DETAIL_ACTIONS_CONTAINER_ID);
+        if (existingContainer) {
+            return existingContainer;
+        }
+
+        const container = document.createElement('div');
+        container.id = SCRIPT_DETAIL_ACTIONS_CONTAINER_ID;
+        container.className = 'gf-script-card-actions gf-script-detail-actions';
+
+        const tabs = document.getElementById('script-links');
+        if (tabs) {
+            tabs.insertAdjacentElement('afterend', container);
+            return container;
+        }
+
+        const header = document.querySelector('#script-info header');
+        if (header) {
+            header.insertAdjacentElement('afterend', container);
+            return container;
+        }
+
+        const content = document.getElementById('script-content');
+        if (content) {
+            content.insertAdjacentElement('afterbegin', container);
+            return container;
+        }
+
+        return null;
+    };
+    const createScriptStarButton = (locale, scriptId) => {
+        const starButton = document.createElement('button');
+        starButton.className = 'gf-script-star-button';
+        starButton.type = 'button';
+        starButton.setAttribute('data-script-id', String(scriptId));
+        setStarButtonState(starButton, false, locale);
+        starButton.innerHTML = `
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m12 3.6 2.55 5.17 5.7.83-4.12 4.01.97 5.67L12 16.6l-5.1 2.68.97-5.67L3.75 9.6l5.7-.83L12 3.6Z"></path>
+            </svg>
+        `;
+
+        starButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const currentProfilePath = extractCurrentUserProfilePath();
+            if (!currentProfilePath) {
+                const signInUrl = new URL(`/${locale}/users/sign_in`, window.location.origin);
+                signInUrl.searchParams.set('return_to', window.location.href);
+                window.location.assign(signInUrl.toString());
+                return;
+            }
+
+            const scriptIdString = String(scriptId);
+            if (favoriteBusyScriptIds.has(scriptIdString)) {
+                return;
+            }
+
+            const previousFavoriteIds = favoriteIdsCache instanceof Set
+                ? new Set(favoriteIdsCache)
+                : readStoredFavoriteIds();
+            const isActive = previousFavoriteIds.has(scriptIdString);
+            const nextFavoriteIds = new Set(previousFavoriteIds);
+
+            if (isActive) {
+                nextFavoriteIds.delete(scriptIdString);
+            } else {
+                nextFavoriteIds.add(scriptIdString);
+            }
+
+            favoriteIdsCache = new Set(nextFavoriteIds);
+            writeStoredFavoriteIds(nextFavoriteIds);
+            setFavoriteStateForScript(scriptIdString, !isActive, locale);
+            favoriteBusyScriptIds.add(scriptIdString);
+            setFavoriteButtonsBusy(scriptIdString, true);
+
+            enqueueFavoriteMutation(async () => {
+                const savedFavoriteIds = await saveFavoritesToRemote(nextFavoriteIds);
+                favoriteIdsCache = new Set(savedFavoriteIds);
+                writeStoredFavoriteIds(savedFavoriteIds);
+                await syncFavoriteStarsWithSet();
+            }).catch(async () => {
+                favoriteIdsCache = new Set(previousFavoriteIds);
+                writeStoredFavoriteIds(previousFavoriteIds);
+                await syncFavoriteStarsWithSet({ force: true });
+            }).finally(() => {
+                favoriteBusyScriptIds.delete(scriptIdString);
+                setFavoriteButtonsBusy(scriptIdString, false);
+                starButton.blur();
+            });
+        });
+
+        return starButton;
+    };
+    const applyScriptCardActions = () => {
+        const locale = getCurrentLocale();
+
+        document.querySelectorAll('li[data-script-id]:not(.ad-entry)').forEach((listItem) => {
+            if (listItem.getAttribute(SCRIPT_CARD_ACTIONS_ATTR) === 'done') {
+                return;
+            }
+
+            const article = listItem.querySelector('article');
+            const codeUrl = listItem.getAttribute('data-code-url');
+            const scriptId = Number.parseInt(listItem.getAttribute('data-script-id') || '', 10);
+            if (!article || !Number.isFinite(scriptId)) {
+                return;
+            }
+
+            const actions = document.createElement('div');
+            actions.className = 'gf-script-card-actions';
+            if (codeUrl) {
+                actions.appendChild(createScriptInstallButton(codeUrl, locale));
+            }
+            actions.appendChild(createScriptStarButton(locale, scriptId));
+            article.appendChild(actions);
+            listItem.setAttribute(SCRIPT_CARD_ACTIONS_ATTR, 'done');
+        });
+
+        const detailActionsTarget = getScriptDetailActionsContainer();
+        if (detailActionsTarget && detailActionsTarget.getAttribute(SCRIPT_DETAIL_ACTIONS_ATTR) !== 'done') {
+            const scriptId = getCurrentPageScriptId();
+            const codeUrl = getCurrentPageCodeUrl();
+            const hasNativeInstallArea = Boolean(document.getElementById('install-area'));
+            if (Number.isFinite(scriptId) && !detailActionsTarget.querySelector(`.gf-script-star-button[data-script-id="${scriptId}"]`)) {
+                if (!hasNativeInstallArea && codeUrl) {
+                    detailActionsTarget.appendChild(createScriptInstallButton(codeUrl, locale));
+                }
+                detailActionsTarget.appendChild(createScriptStarButton(locale, scriptId));
+            }
+
+            detailActionsTarget.setAttribute(SCRIPT_DETAIL_ACTIONS_ATTR, 'done');
+        }
+
+        void syncFavoriteStarsWithSet();
+    };
+    const initScriptCardActions = () => {
+        applyScriptCardActions();
+        void syncFavoriteStarsWithSet();
+        if (scriptCardActionsObserver) {
+            return;
+        }
+
+        scriptCardActionsObserver = new MutationObserver(applyScriptCardActions);
+        scriptCardActionsObserver.observe(document.body, { childList: true, subtree: true });
+    };
+
     // i18n dictionary for user navigation
     const USER_NAV_I18N = {
         'en': {
+            install: 'Install',
             submitScript: 'Post a script',
             submitStyle: 'Post a style',
             submitSet: 'New script set',
@@ -8783,6 +10388,7 @@ License: BSD 3-Clause
         },
 
         'fr': {
+            install: 'Installer',
             submitScript: 'Publier un script',
             submitStyle: 'Publier un style',
             submitSet: 'Nouveau jeu de scripts',
@@ -8796,6 +10402,7 @@ License: BSD 3-Clause
         },
 
         'es': {
+            install: 'Instalar',
             submitScript: 'Publicar un script',
             submitStyle: 'Publicar un estilo',
             submitSet: 'Nuevo conjunto de scripts',
@@ -8809,6 +10416,7 @@ License: BSD 3-Clause
         },
 
         'de': {
+            install: 'Installieren',
             submitScript: 'Skript veröffentlichen',
             submitStyle: 'Style veröffentlichen',
             submitSet: 'Neues Skript-Set',
@@ -8822,6 +10430,7 @@ License: BSD 3-Clause
         },
 
         'it': {
+            install: 'Installare',
             submitScript: 'Pubblica uno script',
             submitStyle: 'Pubblica uno stile',
             submitSet: 'Nuovo set di script',
@@ -8835,6 +10444,7 @@ License: BSD 3-Clause
         },
 
         'pt': {
+            install: 'Instalar',
             submitScript: 'Publicar script',
             submitStyle: 'Publicar estilo',
             submitSet: 'Novo conjunto de scripts',
@@ -8848,6 +10458,7 @@ License: BSD 3-Clause
         },
 
         'ru': {
+            install: 'Установить',
             submitScript: 'Опубликовать скрипт',
             submitStyle: 'Опубликовать стиль',
             submitSet: 'Набор скриптов',
@@ -8861,6 +10472,7 @@ License: BSD 3-Clause
         },
 
         'ja': {
+            install: 'インストール',
             submitScript: 'スクリプトを投稿',
             submitStyle: 'スタイルを投稿',
             submitSet: '新しいスクリプトセット',
@@ -8874,6 +10486,7 @@ License: BSD 3-Clause
         },
 
         'zh-CN': {
+            install: '安装',
             submitScript: '发布脚本',
             submitStyle: '发布样式',
             submitSet: '新的脚本集',
@@ -8887,6 +10500,7 @@ License: BSD 3-Clause
         },
 
         'zh-TW': {
+            install: '安裝',
             submitScript: '發佈腳本',
             submitStyle: '發佈樣式',
             submitSet: '新的腳本集',
@@ -8900,6 +10514,7 @@ License: BSD 3-Clause
         },
 
         'ar': {
+            install: 'تثبيت',
             submitScript: 'نشر سكربت',
             submitStyle: 'نشر نمط',
             submitSet: 'مجموعة سكربتات جديدة',
@@ -8913,6 +10528,7 @@ License: BSD 3-Clause
         },
 
         'hi': {
+            install: 'इंस्टॉल करें',
             submitScript: 'स्क्रिप्ट प्रकाशित करें',
             submitStyle: 'स्टाइल प्रकाशित करें',
             submitSet: 'नया स्क्रिप्ट सेट',
@@ -8925,6 +10541,7 @@ License: BSD 3-Clause
             deleteAccount: 'खाता हटाएँ'
         },
         'ko': {
+            install: '설치',
             submitScript: '스크립트 게시',
             submitStyle: '스타일 게시',
             submitSet: '새 스크립트 세트',
@@ -8938,6 +10555,7 @@ License: BSD 3-Clause
         },
 
         'tr': {
+            install: 'Yükle',
             submitScript: 'Script yayınla',
             submitStyle: 'Stil yayınla',
             submitSet: 'Yeni script seti',
@@ -8951,6 +10569,7 @@ License: BSD 3-Clause
         },
 
         'pl': {
+            install: 'Zainstaluj',
             submitScript: 'Opublikuj skrypt',
             submitStyle: 'Opublikuj styl',
             submitSet: 'Nowy zestaw skryptów',
@@ -8964,6 +10583,7 @@ License: BSD 3-Clause
         },
 
         'nl': {
+            install: 'Installeren',
             submitScript: 'Script publiceren',
             submitStyle: 'Stijl publiceren',
             submitSet: 'Nieuwe scriptset',
@@ -8977,6 +10597,7 @@ License: BSD 3-Clause
         },
 
         'sv': {
+            install: 'Installera',
             submitScript: 'Publicera skript',
             submitStyle: 'Publicera stil',
             submitSet: 'Ny skriptsamling',
@@ -8990,6 +10611,7 @@ License: BSD 3-Clause
         },
 
         'ro': {
+            install: 'Instalează',
             submitScript: 'Publică script',
             submitStyle: 'Publică stil',
             submitSet: 'Set nou de scripturi',
@@ -9003,6 +10625,7 @@ License: BSD 3-Clause
         },
 
         'vi': {
+            install: 'Cài đặt',
             submitScript: 'Đăng script',
             submitStyle: 'Đăng kiểu',
             submitSet: 'Bộ script mới',
@@ -9016,6 +10639,7 @@ License: BSD 3-Clause
         },
 
         'id': {
+            install: 'Pasang',
             submitScript: 'Publikasikan skrip',
             submitStyle: 'Publikasikan gaya',
             submitSet: 'Set skrip baru',
@@ -9029,6 +10653,7 @@ License: BSD 3-Clause
         },
 
         'ms': {
+            install: 'Pasang',
             submitScript: 'Terbitkan skrip',
             submitStyle: 'Terbitkan gaya',
             submitSet: 'Set skrip baharu',
@@ -9042,6 +10667,7 @@ License: BSD 3-Clause
         },
 
         'th': {
+            install: 'ติดตั้ง',
             submitScript: 'เผยแพร่สคริปต์',
             submitStyle: 'เผยแพร่สไตล์',
             submitSet: 'ชุดสคริปต์ใหม่',
@@ -9226,6 +10852,7 @@ License: BSD 3-Clause
                 closeAllPanels();
             }
         });
+
     };
 
     const initMobileUserNavigation = () => {
@@ -9396,6 +11023,7 @@ License: BSD 3-Clause
                 closeMobilePanels();
             }
         });
+
     };
 
     let uiInitialized = false;
@@ -9408,9 +11036,12 @@ License: BSD 3-Clause
         initThemeSwitch();
         initMobileNavLayout();
         initMobileThemeSwitch();
+        initModeratorActionsLayout();
         initCompactUserScriptSets();
+        initScriptSetEditor();
         initHighlightJs();
         initScriptLogos();
+        initScriptCardActions();
         initUserNavigation();
         initMobileUserNavigation();
 
