@@ -60,8 +60,9 @@ Suggestions, feature requests, bug reports, and contributions are welcome.
 
 You can reach me through:
 
-- **[GitHub Issues](https://github.com/DREwX-code/greasyfork-premium/issues)**
-- **[GreasyFork Discussions](https://greasyfork.org/scripts/562938-greasyfork-premium/feedback)**
+- **[GitHub Discussions](https://github.com/DREwX-code/greasyfork-premium/discussions/1)** → Share ideas and improvements
+- **[GitHub Issues](https://github.com/DREwX-code/greasyfork-premium/issues)** → Report bugs or technical issues
+- **[GreasyFork Feedback](https://greasyfork.org/scripts/562938-greasyfork-premium/feedback)** → General feedback and comments
 
 Please provide a clear and detailed description of the issue, including steps to reproduce it when applicable.
 
@@ -76,5 +77,5 @@ GitHub: [DREwX-code](https://github.com/DREwX-code)
 
 ## 📄 License
 
-This project is licensed under the <strong>Apache License 2.0</strong>.
+This project is licensed under the <strong>Apache License 2.0</strong>.  
 You are free to use, modify, and distribute this project in accordance with the terms of the license.
