@@ -12,7 +12,8 @@
        alt="GreasyFork Premium Preview"
        width="100%">
 </p>
-The script focuses exclusively on UI and UX improvements, without altering GreasyFork’s core behavior.
+The script focuses exclusively on UI and UX improvements, without altering GreasyFork’s core behavior. 
+
 ---
 
 ## Main features
