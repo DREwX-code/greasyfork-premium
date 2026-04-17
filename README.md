@@ -80,6 +80,8 @@ Suggestions from [ccamel](https://github.com/ccamel) (GitHub Discussions):
 Reported by 离火煮青龙 (GreasyFork feedback):
 - Fixes and improvements for favorites state persistence on iPhone Safari
 
+See also: [Project Roadmap](./ROADMAP.md)
+
 ---
 
 ## 👤 Author
