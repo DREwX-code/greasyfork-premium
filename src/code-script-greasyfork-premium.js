@@ -53,7 +53,7 @@
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.1.0
+// @version      1.1.1
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -713,8 +713,91 @@ License: BSD 3-Clause
         border-radius: var(--border-radius-small);
         background-color: var(--content-background-color);
         box-shadow: inset 0 1px 2px rgba(15, 23, 42, .08);
-        resize: both;
+        resize: vertical;
         transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base)
+    }
+
+    #ace-editor.ace-tm {
+        background-color: #ffffff !important;
+        color: #111827 !important;
+        border-color: var(--content-border-color) !important;
+    }
+
+    #ace-editor.ace-tm .ace_scroller,
+    #ace-editor.ace-tm .ace_content {
+        background-color: #ffffff !important;
+    }
+
+    #ace-editor.ace-tm .ace_gutter {
+        background: #f8fafc !important;
+        color: #64748b !important;
+        border-right: 1px solid #e2e8f0;
+    }
+
+    #ace-editor.ace-tm .ace_print-margin {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    #ace-editor.ace-tm .ace_cursor {
+        color: #111827 !important;
+    }
+
+    #ace-editor.ace-tm .ace_marker-layer .ace_active-line,
+    #ace-editor.ace-tm .ace_gutter-active-line {
+        background: rgba(79, 70, 229, .08) !important;
+    }
+
+    #ace-editor.ace-tm .ace_marker-layer .ace_selection {
+        background: rgba(79, 70, 229, .22) !important;
+    }
+
+    #ace-editor.ace-tm .ace_marker-layer .ace_selected-word {
+        background: rgba(79, 70, 229, .12) !important;
+        border: 1px solid rgba(79, 70, 229, .35) !important;
+    }
+
+    #ace-editor.ace-tm .ace_fold {
+        background-color: #4f46e5 !important;
+    }
+
+    #ace-editor.ace-tm .ace_invisible {
+        color: #cbd5e1 !important;
+    }
+
+    #ace-editor.ace-tm .ace_storage,
+    #ace-editor.ace-tm .ace_keyword {
+        color: #6d28d9 !important;
+    }
+
+    #ace-editor.ace-tm .ace_constant,
+    #ace-editor.ace-tm .ace_constant.ace_numeric {
+        color: #b45309 !important;
+    }
+
+    #ace-editor.ace-tm .ace_string {
+        color: #15803d !important;
+    }
+
+    #ace-editor.ace-tm .ace_comment {
+        color: #64748b !important;
+    }
+
+    #ace-editor.ace-tm .ace_variable,
+    #ace-editor.ace-tm .ace_support.ace_function,
+    #ace-editor.ace-tm .ace_entity.ace_name.ace_function {
+        color: #1d4ed8 !important;
+    }
+
+    #ace-editor.ace-tm .ace_keyword.ace_operator,
+    #ace-editor.ace-tm .ace_paren,
+    #ace-editor.ace-tm .ace_punctuation {
+        color: #334155 !important;
+    }
+
+    #ace-editor.ace-tm .ace_invalid {
+        background-color: rgba(220, 38, 38, .12) !important;
+        color: #b91c1c !important;
     }
 
     .form-control input:not([type=radio]):not([type=file]):not([type=checkbox]):not([type=search]):not([type=submit]):not([size]) {
@@ -736,6 +819,46 @@ License: BSD 3-Clause
 
     .form-control label.radio-label,.form-control label.checkbox-label {
         font-weight: 400
+    }
+
+    .form-control .enable-source-editor + label.checkbox-label {
+        display: inline;
+        margin: 0;
+        line-height: 1.25;
+        vertical-align: middle;
+    }
+
+    .form-control .label-note .enable-source-editor {
+        margin: 0 .35em 0 0;
+        vertical-align: middle;
+    }
+
+    .form-control select[name*="[additional_info]"][name$="[locale]"] {
+        width: auto;
+        max-width: min(100%, 18rem);
+        padding: .35em .65em;
+        font-size: .92rem;
+    }
+
+    .form-control textarea[name="script_version[code]"],
+    textarea[name="script_version[changelog]"],
+    textarea.comment-entry,
+    .form-control textarea[name*="[additional_info]"][name$="[attribute_value]"] {
+        background-color: #f8fafc;
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, .08), 0 0 0 1px rgba(79, 70, 229, .04);
+    }
+
+    .form-control textarea[name*="[additional_info]"][name$="[attribute_value]"] {
+        border-top-left-radius: 0;
+    }
+
+    textarea.comment-entry {
+        border-top-left-radius: 0;
+    }
+
+    .previewable[data-markup-option-name="script_version[changelog_markup]"] textarea,
+    .previewable[data-markup-option-name="script_version[changelog_markup]"] .preview-results {
+        border-top-left-radius: 0;
     }
 
     label.subselection-radio-title {
@@ -1303,6 +1426,29 @@ License: BSD 3-Clause
         background-repeat: no-repeat;
         background-size: 16px 16px;
         background-position: 5px 2px
+    }
+
+    .external-login:hover,
+    .external-login:focus,
+    .external-login:active {
+        background-repeat: no-repeat !important;
+        background-size: 16px 16px !important;
+        background-position: 5px center !important;
+    }
+
+    .external-login.github-login,
+    .external-login.gitlab-login,
+    .external-login.google_oauth2-login,
+    .external-login.github-login:hover,
+    .external-login.gitlab-login:hover,
+    .external-login.google_oauth2-login:hover,
+    .external-login.github-login:focus,
+    .external-login.gitlab-login:focus,
+    .external-login.google_oauth2-login:focus,
+    .external-login.github-login:active,
+    .external-login.gitlab-login:active,
+    .external-login.google_oauth2-login:active {
+        box-shadow: none !important;
     }
 
     .external-login-container {
@@ -2758,6 +2904,28 @@ License: BSD 3-Clause
         overflow-wrap: break-word
     }
 
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content {
+        display: table;
+    }
+
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content thead {
+        display: table-header-group;
+    }
+
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content tbody {
+        display: table-row-group;
+    }
+
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content tr {
+        display: table-row;
+    }
+
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content th,
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content td {
+        display: table-cell;
+        vertical-align: top;
+    }
+
     @media screen and (max-width: 820px) {
         html[data-gfplus-moderator-actions-page] .width-constraint {
             overflow-x: auto;
@@ -4158,7 +4326,7 @@ License: BSD 3-Clause
         --overall-text-color: #111827;
         --overall-text-color-icon: #e5e7eb;
         --link-color: #4f46e5;
-        --link-color-icon: #746bff;
+        --link-color-icon: #e5bcbc;
         --link-visited-color: #4338ca;
         --texty-link-visited-color: #4b5563;
         --content-background-color: #ffffff;
@@ -4852,7 +5020,7 @@ License: BSD 3-Clause
         border-radius: var(--border-radius-small);
         background-color: var(--content-background-color);
         box-shadow: inset 0 1px 2px rgba(15, 23, 42, .08);
-        resize: both;
+        resize: vertical;
         transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base)
     }
 
@@ -4875,6 +5043,46 @@ License: BSD 3-Clause
 
     .form-control label.radio-label,.form-control label.checkbox-label {
         font-weight: 400
+    }
+
+    .form-control .enable-source-editor + label.checkbox-label {
+        display: inline;
+        margin: 0;
+        line-height: 1.25;
+        vertical-align: middle;
+    }
+
+    .form-control .label-note .enable-source-editor {
+        margin: 0 .35em 0 0;
+        vertical-align: middle;
+    }
+
+    .form-control select[name*="[additional_info]"][name$="[locale]"] {
+        width: auto;
+        max-width: min(100%, 18rem);
+        padding: .35em .65em;
+        font-size: .92rem;
+    }
+
+    .form-control textarea[name="script_version[code]"],
+    textarea[name="script_version[changelog]"],
+    textarea.comment-entry,
+    .form-control textarea[name*="[additional_info]"][name$="[attribute_value]"] {
+        background-color: #0b1220;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, .34), 0 0 0 1px rgba(167, 139, 250, .12);
+    }
+
+    .form-control textarea[name*="[additional_info]"][name$="[attribute_value]"] {
+        border-top-left-radius: 0;
+    }
+
+    textarea.comment-entry {
+        border-top-left-radius: 0;
+    }
+
+    .previewable[data-markup-option-name="script_version[changelog_markup]"] textarea,
+    .previewable[data-markup-option-name="script_version[changelog_markup]"] .preview-results {
+        border-top-left-radius: 0;
     }
 
     label.subselection-radio-title {
@@ -5448,6 +5656,29 @@ License: BSD 3-Clause
         background-position: 5px 2px
     }
 
+    .external-login:hover,
+    .external-login:focus,
+    .external-login:active {
+        background-repeat: no-repeat !important;
+        background-size: 16px 16px !important;
+        background-position: 5px center !important;
+    }
+
+    .external-login.github-login,
+    .external-login.gitlab-login,
+    .external-login.google_oauth2-login,
+    .external-login.github-login:hover,
+    .external-login.gitlab-login:hover,
+    .external-login.google_oauth2-login:hover,
+    .external-login.github-login:focus,
+    .external-login.gitlab-login:focus,
+    .external-login.google_oauth2-login:focus,
+    .external-login.github-login:active,
+    .external-login.gitlab-login:active,
+    .external-login.google_oauth2-login:active {
+        box-shadow: none !important;
+    }
+
     .external-login-container {
         display: inline-block;
         vertical-align: top
@@ -5488,7 +5719,7 @@ License: BSD 3-Clause
         margin: 0 auto;
         padding: 1em;
         background-color: var(--content-background-color);
-        border: 1px solid var(--content-border-color);
+        border: 1px solid #414954;
         border-radius: 5px;
         text-align: center
     }
@@ -5503,7 +5734,7 @@ License: BSD 3-Clause
         margin: 0 auto;
         padding: 1em;
         background-color: var(--content-background-color);
-        border: 1px solid var(--content-border-color);
+        border: 0;
         border-radius: 5px;
         text-align: start
     }
@@ -5534,10 +5765,15 @@ License: BSD 3-Clause
         font-size: 14px;
         line-height: 20px;
         vertical-align: middle;
-        border: 1px solid var(--content-border-color);
+        border: 1px solid rgba(196, 181, 253, .32);
         border-radius: 3px;
         outline: none;
         box-shadow: inset 0 1px 2px #0000001a
+    }
+
+    form.new_user #user_email,
+    form.new_user #user_password {
+        border: 1px solid #414954;
     }
 
     form input[type=checkbox],input[type=checkbox]+label,form input[type=radio],input[type=radio]+label {
@@ -5573,7 +5809,7 @@ License: BSD 3-Clause
         background-color: #3b1e8a;
         background-image: linear-gradient(#2f2675,#4c1d95);
         border: 0px solid transparent;
-        box-shadow: 0 8px 18px rgba(139, 92, 246, .32),0 12px 28px rgba(15, 23, 42, .38);
+        box-shadow: none;
         border-radius: 3px;
         white-space: normal
     }
@@ -6034,7 +6270,8 @@ License: BSD 3-Clause
         }
 
         #ace-editor.ace-tm .ace_print-margin {
-            background: #25282a
+            display: none!important;
+            visibility: hidden!important
         }
 
         #ace-editor.ace-tm .ace_fold {
@@ -7118,6 +7355,28 @@ License: BSD 3-Clause
     .log-table td .possibly-long-text {
         max-width: 500px;
         overflow-wrap: break-word
+    }
+
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content {
+        display: table;
+    }
+
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content thead {
+        display: table-header-group;
+    }
+
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content tbody {
+        display: table-row-group;
+    }
+
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content tr {
+        display: table-row;
+    }
+
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content th,
+    html[data-gfplus-moderator-actions-page] table.log-table.text-content td {
+        display: table-cell;
+        vertical-align: top;
     }
 
     @media screen and (max-width: 820px) {
@@ -8910,7 +9169,7 @@ License: BSD 3-Clause
         :host([theme="dark"]) .moon { display: block; }
         </style>
 
-        <button title="Changer de thème">
+        <button type="button">
         <div class="thumb">
             <svg class="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="5"/>
@@ -8930,7 +9189,12 @@ License: BSD 3-Clause
         </button>
     `;
 
-        shadow.querySelector('button').addEventListener('click', () => {
+        const button = shadow.querySelector('button');
+        const themeLabel = getUserNavI18n(getCurrentLocale()).themeToggle || 'Toggle theme';
+        button.setAttribute('title', themeLabel);
+        button.setAttribute('aria-label', themeLabel);
+
+        button.addEventListener('click', () => {
             const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             currentTheme = newTheme;
             applyRootTheme(newTheme);
@@ -9083,21 +9347,7 @@ License: BSD 3-Clause
     const SCRIPT_SET_EDITOR_ATTR = 'data-gfplus-set-editor';
     const SCRIPT_SET_EDITOR_PAGE_ATTR = 'data-gfplus-set-editor-page';
 
-    const getScriptSetEditorI18n = (locale) => locale === 'fr'
-        ? {
-            currentScripts: 'Scripts inclus',
-            emptyScripts: 'Aucun script dans cette liste pour le moment.',
-            removeScript: 'Retirer ce script',
-            addActions: 'Actions',
-            save: 'Sauver'
-        }
-        : {
-            currentScripts: 'Included scripts',
-            emptyScripts: 'No scripts in this list yet.',
-            removeScript: 'Remove this script',
-            addActions: 'Actions',
-            save: 'Save'
-        };
+    const getScriptSetEditorI18n = (locale) => getUserNavI18n(locale);
 
     const collectScriptSetEntries = (form, select) => {
         const entries = new Map();
@@ -9710,7 +9960,7 @@ License: BSD 3-Clause
     const findFavoriteSetLinkInDocument = (doc, baseUrl = window.location.origin) => {
         const currentUrl = new URL(window.location.href);
         const currentHeading = document.querySelector('.sidebarred-main-content h1, .sidebarred-main-content h2, .sidebarred-main-content h3, .text-content h1, .text-content h2, .text-content h3')?.textContent || '';
-        if (currentUrl.searchParams.get('set') && FAVORITE_SET_NAME_PATTERN.test(currentHeading)) {
+        if (currentUrl.searchParams.get('set') && isFavoriteSetName(currentHeading)) {
             return currentUrl.toString();
         }
 
@@ -9720,7 +9970,7 @@ License: BSD 3-Clause
             '.sidebarred-main-content a[href*="set="]',
             '.text-content a[href*="set="]'
         ].join(', ')));
-        const favoriteLink = links.find((link) => FAVORITE_SET_NAME_PATTERN.test(link.textContent || ''));
+        const favoriteLink = links.find((link) => isFavoriteSetName(link.textContent || ''));
         return favoriteLink?.href ? new URL(favoriteLink.href, baseUrl).toString() : null;
     };
     const resolveFavoriteSetUrl = async () => {
@@ -10027,7 +10277,7 @@ License: BSD 3-Clause
             formData.set('authenticity_token', csrfToken);
         }
 
-        setFirstMatchingFormValue(formData, ['script_set[name]', 'name'], locale === 'fr' ? 'Favoris' : 'Favorite');
+        setFirstMatchingFormValue(formData, ['script_set[name]', 'name'], getUserNavI18n(locale).favoriteSetName || 'Favorites');
         setFirstMatchingFormValue(formData, ['script_set[favorite]', 'favorite'], '1');
         formData.set('save', '1');
 
@@ -10112,9 +10362,8 @@ License: BSD 3-Clause
         starButton.setAttribute('data-active', String(isActive));
         starButton.setAttribute('aria-pressed', String(isActive));
         starButton.classList.toggle('active', isActive);
-        starButton.setAttribute('aria-label', locale === 'fr'
-            ? (isActive ? 'Retirer des favoris' : 'Ajouter aux favoris')
-            : (isActive ? 'Remove from favorites' : 'Add to favorites'));
+        const i18n = getUserNavI18n(locale);
+        starButton.setAttribute('aria-label', isActive ? i18n.removeFromFavorites : i18n.addToFavorites);
     };
     const setFavoriteStateForScript = (scriptId, isActive, locale) => {
         document.querySelectorAll(`.gf-script-star-button[data-script-id="${scriptId}"]`).forEach((starButton) => {
@@ -10158,7 +10407,7 @@ License: BSD 3-Clause
         applyFavoriteIds(await getAllFavoritesIds({ force }));
     };
     const createScriptInstallButton = (codeUrl, locale) => {
-        const installLabel = (USER_NAV_I18N[locale] || USER_NAV_I18N.en).install || 'Install';
+        const installLabel = getUserNavI18n(locale).install || 'Install';
         const installButton = document.createElement('a');
         installButton.className = 'gf-script-install-button';
         installButton.href = codeUrl;
@@ -10375,6 +10624,14 @@ License: BSD 3-Clause
     const USER_NAV_I18N = {
         'en': {
             install: 'Install',
+            themeToggle: 'Toggle theme',
+            currentScripts: 'Included scripts',
+            emptyScripts: 'No scripts in this list yet.',
+            removeScript: 'Remove this script',
+            save: 'Save',
+            favoriteSetName: 'Favorites',
+            addToFavorites: 'Add to favorites',
+            removeFromFavorites: 'Remove from favorites',
             submitScript: 'Post a script',
             submitStyle: 'Post a style',
             submitSet: 'New script set',
@@ -10389,12 +10646,20 @@ License: BSD 3-Clause
 
         'fr': {
             install: 'Installer',
+            themeToggle: 'Changer de thème',
+            currentScripts: 'Scripts inclus',
+            emptyScripts: 'Aucun script dans cette liste pour le moment.',
+            removeScript: 'Retirer ce script',
+            save: 'Enregistrer',
+            favoriteSetName: 'Favoris',
+            addToFavorites: 'Ajouter aux favoris',
+            removeFromFavorites: 'Retirer des favoris',
             submitScript: 'Publier un script',
             submitStyle: 'Publier un style',
             submitSet: 'Nouveau jeu de scripts',
             webhookInfo: 'Mettre en place un Webhook',
             importScripts: 'Importer des scripts',
-            editProfile: 'Modifier mon compte',
+            editProfile: 'Modifier le profil',
             editSignIn: 'Modifier mes méthodes d\'identification',
             viewNotifications: 'Afficher les notifications',
             notificationSettings: 'Modifier les paramètres de notification',
@@ -10403,6 +10668,14 @@ License: BSD 3-Clause
 
         'es': {
             install: 'Instalar',
+            themeToggle: 'Cambiar tema',
+            currentScripts: 'Scripts incluidos',
+            emptyScripts: 'No hay scripts en esta lista todavía.',
+            removeScript: 'Quitar este script',
+            save: 'Guardar',
+            favoriteSetName: 'Favoritos',
+            addToFavorites: 'Añadir a favoritos',
+            removeFromFavorites: 'Quitar de favoritos',
             submitScript: 'Publicar un script',
             submitStyle: 'Publicar un estilo',
             submitSet: 'Nuevo conjunto de scripts',
@@ -10417,6 +10690,14 @@ License: BSD 3-Clause
 
         'de': {
             install: 'Installieren',
+            themeToggle: 'Design wechseln',
+            currentScripts: 'Enthaltene Skripte',
+            emptyScripts: 'Noch keine Skripte in dieser Liste.',
+            removeScript: 'Dieses Skript entfernen',
+            save: 'Speichern',
+            favoriteSetName: 'Favoriten',
+            addToFavorites: 'Zu Favoriten hinzufügen',
+            removeFromFavorites: 'Aus Favoriten entfernen',
             submitScript: 'Skript veröffentlichen',
             submitStyle: 'Style veröffentlichen',
             submitSet: 'Neues Skript-Set',
@@ -10431,6 +10712,14 @@ License: BSD 3-Clause
 
         'it': {
             install: 'Installare',
+            themeToggle: 'Cambia tema',
+            currentScripts: 'Script inclusi',
+            emptyScripts: 'Nessuno script in questa lista per ora.',
+            removeScript: 'Rimuovi questo script',
+            save: 'Salva',
+            favoriteSetName: 'Preferiti',
+            addToFavorites: 'Aggiungi ai preferiti',
+            removeFromFavorites: 'Rimuovi dai preferiti',
             submitScript: 'Pubblica uno script',
             submitStyle: 'Pubblica uno stile',
             submitSet: 'Nuovo set di script',
@@ -10445,6 +10734,14 @@ License: BSD 3-Clause
 
         'pt': {
             install: 'Instalar',
+            themeToggle: 'Mudar tema',
+            currentScripts: 'Scripts incluídos',
+            emptyScripts: 'Ainda não há scripts nesta lista.',
+            removeScript: 'Remover este script',
+            save: 'Salvar',
+            favoriteSetName: 'Favoritos',
+            addToFavorites: 'Adicionar aos favoritos',
+            removeFromFavorites: 'Remover dos favoritos',
             submitScript: 'Publicar script',
             submitStyle: 'Publicar estilo',
             submitSet: 'Novo conjunto de scripts',
@@ -10459,6 +10756,14 @@ License: BSD 3-Clause
 
         'ru': {
             install: 'Установить',
+            themeToggle: 'Переключить тему',
+            currentScripts: 'Включённые скрипты',
+            emptyScripts: 'В этом списке пока нет скриптов.',
+            removeScript: 'Удалить этот скрипт',
+            save: 'Сохранить',
+            favoriteSetName: 'Избранное',
+            addToFavorites: 'Добавить в избранное',
+            removeFromFavorites: 'Удалить из избранного',
             submitScript: 'Опубликовать скрипт',
             submitStyle: 'Опубликовать стиль',
             submitSet: 'Набор скриптов',
@@ -10473,6 +10778,14 @@ License: BSD 3-Clause
 
         'ja': {
             install: 'インストール',
+            themeToggle: 'テーマを切り替え',
+            currentScripts: '含まれるスクリプト',
+            emptyScripts: 'このリストにはまだスクリプトがありません。',
+            removeScript: 'このスクリプトを削除',
+            save: '保存',
+            favoriteSetName: 'お気に入り',
+            addToFavorites: 'お気に入りに追加',
+            removeFromFavorites: 'お気に入りから削除',
             submitScript: 'スクリプトを投稿',
             submitStyle: 'スタイルを投稿',
             submitSet: '新しいスクリプトセット',
@@ -10487,6 +10800,14 @@ License: BSD 3-Clause
 
         'zh-CN': {
             install: '安装',
+            themeToggle: '切换主题',
+            currentScripts: '已包含的脚本',
+            emptyScripts: '此列表中还没有脚本。',
+            removeScript: '移除此脚本',
+            save: '保存',
+            favoriteSetName: '收藏',
+            addToFavorites: '添加到收藏',
+            removeFromFavorites: '从收藏中移除',
             submitScript: '发布脚本',
             submitStyle: '发布样式',
             submitSet: '新的脚本集',
@@ -10501,6 +10822,14 @@ License: BSD 3-Clause
 
         'zh-TW': {
             install: '安裝',
+            themeToggle: '切換主題',
+            currentScripts: '已包含的腳本',
+            emptyScripts: '此清單中還沒有腳本。',
+            removeScript: '移除此腳本',
+            save: '儲存',
+            favoriteSetName: '收藏',
+            addToFavorites: '加入收藏',
+            removeFromFavorites: '從收藏移除',
             submitScript: '發佈腳本',
             submitStyle: '發佈樣式',
             submitSet: '新的腳本集',
@@ -10515,6 +10844,14 @@ License: BSD 3-Clause
 
         'ar': {
             install: 'تثبيت',
+            themeToggle: 'تبديل المظهر',
+            currentScripts: 'السكربتات المضمنة',
+            emptyScripts: 'لا توجد سكربتات في هذه القائمة بعد.',
+            removeScript: 'إزالة هذا السكربت',
+            save: 'حفظ',
+            favoriteSetName: 'المفضلة',
+            addToFavorites: 'إضافة إلى المفضلة',
+            removeFromFavorites: 'إزالة من المفضلة',
             submitScript: 'نشر سكربت',
             submitStyle: 'نشر نمط',
             submitSet: 'مجموعة سكربتات جديدة',
@@ -10529,6 +10866,14 @@ License: BSD 3-Clause
 
         'hi': {
             install: 'इंस्टॉल करें',
+            themeToggle: 'थीम बदलें',
+            currentScripts: 'शामिल स्क्रिप्ट',
+            emptyScripts: 'इस सूची में अभी कोई स्क्रिप्ट नहीं है.',
+            removeScript: 'इस स्क्रिप्ट को हटाएँ',
+            save: 'सहेजें',
+            favoriteSetName: 'पसंदीदा',
+            addToFavorites: 'पसंदीदा में जोड़ें',
+            removeFromFavorites: 'पसंदीदा से हटाएँ',
             submitScript: 'स्क्रिप्ट प्रकाशित करें',
             submitStyle: 'स्टाइल प्रकाशित करें',
             submitSet: 'नया स्क्रिप्ट सेट',
@@ -10540,8 +10885,82 @@ License: BSD 3-Clause
             notificationSettings: 'सूचना सेटिंग संपादित करें',
             deleteAccount: 'खाता हटाएँ'
         },
+        'bn': {
+            install: 'ইনস্টল করুন',
+            themeToggle: 'থিম বদলান',
+            currentScripts: 'অন্তর্ভুক্ত স্ক্রিপ্ট',
+            emptyScripts: 'এই তালিকায় এখনও কোনো স্ক্রিপ্ট নেই।',
+            removeScript: 'এই স্ক্রিপ্ট সরান',
+            save: 'সংরক্ষণ করুন',
+            favoriteSetName: 'প্রিয়',
+            addToFavorites: 'প্রিয়তে যোগ করুন',
+            removeFromFavorites: 'প্রিয় থেকে সরান',
+            submitScript: 'স্ক্রিপ্ট প্রকাশ করুন',
+            submitStyle: 'স্টাইল প্রকাশ করুন',
+            submitSet: 'নতুন স্ক্রিপ্ট সেট',
+            webhookInfo: 'Webhook সেট আপ করুন',
+            importScripts: 'স্ক্রিপ্ট আমদানি করুন',
+            editProfile: 'প্রোফাইল সম্পাদনা করুন',
+            editSignIn: 'সাইন-ইন পদ্ধতি সম্পাদনা করুন',
+            viewNotifications: 'বিজ্ঞপ্তি দেখুন',
+            notificationSettings: 'বিজ্ঞপ্তি সেটিংস সম্পাদনা করুন',
+            deleteAccount: 'অ্যাকাউন্ট মুছুন'
+        },
+
+        'ur': {
+            install: 'انسٹال کریں',
+            themeToggle: 'تھیم تبدیل کریں',
+            currentScripts: 'شامل اسکرپٹس',
+            emptyScripts: 'اس فہرست میں ابھی کوئی اسکرپٹ نہیں ہے۔',
+            removeScript: 'یہ اسکرپٹ ہٹائیں',
+            save: 'محفوظ کریں',
+            favoriteSetName: 'پسندیدہ',
+            addToFavorites: 'پسندیدہ میں شامل کریں',
+            removeFromFavorites: 'پسندیدہ سے ہٹائیں',
+            submitScript: 'اسکرپٹ شائع کریں',
+            submitStyle: 'اسٹائل شائع کریں',
+            submitSet: 'نیا اسکرپٹ سیٹ',
+            webhookInfo: 'Webhook سیٹ اپ کریں',
+            importScripts: 'اسکرپٹس درآمد کریں',
+            editProfile: 'پروفائل میں ترمیم کریں',
+            editSignIn: 'سائن اِن طریقے میں ترمیم کریں',
+            viewNotifications: 'اطلاعات دیکھیں',
+            notificationSettings: 'اطلاع کی ترتیبات میں ترمیم کریں',
+            deleteAccount: 'اکاؤنٹ حذف کریں'
+        },
+
+        'ml': {
+            install: 'ഇൻസ്റ്റാൾ ചെയ്യുക',
+            themeToggle: 'തീം മാറ്റുക',
+            currentScripts: 'ഉൾപ്പെടുത്തിയ സ്ക്രിപ്റ്റുകൾ',
+            emptyScripts: 'ഈ പട്ടികയിൽ ഇതുവരെ സ്ക്രിപ്റ്റുകളൊന്നുമില്ല.',
+            removeScript: 'ഈ സ്ക്രിപ്റ്റ് നീക്കം ചെയ്യുക',
+            save: 'സംരക്ഷിക്കുക',
+            favoriteSetName: 'പ്രിയപ്പെട്ടവ',
+            addToFavorites: 'പ്രിയപ്പെട്ടവയിൽ ചേർക്കുക',
+            removeFromFavorites: 'പ്രിയപ്പെട്ടവയിൽ നിന്ന് നീക്കം ചെയ്യുക',
+            submitScript: 'സ്ക്രിപ്റ്റ് പ്രസിദ്ധീകരിക്കുക',
+            submitStyle: 'സ്റ്റൈൽ പ്രസിദ്ധീകരിക്കുക',
+            submitSet: 'പുതിയ സ്ക്രിപ്റ്റ് സെറ്റ്',
+            webhookInfo: 'Webhook സജ്ജമാക്കുക',
+            importScripts: 'സ്ക്രിപ്റ്റുകൾ ഇറക്കുമതി ചെയ്യുക',
+            editProfile: 'പ്രൊഫൈൽ തിരുത്തുക',
+            editSignIn: 'സൈൻ-ഇൻ രീതികൾ തിരുത്തുക',
+            viewNotifications: 'അറിയിപ്പുകൾ കാണുക',
+            notificationSettings: 'അറിയിപ്പ് ക്രമീകരണങ്ങൾ തിരുത്തുക',
+            deleteAccount: 'അക്കൗണ്ട് ഇല്ലാതാക്കുക'
+        },
+
         'ko': {
             install: '설치',
+            themeToggle: '테마 전환',
+            currentScripts: '포함된 스크립트',
+            emptyScripts: '이 목록에는 아직 스크립트가 없습니다.',
+            removeScript: '이 스크립트 제거',
+            save: '저장',
+            favoriteSetName: '즐겨찾기',
+            addToFavorites: '즐겨찾기에 추가',
+            removeFromFavorites: '즐겨찾기에서 제거',
             submitScript: '스크립트 게시',
             submitStyle: '스타일 게시',
             submitSet: '새 스크립트 세트',
@@ -10556,6 +10975,14 @@ License: BSD 3-Clause
 
         'tr': {
             install: 'Yükle',
+            themeToggle: 'Tema değiştir',
+            currentScripts: 'Dahil edilen scriptler',
+            emptyScripts: 'Bu listede henüz script yok.',
+            removeScript: 'Bu scripti kaldır',
+            save: 'Kaydet',
+            favoriteSetName: 'Favoriler',
+            addToFavorites: 'Favorilere ekle',
+            removeFromFavorites: 'Favorilerden kaldır',
             submitScript: 'Script yayınla',
             submitStyle: 'Stil yayınla',
             submitSet: 'Yeni script seti',
@@ -10570,6 +10997,14 @@ License: BSD 3-Clause
 
         'pl': {
             install: 'Zainstaluj',
+            themeToggle: 'Przełącz motyw',
+            currentScripts: 'Dołączone skrypty',
+            emptyScripts: 'Na tej liście nie ma jeszcze skryptów.',
+            removeScript: 'Usuń ten skrypt',
+            save: 'Zapisz',
+            favoriteSetName: 'Ulubione',
+            addToFavorites: 'Dodaj do ulubionych',
+            removeFromFavorites: 'Usuń z ulubionych',
             submitScript: 'Opublikuj skrypt',
             submitStyle: 'Opublikuj styl',
             submitSet: 'Nowy zestaw skryptów',
@@ -10584,6 +11019,14 @@ License: BSD 3-Clause
 
         'nl': {
             install: 'Installeren',
+            themeToggle: 'Thema wisselen',
+            currentScripts: 'Opgenomen scripts',
+            emptyScripts: 'Er staan nog geen scripts in deze lijst.',
+            removeScript: 'Dit script verwijderen',
+            save: 'Opslaan',
+            favoriteSetName: 'Favorieten',
+            addToFavorites: 'Aan favorieten toevoegen',
+            removeFromFavorites: 'Uit favorieten verwijderen',
             submitScript: 'Script publiceren',
             submitStyle: 'Stijl publiceren',
             submitSet: 'Nieuwe scriptset',
@@ -10598,6 +11041,14 @@ License: BSD 3-Clause
 
         'sv': {
             install: 'Installera',
+            themeToggle: 'Växla tema',
+            currentScripts: 'Inkluderade skript',
+            emptyScripts: 'Det finns inga skript i den här listan ännu.',
+            removeScript: 'Ta bort det här skriptet',
+            save: 'Spara',
+            favoriteSetName: 'Favoriter',
+            addToFavorites: 'Lägg till i favoriter',
+            removeFromFavorites: 'Ta bort från favoriter',
             submitScript: 'Publicera skript',
             submitStyle: 'Publicera stil',
             submitSet: 'Ny skriptsamling',
@@ -10612,6 +11063,14 @@ License: BSD 3-Clause
 
         'ro': {
             install: 'Instalează',
+            themeToggle: 'Comută tema',
+            currentScripts: 'Scripturi incluse',
+            emptyScripts: 'Nu există încă scripturi în această listă.',
+            removeScript: 'Elimină acest script',
+            save: 'Salvează',
+            favoriteSetName: 'Favorite',
+            addToFavorites: 'Adaugă la favorite',
+            removeFromFavorites: 'Elimină din favorite',
             submitScript: 'Publică script',
             submitStyle: 'Publică stil',
             submitSet: 'Set nou de scripturi',
@@ -10626,6 +11085,14 @@ License: BSD 3-Clause
 
         'vi': {
             install: 'Cài đặt',
+            themeToggle: 'Chuyển giao diện',
+            currentScripts: 'Script đã thêm',
+            emptyScripts: 'Chưa có script nào trong danh sách này.',
+            removeScript: 'Xóa script này',
+            save: 'Lưu',
+            favoriteSetName: 'Yêu thích',
+            addToFavorites: 'Thêm vào yêu thích',
+            removeFromFavorites: 'Xóa khỏi yêu thích',
             submitScript: 'Đăng script',
             submitStyle: 'Đăng kiểu',
             submitSet: 'Bộ script mới',
@@ -10640,6 +11107,14 @@ License: BSD 3-Clause
 
         'id': {
             install: 'Pasang',
+            themeToggle: 'Ganti tema',
+            currentScripts: 'Skrip yang disertakan',
+            emptyScripts: 'Belum ada skrip dalam daftar ini.',
+            removeScript: 'Hapus skrip ini',
+            save: 'Simpan',
+            favoriteSetName: 'Favorit',
+            addToFavorites: 'Tambahkan ke favorit',
+            removeFromFavorites: 'Hapus dari favorit',
             submitScript: 'Publikasikan skrip',
             submitStyle: 'Publikasikan gaya',
             submitSet: 'Set skrip baru',
@@ -10654,6 +11129,14 @@ License: BSD 3-Clause
 
         'ms': {
             install: 'Pasang',
+            themeToggle: 'Tukar tema',
+            currentScripts: 'Skrip disertakan',
+            emptyScripts: 'Tiada skrip dalam senarai ini lagi.',
+            removeScript: 'Alih keluar skrip ini',
+            save: 'Simpan',
+            favoriteSetName: 'Kegemaran',
+            addToFavorites: 'Tambah ke kegemaran',
+            removeFromFavorites: 'Alih keluar daripada kegemaran',
             submitScript: 'Terbitkan skrip',
             submitStyle: 'Terbitkan gaya',
             submitSet: 'Set skrip baharu',
@@ -10668,6 +11151,14 @@ License: BSD 3-Clause
 
         'th': {
             install: 'ติดตั้ง',
+            themeToggle: 'สลับธีม',
+            currentScripts: 'สคริปต์ที่รวมอยู่',
+            emptyScripts: 'ยังไม่มีสคริปต์ในรายการนี้',
+            removeScript: 'ลบสคริปต์นี้',
+            save: 'บันทึก',
+            favoriteSetName: 'รายการโปรด',
+            addToFavorites: 'เพิ่มในรายการโปรด',
+            removeFromFavorites: 'ลบออกจากรายการโปรด',
             submitScript: 'เผยแพร่สคริปต์',
             submitStyle: 'เผยแพร่สไตล์',
             submitSet: 'ชุดสคริปต์ใหม่',
@@ -10679,7 +11170,31 @@ License: BSD 3-Clause
             notificationSettings: 'แก้ไขการตั้งค่าการแจ้งเตือน',
             deleteAccount: 'ลบบัญชี'
         }
-    }
+    };
+
+    const getUserNavI18n = (locale) => {
+        const exactLocale = USER_NAV_I18N[locale] || {};
+        const primaryLocale = USER_NAV_I18N[String(locale || '').split('-')[0]] || {};
+        return {
+            ...USER_NAV_I18N.en,
+            ...primaryLocale,
+            ...exactLocale
+        };
+    };
+
+    const normalizeFavoriteSetName = (value) => String(value || '').trim().toLocaleLowerCase();
+    const isFavoriteSetName = (value) => {
+        const normalizedValue = normalizeFavoriteSetName(value);
+        if (!normalizedValue) {
+            return false;
+        }
+
+        return FAVORITE_SET_NAME_PATTERN.test(normalizedValue)
+            || Object.values(USER_NAV_I18N).some((i18n) => {
+                const favoriteSetName = normalizeFavoriteSetName(i18n.favoriteSetName);
+                return favoriteSetName && (normalizedValue === favoriteSetName || normalizedValue.includes(favoriteSetName));
+            });
+    };
 
 
     const initUserNavigation = () => {
@@ -10704,7 +11219,7 @@ License: BSD 3-Clause
         const userId = match[2];
 
         // Get i18n strings for current locale (fallback to English)
-        const i18n = USER_NAV_I18N[locale] || USER_NAV_I18N['en'];
+        const i18n = getUserNavI18n(locale);
 
         // Remove old sign-out link
         const signOutLink = navUserInfo.querySelector('.sign-out-link');
@@ -10876,7 +11391,7 @@ License: BSD 3-Clause
 
         const locale = match[1];
         const userId = match[2];
-        const i18n = USER_NAV_I18N[locale] || USER_NAV_I18N.en;
+        const i18n = getUserNavI18n(locale);
         const signOutAnchor = signOutContainer.querySelector('a');
         if (!signOutAnchor) {
             return;
