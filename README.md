@@ -69,6 +69,19 @@ Please provide a clear and detailed description of the issue, including steps to
 
 ---
 
+## 💡 Community Suggestions
+
+Ideas proposed by users for possible future improvements:
+
+Suggestions from [ccamel](https://github.com/ccamel) (GitHub Discussions):
+- Personal notes attached to scripts
+- Interface density modes: compact / comfortable / detailed
+
+Reported by 离火煮青龙 (GreasyFork feedback):
+- Fixes and improvements for favorites state persistence on iPhone Safari
+
+---
+
 ## 👤 Author
 
 Developed and maintained by **Dℝ∃wX**  
