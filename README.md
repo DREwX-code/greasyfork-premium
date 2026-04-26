@@ -77,9 +77,6 @@ Suggestions from [ccamel](https://github.com/ccamel) (GitHub Discussions):
 - Personal notes attached to scripts
 - Interface density modes: compact / comfortable / detailed
 
-Reported by 离火煮青龙 (GreasyFork feedback):
-- Fixes and improvements for favorites state persistence on iPhone Safari
-
 See also: [Project Roadmap](./ROADMAP.md)
 
 ---
