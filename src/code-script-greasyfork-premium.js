@@ -53,7 +53,7 @@
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.1.1
+// @version      1.1.2
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -9902,6 +9902,8 @@ License: BSD 3-Clause
     let favoriteSetMetaCache = null;
     let favoriteSetMissingConfirmed = false;
     let favoriteMutationQueue = Promise.resolve();
+    let favoriteSyncToken = 0;
+    const pendingFavoriteOverrides = new Map();
     const favoriteBusyScriptIds = new Set();
 
     const getCurrentLocale = () => (window.location.pathname.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)(?:\/|$)/) || [null, 'en'])[1];
@@ -10371,6 +10373,7 @@ License: BSD 3-Clause
         });
     };
     const syncFavoriteStarsWithSet = async ({ force = false } = {}) => {
+        const syncToken = ++favoriteSyncToken;
         const locale = getCurrentLocale();
         const applyFavoriteIds = (favoriteIds) => {
             const visibleScriptIds = new Set();
@@ -10401,10 +10404,26 @@ License: BSD 3-Clause
 
         const storedFavoriteIds = readStoredFavoriteIds();
         if (storedFavoriteIds.size) {
+            if (syncToken !== favoriteSyncToken) {
+                return;
+            }
             applyFavoriteIds(storedFavoriteIds);
         }
 
-        applyFavoriteIds(await getAllFavoritesIds({ force }));
+        const favoriteIds = await getAllFavoritesIds({ force });
+        if (syncToken !== favoriteSyncToken) {
+            return;
+        }
+
+        pendingFavoriteOverrides.forEach((isActive, scriptId) => {
+            if (isActive) {
+                favoriteIds.add(scriptId);
+            } else {
+                favoriteIds.delete(scriptId);
+            }
+        });
+
+        applyFavoriteIds(favoriteIds);
     };
     const createScriptInstallButton = (codeUrl, locale) => {
         const installLabel = getUserNavI18n(locale).install || 'Install';
@@ -10543,6 +10562,8 @@ License: BSD 3-Clause
                 nextFavoriteIds.add(scriptIdString);
             }
 
+            favoriteSyncToken += 1;
+            pendingFavoriteOverrides.set(scriptIdString, !isActive);
             favoriteIdsCache = new Set(nextFavoriteIds);
             writeStoredFavoriteIds(nextFavoriteIds);
             setFavoriteStateForScript(scriptIdString, !isActive, locale);
@@ -10553,12 +10574,16 @@ License: BSD 3-Clause
                 const savedFavoriteIds = await saveFavoritesToRemote(nextFavoriteIds);
                 favoriteIdsCache = new Set(savedFavoriteIds);
                 writeStoredFavoriteIds(savedFavoriteIds);
+                pendingFavoriteOverrides.delete(scriptIdString);
                 await syncFavoriteStarsWithSet();
-            }).catch(async () => {
-                favoriteIdsCache = new Set(previousFavoriteIds);
-                writeStoredFavoriteIds(previousFavoriteIds);
-                await syncFavoriteStarsWithSet({ force: true });
+            }).catch((error) => {
+                console.warn('GreasyFork Premium: favorite update failed; keeping optimistic state.', error);
+                favoriteSyncToken += 1;
+                favoriteIdsCache = new Set(nextFavoriteIds);
+                writeStoredFavoriteIds(nextFavoriteIds);
+                setFavoriteStateForScript(scriptIdString, !isActive, locale);
             }).finally(() => {
+                pendingFavoriteOverrides.delete(scriptIdString);
                 favoriteBusyScriptIds.delete(scriptIdString);
                 setFavoriteButtonsBusy(scriptIdString, false);
                 starButton.blur();
