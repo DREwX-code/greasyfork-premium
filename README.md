@@ -6,13 +6,13 @@
 [![GitHub license](https://img.shields.io/github/license/DREwX-code/greasyfork-premium?style=flat-square)](./LICENSE)
 
 
-<strong>[GreasyFork Premium](https://greasyfork.org/scripts/562938-greasyfork-premium)</strong> is a userscript that transforms the GreasyFork interface to make daily usage more fluid, more readable, and more efficient.
+<strong>[GreasyFork Premium](https://greasyfork.org/scripts/562938-greasyfork-premium)</strong> is a userscript that enhances both GreasyFork and SleazyFork with a modern interface, faster navigation, improved script discovery, and productivity-focused features.
 <p align="center">
   <img src="https://github.com/DREwX-code/greasyfork-premium/blob/main/assets/media/script-preview.png" 
        alt="GreasyFork Premium Preview"
        width="100%">
 </p>
-The script focuses exclusively on UI and UX improvements, without altering GreasyFork’s core behavior. 
+The script focuses exclusively on UI and UX improvements without altering the core behavior of GreasyFork or SleazyFork.
 
 ---
 
@@ -23,6 +23,7 @@ The script focuses exclusively on UI and UX improvements, without altering Greas
 - One-click favorites directly from script cards
 - Redesigned favorites management (faster, cleaner, more intuitive)
 - Direct install button without opening the script page
+- Expandable script details directly from script cards
 
 ### 🎨 Interface & Experience
 
@@ -30,13 +31,28 @@ The script focuses exclusively on UI and UX improvements, without altering Greas
 - Cleaner layout with improved visual consistency
 - Improved spacing and layout consistency
 - Light and dark themes with instant toggle
+- Support for both GreasyFork and SleazyFork
 
-### 🧭 Navigation and quick actions
+### 🧭 Navigation and Quick Actions
 
 - Immediate access to essential actions
 - Settings and script edit buttons directly accessible
 - Replaced logout text link with a modern icon
 - Reduced number of clicks for common actions
+- Collapsible sidebar groups with saved state
+- Quick navigation buttons for jumping to the top or bottom
+
+### 🖼️ Image Experience
+
+- Modern image lightbox
+- Zoom support on desktop and mobile
+- Improved image viewing inside script pages
+
+### ✍️ Editor Enhancements
+
+- Modern formatting toolbar for comments and discussions
+- Quick insertion of headings, links, images, code blocks, quotes, lists, details, and highlights
+- Faster and more comfortable writing experience
 
 ### 💻 Code Readability
 
