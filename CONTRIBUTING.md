@@ -8,8 +8,8 @@ Whether you're reporting a bug, suggesting an idea, improving documentation, or 
 
 You can help by:
 
-* Reporting bugs
-* Suggesting new features
+* Reporting bugs → [GitHub Issues](../../issues/new?template=bug_report.yml)
+* Suggesting features → [GitHub Discussions](../../discussions)
 * Improving documentation
 * Improving translations
 * Submitting code improvements
