@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/DREwX-code/greasyfork-premium/discussions
+    about: Ask questions, share ideas, or discuss GreasyFork Premium.
+
+  - name: GreasyFork Feedback
+    url: https://greasyfork.org/scripts/562938-greasyfork-premium/feedback
+    about: Leave general feedback directly on GreasyFork.
