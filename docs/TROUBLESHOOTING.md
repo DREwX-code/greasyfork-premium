@@ -6,9 +6,9 @@ This guide covers the most common issues and their solutions.
 
 ### Possible Causes
 
-* An outdated version of GreasyFork Premium is installed.
-* The userscript manager failed to save local data.
-* Browser storage has been cleared.
+- An outdated version of GreasyFork Premium is installed.
+- The userscript manager failed to save local data.
+- Browser storage has been cleared.
 
 ### Solution
 
@@ -26,9 +26,9 @@ Fixed in v1.1.2.
 
 ### Solution
 
-Update to the latest version of GreasyFork Premium.
-
-If the problem persists, reinstall the script and refresh GreasyFork.
+1. Update to the latest version of GreasyFork Premium.
+2. Reinstall the script if necessary.
+3. Refresh GreasyFork.
 
 ---
 
@@ -52,9 +52,9 @@ While GreasyFork Premium minimizes this behavior, it cannot be completely elimin
 
 ### Possible Causes
 
-* Browser caching
-* Delayed Chart.js initialization
-* Temporary GreasyFork page issues
+- Browser caching
+- Delayed Chart.js initialization
+- Temporary GreasyFork page issues
 
 ### Solution
 
@@ -71,10 +71,9 @@ While GreasyFork Premium minimizes this behavior, it cannot be completely elimin
 1. Update to the latest version.
 2. Refresh the page.
 3. Report the issue with:
-
-   * Browser name
-   * Device model
-   * Screenshot of the problem
+   - Browser name
+   - Device model
+   - Screenshot of the problem
 
 ---
 
@@ -90,10 +89,14 @@ While GreasyFork Premium minimizes this behavior, it cannot be completely elimin
 
 ## Still need help?
 
-If your issue is not listed here, please open an issue on GitHub and include:
+If your issue is not listed here, please open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)** and include:
 
-* Browser version
-* Userscript manager
-* GreasyFork Premium version
-* Steps to reproduce the issue
-* Screenshots if available
+- Browser version
+- Userscript manager
+- GreasyFork Premium version
+- Steps to reproduce the issue
+- Screenshots (if available)
+
+Before opening a new issue, please check the **[FAQ](FAQ.md)** to see if your question has already been answered.
+
+If you're unsure whether you've found a bug or simply have a question, start a discussion on **[GitHub Discussions](../../../discussions)**.
