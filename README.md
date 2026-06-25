@@ -99,6 +99,12 @@ Designed to improve your daily workflow while keeping GreasyFork familiar and li
 - Quick insertion of headings, links, images, code blocks, quotes, lists, details, and highlights
 - Faster and more comfortable writing experience
 
+<p align="center">
+  <img src="./assets/media/screenshot-editor.png"
+       alt="Modern editor toolbar"
+       width="100%">
+</p>
+
 ### 💻 Code Readability
 
 - Improved code block rendering
@@ -107,7 +113,7 @@ Designed to improve your daily workflow while keeping GreasyFork familiar and li
 
 ---
 
-## 📦 Third-party library
+## 📦 Third-party Libraries
 
 | Library | Purpose | License |
 |---------|---------|---------|
@@ -132,13 +138,12 @@ Suggestions, feature requests, bug reports, and contributions are always welcome
 
 ## 💡 Community Suggestions
 
-Ideas proposed by users for possible future improvements:
+Community suggestions currently under consideration:
 
-Suggestions from [ccamel](https://github.com/ccamel) (GitHub Discussions):
 - Personal notes attached to scripts
-- Interface density modes: compact / comfortable / detailed
+- Interface density modes (compact / comfortable / detailed)
 
-See also: [Project Roadmap](./ROADMAP.md)
+See the full **[Project Roadmap](./ROADMAP.md)**.
 
 ---
 
