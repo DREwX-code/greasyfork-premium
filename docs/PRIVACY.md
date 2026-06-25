@@ -38,3 +38,5 @@ If you have any questions about this Privacy Policy, you can:
 
 - Start a **[GitHub Discussion](../../../discussions)** for general questions.
 - Open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)** if you believe you've found a privacy-related problem.
+
+For information about reporting security vulnerabilities, please see the **[Security Policy](../SECURITY.md)**.
