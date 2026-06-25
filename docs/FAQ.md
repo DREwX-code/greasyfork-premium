@@ -14,13 +14,23 @@ Yes. The project is completely free and open source.
 
 Yes. SleazyFork support was added in v1.2.0.
 
+### Which websites are supported?
+
+GreasyFork Premium is designed for GreasyFork and SleazyFork.
+
+Support for additional websites is not planned at this time.
+
 ### Does it modify installed scripts?
 
 No. GreasyFork Premium only improves the website interface and user experience.
 
-### Does it collect any data?
+### Why do I briefly see the original GreasyFork theme when a page loads?
 
-No. GreasyFork Premium does not collect personal information or usage data.
+This is known as a Flash of Unstyled Content (FOUC). It may occasionally occur before the userscript finishes loading.
+
+GreasyFork Premium minimizes this behavior, but it cannot be completely eliminated due to how userscript managers inject scripts into web pages.
+
+For more information, see the **[Troubleshooting Guide](TROUBLESHOOTING.md)**.
 
 ## Compatibility
 
@@ -54,8 +64,16 @@ Yes. Mobile support has been continuously improved through recent updates.
 
 ### I found a bug. What should I do?
 
-Open an issue on GitHub and include as much information as possible.
+Open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)** and include as much information as possible.
 
 ### Can I suggest a new feature?
 
-Absolutely. Community feedback helps shape future updates.
+Absolutely! Share your ideas through **[GitHub Discussions](../../../discussions)**. Community feedback helps shape future updates.
+
+## Privacy
+
+### Does it collect any data?
+
+No. GreasyFork Premium does not collect, transmit, sell, or share personal data.
+
+For more information, see the **[Privacy Policy](PRIVACY.md)**.
