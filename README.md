@@ -40,7 +40,7 @@ Designed to improve your daily workflow while keeping GreasyFork familiar and li
 
 - [📚 Documentation](#-documentation)
 - [✨ Main Features](#-main-features)
-- [📦 Third-party Library](#-third-party-library)
+- [📦 Third-party Libraries](#-third-party-libraries)
 - [💬 Feedback & Contribution](#-feedback--contribution)
 - [💡 Community Suggestions](#-community-suggestions)
 - [👤 Author](#-author)
