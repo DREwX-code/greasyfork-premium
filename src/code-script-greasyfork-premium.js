@@ -53,7 +53,7 @@
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.2.0
+// @version      1.2.1
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -119,10 +119,13 @@ License: BSD 3-Clause
     const SAFARI_ATTR = 'data-gfplus-safari';
     const LIGHTBOX_SCROLL_LOCK_CLASS = 'gfplus-lightbox-open';
     const THEME_MOTION_DURATION = 380;
-    let currentTheme = localStorage.getItem(STORAGE_KEY) || 'light';
+    const THEME_OPTIONS = ['light', 'system', 'dark'];
+    const storedTheme = localStorage.getItem(STORAGE_KEY);
+    let currentTheme = THEME_OPTIONS.includes(storedTheme) ? storedTheme : 'system';
     let internalNavigation = false;
     let themeMotionTimer = 0;
     const root = document.documentElement;
+    const systemThemeQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
     const THEME_COLORS = {
         light: {
             background: '#f5f7fb',
@@ -151,14 +154,20 @@ License: BSD 3-Clause
         root.setAttribute(SAFARI_ATTR, 'true');
     }
 
+    const resolveTheme = (theme = currentTheme) => theme === 'system'
+        ? (systemThemeQuery?.matches ? 'dark' : 'light')
+        : theme;
+
     const applyRootTheme = (theme) => {
         if (!root) {
             return;
         }
 
-        const colors = THEME_COLORS[theme] || THEME_COLORS.light;
-        root.setAttribute('data-theme', theme);
-        root.style.colorScheme = theme;
+        const resolvedTheme = resolveTheme(theme);
+        const colors = THEME_COLORS[resolvedTheme] || THEME_COLORS.light;
+        root.setAttribute('data-theme', resolvedTheme);
+        root.setAttribute('data-theme-preference', theme);
+        root.style.colorScheme = resolvedTheme;
         root.style.backgroundColor = colors.background;
         root.style.color = colors.text;
         root.style.setProperty('--gfplus-preload-bg', colors.background);
@@ -303,10 +312,15 @@ License: BSD 3-Clause
     bootstrapThemeScript.textContent = `
     (() => {
         try {
-            const theme = localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || 'light';
+            const themeOptions = ['light', 'system', 'dark'];
+            const storedTheme = localStorage.getItem(${JSON.stringify(STORAGE_KEY)});
+            const theme = themeOptions.includes(storedTheme) ? storedTheme : 'system';
+            const resolvedTheme = theme === 'system'
+                ? (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+                : theme;
             const root = document.documentElement;
             if (!root) return;
-            const colors = theme === 'dark'
+            const colors = resolvedTheme === 'dark'
                 ? {
                     background: '#0b111a',
                     text: '#e5e7eb',
@@ -323,8 +337,9 @@ License: BSD 3-Clause
                     chartGrid: '#dbe4f0',
                     chartText: '#334155'
                 };
-            root.setAttribute('data-theme', theme);
-            root.style.colorScheme = theme;
+            root.setAttribute('data-theme', resolvedTheme);
+            root.setAttribute('data-theme-preference', theme);
+            root.style.colorScheme = resolvedTheme;
             root.style.backgroundColor = colors.background;
             root.style.color = colors.text;
             root.style.setProperty('--gfplus-preload-bg', colors.background);
@@ -342,7 +357,7 @@ License: BSD 3-Clause
     bootstrapThemeScript.remove();
 
     const rootThemeObserver = new MutationObserver(() => {
-        if (root.getAttribute('data-theme') !== currentTheme) {
+        if (root.getAttribute('data-theme') !== resolveTheme(currentTheme)) {
             applyRootTheme(currentTheme);
         }
     });
@@ -643,7 +658,7 @@ License: BSD 3-Clause
         opacity: .7
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),input[type=submit]:not(.search-submit),input[type=submit].search-submit:not([value="🔎"]),input[type=button],.button {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),input[type=submit]:not(.search-submit),input[type=submit].search-submit:not([value="🔎"]),input[type=button],.button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -666,31 +681,31 @@ License: BSD 3-Clause
         transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-base), border-color var(--transition-base), color var(--transition-base);
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,input[type=submit]:not(.search-submit):hover,input[type=submit].search-submit:not([value="🔎"]):hover,input[type=button]:hover,.button:hover,button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,input[type=submit]:not(.search-submit):focus,input[type=submit].search-submit:not([value="🔎"]):focus,input[type=button]:focus,.button:focus {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,input[type=submit]:not(.search-submit):hover,input[type=submit].search-submit:not([value="🔎"]):hover,input[type=button]:hover,.button:hover,button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,input[type=submit]:not(.search-submit):focus,input[type=submit].search-submit:not([value="🔎"]):focus,input[type=button]:focus,.button:focus {
         background: linear-gradient(180deg, #7c83ff, #4338ca);
         border-color: rgba(67, 56, 202, .55);
         box-shadow: none;
         transform: translateY(-1px);
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):active,input[type=submit]:not(.search-submit):active,input[type=submit].search-submit:not([value="🔎"]):active,input[type=button]:active,.button:active {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):active,input[type=submit]:not(.search-submit):active,input[type=submit].search-submit:not([value="🔎"]):active,input[type=button]:active,.button:active {
         transform: translateY(0);
         box-shadow: 0 7px 18px rgba(79, 70, 229, .2), inset 0 1px 2px rgba(15, 23, 42, .2);
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):disabled,input[type=submit]:not(.search-submit):disabled,input[type=submit].search-submit:not([value="🔎"]):disabled,input[type=button]:disabled,.button:disabled {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):disabled,input[type=submit]:not(.search-submit):disabled,input[type=submit].search-submit:not([value="🔎"]):disabled,input[type=button]:disabled,.button:disabled {
         opacity: .65;
         box-shadow: none;
         cursor: not-allowed;
         transform: none
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus-visible,input[type=submit]:not(.search-submit):focus-visible,input[type=submit].search-submit:not([value="🔎"]):focus-visible,input[type=button]:focus-visible,.button:focus-visible {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus-visible,input[type=submit]:not(.search-submit):focus-visible,input[type=submit].search-submit:not([value="🔎"]):focus-visible,input[type=button]:focus-visible,.button:focus-visible {
         outline: 2px solid var(--focus-ring-color);
         outline-offset: 3px
     }
 
-    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),
+    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),
     .form-control input[type=submit]:not(.search-submit),
     .form-control input[type=button] {
         display: inline-flex;
@@ -713,10 +728,10 @@ License: BSD 3-Clause
         white-space: normal
     }
 
-    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,
+    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,
     .form-control input[type=submit]:not(.search-submit):hover,
     .form-control input[type=button]:hover,
-    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,
+    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,
     .form-control input[type=submit]:not(.search-submit):focus,
     .form-control input[type=button]:focus {
         background: linear-gradient(180deg, #7c83ff, #4338ca);
@@ -725,7 +740,7 @@ License: BSD 3-Clause
         transform: translateY(-1px)
     }
 
-    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):active,
+    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):active,
     .form-control input[type=submit]:not(.search-submit):active,
     .form-control input[type=button]:active {
         transform: translateY(0);
@@ -1478,7 +1493,7 @@ License: BSD 3-Clause
         }
     }
 
-    .pagination,.script-list+.pagination,.user-list+.pagination {
+    .pagination,.script-list+.pagination,.user-list+.pagination,.pagy.series-nav {
         font-size: 1rem;
         display: flex;
         align-items: center;
@@ -1491,7 +1506,7 @@ License: BSD 3-Clause
         border-radius: var(--border-radius-small)
     }
 
-    .pagination>*,.script-list+.pagination>*,.user-list+.pagination>* {
+    .pagination>*,.script-list+.pagination>*,.user-list+.pagination>*,.pagy.series-nav>* {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -1510,37 +1525,48 @@ License: BSD 3-Clause
         display: none
     }
 
-    .pagination .current {
+    .pagination .current,.pagy.series-nav [aria-current="page"] {
         font-style: normal;
         font-weight: 700
     }
 
-    .pagination .current,.pagination .gap {
+    .pagination .current,.pagination .gap,.pagy.series-nav [aria-disabled="true"] {
         background-color: transparent;
-        color: var(--texty-link-visited-color)
+        color: var(--texty-link-visited-color);
+        text-decoration: none;
+        cursor: default
     }
 
-    .pagination .current {
+    .pagination .current,.pagy.series-nav [aria-current="page"] {
         border-color: var(--link-color);
         color: var(--link-color);
         box-shadow: inset 0 0 0 1px var(--link-color);
         background-color: rgba(79, 70, 229, .08)
     }
 
-    .pagination>a:hover,.pagination>a:focus {
+    .pagy.series-nav [aria-disabled="true"] {
+        pointer-events: none
+    }
+
+    .pagination>a:hover,.pagination>a:focus,.pagy.series-nav>a:hover,.pagy.series-nav>a:focus {
         background-color: var(--pagination-hover-background-color);
         color: var(--overall-text-color);
         transform: translateY(-1px);
         box-shadow: 0 10px 20px rgba(79, 70, 229, .18)
     }
 
-    .pagination>a:focus-visible {
+    .pagy.series-nav>a:hover,.pagy.series-nav>a:focus {
+        transform: none;
+        box-shadow: none
+    }
+
+    .pagination>a:focus-visible,.pagy.series-nav>a:focus-visible {
         outline: 2px solid var(--focus-ring-color);
         outline-offset: 2px
     }
 
     @media screen and (max-width: 400px) {
-        .pagination,.script-list+.pagination,.user-list+.pagination {
+        .pagination,.script-list+.pagination,.user-list+.pagination,.pagy.series-nav {
             padding-left: 1rem;
             padding-right: 1rem
         }
@@ -2628,16 +2654,66 @@ License: BSD 3-Clause
         padding-bottom: 0
     }
 
+    .discussion-list.discussion-list-logged-in {
+        padding: 0;
+        overflow: hidden
+    }
+
+    .discussion-list.discussion-list-logged-in .discussion-list-container {
+        box-sizing: border-box;
+        margin: 0;
+        padding-left: clamp(1rem, 2vw, 1.5rem);
+        padding-right: clamp(1rem, 2vw, 1.5rem);
+        border-radius: 0
+    }
+
+    .discussion-list.discussion-list-logged-in .discussion-list-container:first-child {
+        border-top-left-radius: var(--border-radius-medium);
+        border-top-right-radius: var(--border-radius-medium)
+    }
+
+    .discussion-list.discussion-list-logged-in .discussion-list-container:last-child {
+        border-bottom-left-radius: var(--border-radius-medium);
+        border-bottom-right-radius: var(--border-radius-medium)
+    }
+
     .discussion-list-item,.notification-list-item {
         padding-top: 10px;
         border-top: 1px solid var(--content-separator-color)
+    }
+
+    .discussion-list.discussion-list-logged-in .discussion-list-item {
+        border-top-color: color-mix(in srgb, #fff 72%, #7d76ef 28%)
+    }
+
+    .text-content > .discussion-list-container .discussion-list-item {
+        border-top-color: color-mix(in srgb, #fff 72%, #7d76ef 28%)
     }
 
     .discussion-list-container:first-child .discussion-list-item {
         border-top: 0
     }
 
-    .discussion-list-logged-in .discussion-read,.notification-read {
+    .discussion-list-logged-in .discussion-read {
+        background-color: var(--inactive-item-background-color);
+        margin-left: 0;
+        margin-right: 0
+    }
+
+    .discussion-list-logged-in .discussion-unread,
+    .discussion-list-logged-in .discussion-not-read,
+    .discussion-list-logged-in .discussion-list-container:not(.discussion-read) {
+        background-color: color-mix(in srgb, var(--content-background-color) 92%, var(--link-color) 8%);
+        box-shadow: inset 3px 0 0 var(--link-color)
+    }
+
+    .discussion-list-logged-in .discussion-unread .discussion-title,
+    .discussion-list-logged-in .discussion-not-read .discussion-title,
+    .discussion-list-logged-in .discussion-list-container:not(.discussion-read) .discussion-title {
+        font-weight: 650
+    }
+
+    .notification-read {
         background-color: var(--inactive-item-background-color);
         margin-left: -16px;
         margin-right: -16px;
@@ -3316,6 +3392,15 @@ License: BSD 3-Clause
         border: 1px solid var(--content-border-color);
         border-radius: 5px;
         background-color: var(--content-background-color)
+    }
+
+    .list-option-group li,
+    .list-option-group a {
+        box-sizing: border-box;
+        max-width: calc(100% + 4px);
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word
     }
 
     .list-option-group[data-gfplus-collapsed="true"] > ul > :not(.list-current) {
@@ -4110,6 +4195,11 @@ License: BSD 3-Clause
         min-height: 2.4rem;
     }
 
+    #install-area > .gf-script-note-button,
+    #install-area .gf-script-card-actions > .gf-script-note-button:first-child {
+        margin-left: 13px;
+    }
+
     #install-area > .gf-script-star-button svg {
         width: 24px;
         height: 24px;
@@ -4117,6 +4207,7 @@ License: BSD 3-Clause
 
     .gf-script-install-button,
     .gf-script-detail-button,
+    .gf-script-note-button,
     .gf-script-star-button {
         display: inline-flex;
         align-items: center;
@@ -4160,6 +4251,16 @@ License: BSD 3-Clause
         -webkit-tap-highlight-color: transparent;
     }
 
+    .gf-script-note-button {
+        width: 2.2rem;
+        min-width: 2.2rem;
+        padding: 0;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
     .gf-script-star-button {
         width: auto;
         height: auto;
@@ -4180,6 +4281,7 @@ License: BSD 3-Clause
 
     .gf-script-install-button svg,
     .gf-script-detail-button svg,
+    .gf-script-note-button svg,
     .gf-script-star-button svg {
         width: 19px;
         height: 19px;
@@ -4196,16 +4298,150 @@ License: BSD 3-Clause
     .gf-script-install-button:focus-visible,
     .gf-script-detail-button:hover,
     .gf-script-detail-button:focus-visible,
-    .gf-script-detail-button[data-expanded="true"] {
+    .gf-script-detail-button[data-expanded="true"],
+    .gf-script-note-button:hover,
+    .gf-script-note-button:focus-visible,
+    .gf-script-note-button[data-expanded="true"],
+    .gf-script-note-button[data-has-note="true"] {
         border-color: var(--link-color);
         color: var(--link-color) !important;
         box-shadow: none;
         outline: none;
     }
 
+    .gf-script-note-button[data-has-note="true"] {
+        background: transparent;
+        border-color: color-mix(in srgb, var(--content-border-color) 72%, var(--link-color) 28%);
+    }
+
     .gf-script-detail-button[data-expanded="true"] svg {
         transform: rotate(45deg);
     }
+
+    .gf-script-note-panel {
+        display: none;
+        margin-top: .65rem;
+        border: 1px solid color-mix(in srgb, var(--content-border-color) 88%, var(--link-color) 12%);
+        border-radius: var(--border-radius-small);
+        background: color-mix(in srgb, var(--content-background-color) 98%, var(--overall-text-color) 2%);
+        overflow: hidden;
+    }
+
+    .gf-script-note-panel[data-open="true"],
+    .gf-script-note-panel[data-has-note="true"] {
+        display: block;
+    }
+
+    .gf-script-note-preview {
+        display: none;
+        padding: .65rem .8rem;
+        color: color-mix(in srgb, var(--overall-text-color) 76%, transparent);
+        font-size: .88rem;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .gf-script-note-panel[data-has-note="true"][data-open="false"] .gf-script-note-preview {
+        display: block;
+        margin: .55rem .15rem 0;
+        border-left: 3px solid color-mix(in srgb, var(--link-color) 42%, var(--content-border-color) 58%);
+        background: color-mix(in srgb, var(--content-background-color) 96%, var(--overall-text-color) 4%);
+        border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
+    }
+
+    .gf-script-note-panel[data-has-note="true"][data-open="false"] {
+        border: 0;
+        background: transparent;
+    }
+
+    .gf-script-note-editor {
+        display: none;
+        padding: .65rem;
+    }
+
+    .gf-script-note-panel[data-open="true"] .gf-script-note-editor {
+        display: block;
+    }
+
+    .gf-script-note-textarea {
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 4.25rem;
+        resize: vertical;
+        border: 1px solid color-mix(in srgb, var(--content-border-color) 88%, transparent);
+        border-radius: var(--border-radius-small);
+        background: color-mix(in srgb, var(--content-background-color) 97%, var(--overall-text-color) 3%);
+        color: var(--overall-text-color);
+        padding: .7rem .8rem;
+        font: 500 .9rem/1.45 var(--font-family-base);
+        outline: none;
+        box-shadow: none;
+        transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+    }
+
+    .gf-script-note-textarea:focus {
+        border-color: color-mix(in srgb, var(--link-color) 46%, var(--content-border-color) 54%);
+        box-shadow: none;
+    }
+
+    .gf-script-note-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin-top: .5rem;
+    }
+
+    .gf-script-note-footer-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+    }
+
+    .gf-script-note-status {
+        color: var(--texty-link-visited-color);
+        font-size: .78rem;
+    }
+
+    .gf-script-note-status:empty {
+        display: none;
+    }
+
+    .gf-script-note-done {
+        border: 1px solid var(--content-border-color);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--link-color) 10%, var(--content-background-color) 90%);
+        color: var(--overall-text-color);
+        padding: .3rem .65rem;
+        font: 700 .78rem/1 var(--font-family-base);
+        cursor: pointer;
+    }
+
+    .gf-script-note-done:hover,
+    .gf-script-note-done:focus-visible {
+        border-color: var(--link-color);
+        color: var(--link-color);
+        outline: none;
+    }
+
+    .gf-script-note-delete {
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--texty-link-visited-color);
+        padding: .3rem .45rem;
+        font: 700 .78rem/1 var(--font-family-base);
+        cursor: pointer;
+    }
+
+    .gf-script-note-delete:hover,
+    .gf-script-note-delete:focus-visible {
+        color: #dc2626;
+        background: color-mix(in srgb, #dc2626 9%, transparent);
+        outline: none;
+    }
+
 
     .gf-script-star-button:hover,
     .gf-script-star-button:focus,
@@ -6111,7 +6347,7 @@ License: BSD 3-Clause
         opacity: .7
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),input[type=submit]:not(.search-submit),input[type=submit].search-submit:not([value="🔎"]),input[type=button],.button {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),input[type=submit]:not(.search-submit),input[type=submit].search-submit:not([value="🔎"]),input[type=button],.button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -6134,31 +6370,31 @@ License: BSD 3-Clause
         transition: transform var(--transition-base), box-shadow var(--transition-base), background var(--transition-base), border-color var(--transition-base), color var(--transition-base);
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,input[type=submit]:not(.search-submit):hover,input[type=submit].search-submit:not([value="🔎"]):hover,input[type=button]:hover,.button:hover,button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,input[type=submit]:not(.search-submit):focus,input[type=submit].search-submit:not([value="🔎"]):focus,input[type=button]:focus,.button:focus {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,input[type=submit]:not(.search-submit):hover,input[type=submit].search-submit:not([value="🔎"]):hover,input[type=button]:hover,.button:hover,button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,input[type=submit]:not(.search-submit):focus,input[type=submit].search-submit:not([value="🔎"]):focus,input[type=button]:focus,.button:focus {
         background: linear-gradient(180deg, #4d83d5, #3768bd);
         border-color: rgba(120, 169, 255, .42);
         box-shadow: none;
         transform: translateY(-1px);
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):active,input[type=submit]:not(.search-submit):active,input[type=submit].search-submit:not([value="🔎"]):active,input[type=button]:active,.button:active {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):active,input[type=submit]:not(.search-submit):active,input[type=submit].search-submit:not([value="🔎"]):active,input[type=button]:active,.button:active {
         transform: translateY(0);
         box-shadow: inset 0 1px 2px rgba(0, 0, 0, .28);
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):disabled,input[type=submit]:not(.search-submit):disabled,input[type=submit].search-submit:not([value="🔎"]):disabled,input[type=button]:disabled,.button:disabled {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):disabled,input[type=submit]:not(.search-submit):disabled,input[type=submit].search-submit:not([value="🔎"]):disabled,input[type=button]:disabled,.button:disabled {
         opacity: .65;
         box-shadow: none;
         cursor: not-allowed;
         transform: none
     }
 
-    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus-visible,input[type=submit]:not(.search-submit):focus-visible,input[type=submit].search-submit:not([value="🔎"]):focus-visible,input[type=button]:focus-visible,.button:focus-visible {
+    button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus-visible,input[type=submit]:not(.search-submit):focus-visible,input[type=submit].search-submit:not([value="🔎"]):focus-visible,input[type=button]:focus-visible,.button:focus-visible {
         outline: 2px solid var(--focus-ring-color);
         outline-offset: 3px
     }
 
-    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),
+    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),
     .form-control input[type=submit]:not(.search-submit),
     .form-control input[type=button] {
         display: inline-flex;
@@ -6181,10 +6417,10 @@ License: BSD 3-Clause
         white-space: normal
     }
 
-    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,
+    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,
     .form-control input[type=submit]:not(.search-submit):hover,
     .form-control input[type=button]:hover,
-    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,
+    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,
     .form-control input[type=submit]:not(.search-submit):focus,
     .form-control input[type=button]:focus {
         background: linear-gradient(180deg, #4d83d5, #3768bd);
@@ -6193,7 +6429,7 @@ License: BSD 3-Clause
         transform: translateY(-1px)
     }
 
-    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):active,
+    .form-control button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):active,
     .form-control input[type=submit]:not(.search-submit):active,
     .form-control input[type=button]:active {
         transform: translateY(0);
@@ -6863,7 +7099,7 @@ License: BSD 3-Clause
         }
     }
 
-    .pagination,.script-list+.pagination,.user-list+.pagination {
+    .pagination,.script-list+.pagination,.user-list+.pagination,.pagy.series-nav {
         font-size: 1rem;
         display: flex;
         align-items: center;
@@ -6876,7 +7112,7 @@ License: BSD 3-Clause
         border-radius: var(--border-radius-small)
     }
 
-    .pagination>*,.script-list+.pagination>*,.user-list+.pagination>* {
+    .pagination>*,.script-list+.pagination>*,.user-list+.pagination>*,.pagy.series-nav>* {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -6895,37 +7131,48 @@ License: BSD 3-Clause
         display: none
     }
 
-    .pagination .current {
+    .pagination .current,.pagy.series-nav [aria-current="page"] {
         font-style: normal;
         font-weight: 700
     }
 
-    .pagination .current,.pagination .gap {
+    .pagination .current,.pagination .gap,.pagy.series-nav [aria-disabled="true"] {
         background-color: transparent;
-        color: var(--texty-link-visited-color)
+        color: var(--texty-link-visited-color);
+        text-decoration: none;
+        cursor: default
     }
 
-    .pagination .current {
+    .pagination .current,.pagy.series-nav [aria-current="page"] {
         border-color: var(--link-color);
         color: var(--link-color);
         box-shadow: inset 0 0 0 1px var(--link-color);
         background-color: rgba(139, 92, 246, .16)
     }
 
-    .pagination>a:hover,.pagination>a:focus {
+    .pagy.series-nav [aria-disabled="true"] {
+        pointer-events: none
+    }
+
+    .pagination>a:hover,.pagination>a:focus,.pagy.series-nav>a:hover,.pagy.series-nav>a:focus {
         background-color: var(--pagination-hover-background-color);
         color: var(--overall-text-color);
         transform: translateY(-1px);
         box-shadow: 0 12px 24px rgba(139, 92, 246, .28)
     }
 
-    .pagination>a:focus-visible {
+    .pagy.series-nav>a:hover,.pagy.series-nav>a:focus {
+        transform: none;
+        box-shadow: none
+    }
+
+    .pagination>a:focus-visible,.pagy.series-nav>a:focus-visible {
         outline: 2px solid var(--focus-ring-color);
         outline-offset: 2px
     }
 
     @media screen and (max-width: 400px) {
-        .pagination,.script-list+.pagination,.user-list+.pagination {
+        .pagination,.script-list+.pagination,.user-list+.pagination,.pagy.series-nav {
             padding-left: 1rem;
             padding-right: 1rem
         }
@@ -8236,16 +8483,62 @@ License: BSD 3-Clause
         padding-bottom: 0
     }
 
+    .discussion-list.discussion-list-logged-in {
+        padding: 0;
+        overflow: hidden
+    }
+
+    .discussion-list.discussion-list-logged-in .discussion-list-container {
+        box-sizing: border-box;
+        margin: 0;
+        padding-left: clamp(1rem, 2vw, 1.5rem);
+        padding-right: clamp(1rem, 2vw, 1.5rem);
+        border-radius: 0
+    }
+
+    .discussion-list.discussion-list-logged-in .discussion-list-container:first-child {
+        border-top-left-radius: var(--border-radius-medium);
+        border-top-right-radius: var(--border-radius-medium)
+    }
+
+    .discussion-list.discussion-list-logged-in .discussion-list-container:last-child {
+        border-bottom-left-radius: var(--border-radius-medium);
+        border-bottom-right-radius: var(--border-radius-medium)
+    }
+
     .discussion-list-item,.notification-list-item {
         padding-top: 10px;
         border-top: 1px solid var(--content-separator-color)
+    }
+
+    .discussion-list.discussion-list-logged-in .discussion-list-item {
+        border-top-color: color-mix(in srgb, var(--content-separator-color) 72%, var(--link-color) 28%)
     }
 
     .discussion-list-container:first-child .discussion-list-item {
         border-top: 0
     }
 
-    .discussion-list-logged-in .discussion-read,.notification-read {
+    .discussion-list-logged-in .discussion-read {
+        background-color: var(--inactive-item-background-color);
+        margin-left: 0;
+        margin-right: 0
+    }
+
+    .discussion-list-logged-in .discussion-unread,
+    .discussion-list-logged-in .discussion-not-read,
+    .discussion-list-logged-in .discussion-list-container:not(.discussion-read) {
+        background-color: color-mix(in srgb, var(--content-background-color) 92%, #0054e8 8%);
+        box-shadow: inset 3px 0 0 var(--link-color)
+    }
+
+    .discussion-list-logged-in .discussion-unread .discussion-title,
+    .discussion-list-logged-in .discussion-not-read .discussion-title,
+    .discussion-list-logged-in .discussion-list-container:not(.discussion-read) .discussion-title {
+        font-weight: 650
+    }
+
+    .notification-read {
         background-color: var(--inactive-item-background-color);
         margin-left: -16px;
         margin-right: -16px;
@@ -8926,6 +9219,15 @@ License: BSD 3-Clause
         border: 1px solid var(--content-border-color);
         border-radius: 5px;
         background-color: var(--content-background-color)
+    }
+
+    .list-option-group li,
+    .list-option-group a {
+        box-sizing: border-box;
+        max-width: calc(100% + 4px);
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word
     }
 
     .list-option-group[data-gfplus-collapsed="true"] > ul > :not(.list-current) {
@@ -9724,6 +10026,11 @@ License: BSD 3-Clause
         min-height: 2.4rem;
     }
 
+    #install-area > .gf-script-note-button,
+    #install-area .gf-script-card-actions > .gf-script-note-button:first-child {
+        margin-left: 13px;
+    }
+
     #install-area > .gf-script-star-button svg {
         width: 24px;
         height: 24px;
@@ -9731,6 +10038,7 @@ License: BSD 3-Clause
 
     .gf-script-install-button,
     .gf-script-detail-button,
+    .gf-script-note-button,
     .gf-script-star-button {
         display: inline-flex;
         align-items: center;
@@ -9774,6 +10082,16 @@ License: BSD 3-Clause
         -webkit-tap-highlight-color: transparent;
     }
 
+    .gf-script-note-button {
+        width: 2.2rem;
+        min-width: 2.2rem;
+        padding: 0;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
     .gf-script-star-button {
         width: auto;
         height: auto;
@@ -9794,6 +10112,7 @@ License: BSD 3-Clause
 
     .gf-script-install-button svg,
     .gf-script-detail-button svg,
+    .gf-script-note-button svg,
     .gf-script-star-button svg {
         width: 19px;
         height: 19px;
@@ -9810,16 +10129,150 @@ License: BSD 3-Clause
     .gf-script-install-button:focus-visible,
     .gf-script-detail-button:hover,
     .gf-script-detail-button:focus-visible,
-    .gf-script-detail-button[data-expanded="true"] {
+    .gf-script-detail-button[data-expanded="true"],
+    .gf-script-note-button:hover,
+    .gf-script-note-button:focus-visible,
+    .gf-script-note-button[data-expanded="true"],
+    .gf-script-note-button[data-has-note="true"] {
         border-color: var(--link-color);
         color: var(--link-color) !important;
         box-shadow: none;
         outline: none;
     }
 
+    .gf-script-note-button[data-has-note="true"] {
+        background: transparent;
+        border-color: color-mix(in srgb, var(--content-border-color) 72%, var(--link-color) 28%);
+    }
+
     .gf-script-detail-button[data-expanded="true"] svg {
         transform: rotate(45deg);
     }
+
+    .gf-script-note-panel {
+        display: none;
+        margin-top: .65rem;
+        border: 1px solid color-mix(in srgb, var(--content-border-color) 88%, var(--link-color) 12%);
+        border-radius: var(--border-radius-small);
+        background: color-mix(in srgb, var(--content-background-color) 98%, var(--overall-text-color) 2%);
+        overflow: hidden;
+    }
+
+    .gf-script-note-panel[data-open="true"],
+    .gf-script-note-panel[data-has-note="true"] {
+        display: block;
+    }
+
+    .gf-script-note-preview {
+        display: none;
+        padding: .65rem .8rem;
+        color: color-mix(in srgb, var(--overall-text-color) 76%, transparent);
+        font-size: .88rem;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .gf-script-note-panel[data-has-note="true"][data-open="false"] .gf-script-note-preview {
+        display: block;
+        margin: .55rem .15rem 0;
+        border-left: 3px solid color-mix(in srgb, var(--link-color) 42%, var(--content-border-color) 58%);
+        background: color-mix(in srgb, var(--content-background-color) 96%, var(--overall-text-color) 4%);
+        border-radius: 0 var(--border-radius-small) var(--border-radius-small) 0;
+    }
+
+    .gf-script-note-panel[data-has-note="true"][data-open="false"] {
+        border: 0;
+        background: transparent;
+    }
+
+    .gf-script-note-editor {
+        display: none;
+        padding: .65rem;
+    }
+
+    .gf-script-note-panel[data-open="true"] .gf-script-note-editor {
+        display: block;
+    }
+
+    .gf-script-note-textarea {
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 4.25rem;
+        resize: vertical;
+        border: 1px solid color-mix(in srgb, var(--content-border-color) 88%, transparent);
+        border-radius: var(--border-radius-small);
+        background: color-mix(in srgb, var(--content-background-color) 97%, var(--overall-text-color) 3%);
+        color: var(--overall-text-color);
+        padding: .7rem .8rem;
+        font: 500 .9rem/1.45 var(--font-family-base);
+        outline: none;
+        box-shadow: none;
+        transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+    }
+
+    .gf-script-note-textarea:focus {
+        border-color: color-mix(in srgb, var(--link-color) 46%, var(--content-border-color) 54%);
+        box-shadow: none;
+    }
+
+    .gf-script-note-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        margin-top: .5rem;
+    }
+
+    .gf-script-note-footer-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+    }
+
+    .gf-script-note-status {
+        color: var(--texty-link-visited-color);
+        font-size: .78rem;
+    }
+
+    .gf-script-note-status:empty {
+        display: none;
+    }
+
+    .gf-script-note-done {
+        border: 1px solid var(--content-border-color);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--link-color) 12%, var(--content-background-color) 88%);
+        color: var(--overall-text-color);
+        padding: .3rem .65rem;
+        font: 700 .78rem/1 var(--font-family-base);
+        cursor: pointer;
+    }
+
+    .gf-script-note-done:hover,
+    .gf-script-note-done:focus-visible {
+        border-color: var(--link-color);
+        color: var(--link-color);
+        outline: none;
+    }
+
+    .gf-script-note-delete {
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--texty-link-visited-color);
+        padding: .3rem .45rem;
+        font: 700 .78rem/1 var(--font-family-base);
+        cursor: pointer;
+    }
+
+    .gf-script-note-delete:hover,
+    .gf-script-note-delete:focus-visible {
+        color: #f87171;
+        background: color-mix(in srgb, #f87171 12%, transparent);
+        outline: none;
+    }
+
 
     .gf-script-star-button:hover,
     .gf-script-star-button:focus,
@@ -11498,8 +11951,9 @@ License: BSD 3-Clause
     appendStyle(darkThemeStyle);
 
     const syncThemeStyles = (theme) => {
-        lightThemeStyle.media = theme === 'dark' ? 'not all' : 'all';
-        darkThemeStyle.media = theme === 'dark' ? 'all' : 'not all';
+        const resolvedTheme = resolveTheme(theme);
+        lightThemeStyle.media = resolvedTheme === 'dark' ? 'not all' : 'all';
+        darkThemeStyle.media = resolvedTheme === 'dark' ? 'all' : 'not all';
     };
 
     syncThemeStyles(currentTheme);
@@ -11512,6 +11966,8 @@ License: BSD 3-Clause
     const syncThemeSwitchHosts = (theme) => {
         themeSwitchHosts.forEach((host) => {
             host.setAttribute('theme', theme);
+            host.setAttribute('resolved-theme', resolveTheme(theme));
+            host.syncThemeButtons?.();
         });
     };
 
@@ -11687,6 +12143,23 @@ License: BSD 3-Clause
         });
     };
 
+    const syncSystemTheme = () => {
+        if (currentTheme !== 'system') {
+            return;
+        }
+
+        applyRootTheme(currentTheme);
+        syncThemeStyles(currentTheme);
+        syncThemeSwitchHosts(currentTheme);
+        rebuildInstallStatsCharts();
+    };
+
+    if (systemThemeQuery?.addEventListener) {
+        systemThemeQuery.addEventListener('change', syncSystemTheme);
+    } else {
+        systemThemeQuery?.addListener?.(syncSystemTheme);
+    }
+
     const createThemeSwitchHost = (hostId, options = {}) => {
         if (document.getElementById(hostId)) {
             return null;
@@ -11711,52 +12184,84 @@ License: BSD 3-Clause
             display: inline-flex;
             align-items: center;
             vertical-align: middle;
+            --track-bg: #e5e7eb;
+            --track-border: #cbd5e1;
+            --thumb-bg: #fff;
+            --button-color: #475569;
+            --active-color: #111827;
+            --focus-color: #4f46e5;
         }
-        button {
+        :host([resolved-theme="dark"]) {
+            --track-bg: #1f2937;
+            --track-border: #374151;
+            --thumb-bg: #0f172a;
+            --button-color: #94a3b8;
+            --active-color: #f8fafc;
+            --focus-color: #78a9ff;
+        }
+        .theme-toggle {
             all: unset;
-            cursor: pointer;
             display: inline-flex;
             align-items: center;
-            justify-content: flex-start;
-            width: 52px;
-            height: 26px;
-            border-radius: 20px;
-            background: #ccc;
+            justify-content: space-between;
+            width: 88px;
+            height: 30px;
+            padding: 2px;
+            border-radius: 999px;
+            border: 1px solid var(--track-border);
+            background: var(--track-bg);
             position: relative;
-            transition: background 0.3s ease;
             box-sizing: border-box;
         }
         .thumb {
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #fff;
-            display: flex;
+            width: 26px;
+            height: 24px;
+            border-radius: 999px;
+            background: var(--thumb-bg);
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .18);
+            transition: transform 0.24s ease, background 0.24s ease;
+            box-sizing: border-box;
+        }
+        :host([theme="system"]) .thumb { transform: translateX(28px); }
+        :host([theme="dark"]) .thumb { transform: translateX(56px); }
+        button {
+            all: unset;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+            width: 26px;
+            height: 24px;
+            border-radius: 999px;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s ease, background 0.3s ease;
+            color: var(--button-color);
             box-sizing: border-box;
+        }
+        button[aria-pressed="true"] {
+            color: var(--active-color);
+            pointer-events: none;
+        }
+        button:focus-visible {
+            outline: 2px solid var(--focus-color);
+            outline-offset: 2px;
         }
         svg {
             width: 14px;
             height: 14px;
             stroke-width: 2;
             fill: none;
+            stroke: currentColor;
         }
-        .sun { stroke: #f9b208; }
-        .moon { stroke: #58a6ff; display: none; }
-        :host([theme="dark"]) button { background: #444; }
-        :host([theme="dark"]) .thumb { transform: translateX(24px); background: #111; }
-        :host([theme="dark"]) .sun { display: none; }
-        :host([theme="dark"]) .moon { display: block; }
         </style>
 
-        <button type="button">
-        <div class="thumb">
-            <svg class="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <div class="theme-toggle" role="group">
+            <div class="thumb" aria-hidden="true"></div>
+            <button type="button" data-theme-value="light" aria-label="Light" title="Light">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="5"/>
             <line x1="12" y1="1" x2="12" y2="3"/>
             <line x1="12" y1="21" x2="12" y2="23"/>
@@ -11766,26 +12271,44 @@ License: BSD 3-Clause
             <line x1="21" y1="12" x2="23" y2="12"/>
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-            <svg class="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                </svg>
+            </button>
+            <button type="button" data-theme-value="system" aria-label="System" title="System">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <rect x="3" y="4" width="18" height="12" rx="2"/>
+                    <line x1="8" y1="20" x2="16" y2="20"/>
+                    <line x1="12" y1="16" x2="12" y2="20"/>
+                </svg>
+            </button>
+            <button type="button" data-theme-value="dark" aria-label="Dark" title="Dark">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
+                </svg>
+            </button>
         </div>
-        </button>
     `;
 
-        const button = shadow.querySelector('button');
         const themeLabel = getUserNavI18n(getCurrentLocale()).themeToggle || 'Toggle theme';
-        button.setAttribute('title', themeLabel);
-        button.setAttribute('aria-label', themeLabel);
+        const group = shadow.querySelector('.theme-toggle');
+        group.setAttribute('aria-label', themeLabel);
 
-        button.addEventListener('click', () => {
-            const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            switchTheme(newTheme);
+        const syncButtons = () => {
+            shadow.querySelectorAll('button[data-theme-value]').forEach((button) => {
+                button.setAttribute('aria-pressed', button.dataset.themeValue === currentTheme ? 'true' : 'false');
+            });
+        };
+
+        shadow.querySelectorAll('button[data-theme-value]').forEach((button) => {
+            button.addEventListener('click', () => {
+                switchTheme(button.dataset.themeValue);
+            });
         });
 
         themeSwitchHosts.push(host);
         host.setAttribute('theme', currentTheme);
+        host.setAttribute('resolved-theme', resolveTheme(currentTheme));
+        host.syncThemeButtons = syncButtons;
+        syncButtons();
         return host;
     };
 
@@ -12901,6 +13424,7 @@ License: BSD 3-Clause
     // Favorites
     // ============================================================================
     const FAVORITES_IDS_STORAGE_KEY = 'gfplus-favorites-ids-v1';
+    const PERSONAL_NOTES_STORAGE_KEY = 'gfplus-personal-notes-v1';
     const FAVORITE_SET_NAME_PATTERN = /\bfavor(?:it(?:e|es|o|os|a|as)?|is?)\b/i;
     const FAVORITE_FORM_SELECTOR = 'form.change-script-set, form[id^="edit_script_set"], form[id^="new_script_set"]';
     let scriptCardActionsObserver = null;
@@ -12976,6 +13500,29 @@ License: BSD 3-Clause
 
             localStorage.setItem(`${FAVORITES_IDS_STORAGE_KEY}:${currentUserId}`, JSON.stringify(Array.from(favoriteIds instanceof Set ? favoriteIds : new Set())));
             localStorage.removeItem(FAVORITES_IDS_STORAGE_KEY);
+        } catch {
+        }
+    };
+    const getPersonalNoteStorageKey = (scriptId) => {
+        const currentUserId = extractUserIdFromProfilePath(extractCurrentUserProfilePath()) || 'anonymous';
+        return `${PERSONAL_NOTES_STORAGE_KEY}:${currentUserId}:${scriptId}`;
+    };
+    const readPersonalNote = (scriptId) => {
+        try {
+            return localStorage.getItem(getPersonalNoteStorageKey(scriptId)) || '';
+        } catch {
+            return '';
+        }
+    };
+    const writePersonalNote = (scriptId, note) => {
+        try {
+            const storageKey = getPersonalNoteStorageKey(scriptId);
+            const trimmedNote = String(note || '').trim();
+            if (trimmedNote) {
+                localStorage.setItem(storageKey, trimmedNote);
+            } else {
+                localStorage.removeItem(storageKey);
+            }
         } catch {
         }
     };
@@ -13892,6 +14439,164 @@ License: BSD 3-Clause
 
         return starButton;
     };
+    const updateScriptNoteUi = (panel, noteButton, locale) => {
+        const i18n = getUserNavI18n(locale);
+        const textarea = panel.querySelector('.gf-script-note-textarea');
+        const preview = panel.querySelector('.gf-script-note-preview');
+        const status = panel.querySelector('.gf-script-note-status');
+        const note = String(textarea?.value || '').trim();
+        const hasNote = Boolean(note);
+
+        panel.setAttribute('data-has-note', String(hasNote));
+        noteButton.setAttribute('data-has-note', String(hasNote));
+        noteButton.setAttribute('aria-label', hasNote ? i18n.editPersonalNote : i18n.addPersonalNote);
+
+        if (preview) {
+            preview.textContent = note;
+        }
+        if (status) {
+            status.textContent = hasNote ? i18n.personalNoteSaved : '';
+        }
+    };
+    const createScriptNotePanel = (locale, scriptId) => {
+        const i18n = getUserNavI18n(locale);
+        const panel = document.createElement('div');
+        panel.className = 'gf-script-note-panel';
+        panel.setAttribute('data-open', 'false');
+        panel.setAttribute('data-script-id', String(scriptId));
+
+        const preview = document.createElement('div');
+        preview.className = 'gf-script-note-preview';
+
+        const editor = document.createElement('div');
+        editor.className = 'gf-script-note-editor';
+
+        const textarea = document.createElement('textarea');
+        textarea.className = 'gf-script-note-textarea';
+        textarea.value = readPersonalNote(scriptId);
+        textarea.placeholder = i18n.personalNotePlaceholder;
+        textarea.setAttribute('aria-label', i18n.personalNoteLabel);
+
+        const footer = document.createElement('div');
+        footer.className = 'gf-script-note-footer';
+
+        const status = document.createElement('span');
+        status.className = 'gf-script-note-status';
+
+        const footerActions = document.createElement('div');
+        footerActions.className = 'gf-script-note-footer-actions';
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'gf-script-note-delete';
+        deleteButton.type = 'button';
+        deleteButton.textContent = i18n.deleteNote;
+
+        const doneButton = document.createElement('button');
+        doneButton.className = 'gf-script-note-done';
+        doneButton.type = 'button';
+        doneButton.textContent = i18n.done;
+
+        footerActions.append(deleteButton, doneButton);
+        footer.append(status, footerActions);
+        editor.append(textarea, footer);
+        panel.append(preview, editor);
+
+        let saveTimer = 0;
+        const saveNote = () => {
+            if (saveTimer) {
+                window.clearTimeout(saveTimer);
+                saveTimer = 0;
+            }
+            writePersonalNote(scriptId, textarea.value);
+            panel.dispatchEvent(new CustomEvent('gfplus-note-change', {
+                bubbles: false,
+                detail: { note: textarea.value }
+            }));
+        };
+
+        textarea.addEventListener('input', () => {
+            if (saveTimer) {
+                window.clearTimeout(saveTimer);
+            }
+            saveTimer = window.setTimeout(saveNote, 220);
+            panel.dispatchEvent(new CustomEvent('gfplus-note-change', {
+                bubbles: false,
+                detail: { note: textarea.value }
+            }));
+        });
+        textarea.addEventListener('blur', saveNote);
+        doneButton.addEventListener('click', () => {
+            saveNote();
+            panel.setAttribute('data-open', 'false');
+            panel.dispatchEvent(new CustomEvent('gfplus-note-toggle', {
+                bubbles: false,
+                detail: { open: false }
+            }));
+        });
+        deleteButton.addEventListener('click', () => {
+            if (saveTimer) {
+                window.clearTimeout(saveTimer);
+                saveTimer = 0;
+            }
+            textarea.value = '';
+            writePersonalNote(scriptId, '');
+            panel.setAttribute('data-open', 'false');
+            panel.dispatchEvent(new CustomEvent('gfplus-note-change', {
+                bubbles: false,
+                detail: { note: '' }
+            }));
+            panel.dispatchEvent(new CustomEvent('gfplus-note-toggle', {
+                bubbles: false,
+                detail: { open: false }
+            }));
+        });
+
+        return panel;
+    };
+    const createScriptNoteButton = (locale, scriptId, panel) => {
+        const i18n = getUserNavI18n(locale);
+        const noteButton = document.createElement('button');
+        noteButton.className = 'gf-script-note-button';
+        noteButton.type = 'button';
+        noteButton.setAttribute('aria-expanded', 'false');
+        noteButton.setAttribute('data-expanded', 'false');
+        noteButton.innerHTML = `
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 4.5h14v15H5z"></path>
+                <path d="M8 8h8"></path>
+                <path d="M8 12h5"></path>
+                <path d="M16 19.5v-4h3"></path>
+            </svg>
+        `;
+
+        const sync = () => updateScriptNoteUi(panel, noteButton, locale);
+        panel.addEventListener('gfplus-note-change', sync);
+        panel.addEventListener('gfplus-note-toggle', (event) => {
+            const open = Boolean(event.detail?.open);
+            noteButton.setAttribute('aria-expanded', String(open));
+            noteButton.setAttribute('data-expanded', String(open));
+        });
+        sync();
+
+        noteButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const shouldOpen = panel.getAttribute('data-open') !== 'true';
+            panel.setAttribute('data-open', String(shouldOpen));
+            noteButton.setAttribute('aria-expanded', String(shouldOpen));
+            noteButton.setAttribute('data-expanded', String(shouldOpen));
+            sync();
+
+            if (shouldOpen) {
+                window.setTimeout(() => panel.querySelector('.gf-script-note-textarea')?.focus(), 0);
+            }
+
+            noteButton.blur();
+        });
+
+        return noteButton;
+    };
     const createScriptExtraInfoPanel = (scriptUrl) => {
         const panel = document.createElement('div');
         panel.className = 'gf-script-extra-info';
@@ -13960,9 +14665,11 @@ License: BSD 3-Clause
             const actions = document.createElement('div');
             actions.className = 'gf-script-card-actions';
             let extraInfoPanel = null;
+            const notePanel = createScriptNotePanel(locale, scriptId);
             if (codeUrl) {
                 actions.appendChild(createScriptInstallButton(codeUrl, locale));
             }
+            actions.appendChild(createScriptNoteButton(locale, scriptId, notePanel));
             if (scriptUrl) {
                 extraInfoPanel = createScriptExtraInfoPanel(scriptUrl);
                 actions.appendChild(createScriptDetailButton(locale, extraInfoPanel));
@@ -13971,6 +14678,7 @@ License: BSD 3-Clause
                 actions.appendChild(createScriptStarButton(locale, scriptId));
             }
             article.appendChild(actions);
+            article.appendChild(notePanel);
             if (extraInfoPanel) {
                 article.appendChild(extraInfoPanel);
             }
@@ -13997,10 +14705,13 @@ License: BSD 3-Clause
             const codeUrl = getCurrentPageCodeUrl();
             const hasNativeInstallArea = Boolean(document.getElementById('install-area'));
             if (Number.isFinite(scriptId) && !detailActionsTarget.querySelector(`.gf-script-star-button[data-script-id="${scriptId}"]`)) {
+                const notePanel = createScriptNotePanel(locale, scriptId);
                 if (!hasNativeInstallArea && codeUrl) {
                     detailActionsTarget.appendChild(createScriptInstallButton(codeUrl, locale));
                 }
+                detailActionsTarget.appendChild(createScriptNoteButton(locale, scriptId, notePanel));
                 detailActionsTarget.appendChild(createScriptStarButton(locale, scriptId));
+                detailActionsTarget.insertAdjacentElement('afterend', notePanel);
             }
 
             detailActionsTarget.setAttribute(SCRIPT_DETAIL_ACTIONS_ATTR, 'done');
@@ -14034,6 +14745,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favorites',
             addToFavorites: 'Add to favorites',
             removeFromFavorites: 'Remove from favorites',
+            addPersonalNote: 'Add personal note',
+            editPersonalNote: 'Edit personal note',
+            personalNoteLabel: 'Personal note',
+            personalNotePlaceholder: 'Write a personal note for this script...',
+            personalNoteSaved: 'Saved',
+            deleteNote: 'Delete',
+            done: 'Done',
             showDetails: 'Show more',
             hideDetails: 'Hide details',
             loadingDetails: 'Loading detailed info...',
@@ -14061,6 +14779,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favoris',
             addToFavorites: 'Ajouter aux favoris',
             removeFromFavorites: 'Retirer des favoris',
+            addPersonalNote: 'Ajouter une note personnelle',
+            editPersonalNote: 'Modifier la note personnelle',
+            personalNoteLabel: 'Note personnelle',
+            personalNotePlaceholder: 'Écrire une note personnelle pour ce script...',
+            personalNoteSaved: 'Enregistré',
+            deleteNote: 'Supprimer',
+            done: 'Terminé',
             showDetails: 'Voir plus',
             hideDetails: 'Réduire',
             loadingDetails: 'Chargement des détails...',
@@ -14088,6 +14813,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favoritos',
             addToFavorites: 'Añadir a favoritos',
             removeFromFavorites: 'Quitar de favoritos',
+            addPersonalNote: 'Añadir nota personal',
+            editPersonalNote: 'Editar nota personal',
+            personalNoteLabel: 'Nota personal',
+            personalNotePlaceholder: 'Escribe una nota personal para este script...',
+            personalNoteSaved: 'Guardado',
+            deleteNote: 'Eliminar',
+            done: 'Listo',
             showDetails: 'Ver más',
             hideDetails: 'Reducir',
             loadingDetails: 'Cargando detalles...',
@@ -14115,6 +14847,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favoriten',
             addToFavorites: 'Zu Favoriten hinzufügen',
             removeFromFavorites: 'Aus Favoriten entfernen',
+            addPersonalNote: 'Persönliche Notiz hinzufügen',
+            editPersonalNote: 'Persönliche Notiz bearbeiten',
+            personalNoteLabel: 'Persönliche Notiz',
+            personalNotePlaceholder: 'Schreibe eine persönliche Notiz für dieses Skript...',
+            personalNoteSaved: 'Gespeichert',
+            deleteNote: 'Löschen',
+            done: 'Fertig',
             showDetails: 'Mehr anzeigen',
             hideDetails: 'Details ausblenden',
             loadingDetails: 'Details werden geladen...',
@@ -14142,6 +14881,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Preferiti',
             addToFavorites: 'Aggiungi ai preferiti',
             removeFromFavorites: 'Rimuovi dai preferiti',
+            addPersonalNote: 'Aggiungi nota personale',
+            editPersonalNote: 'Modifica nota personale',
+            personalNoteLabel: 'Nota personale',
+            personalNotePlaceholder: 'Scrivi una nota personale per questo script...',
+            personalNoteSaved: 'Salvato',
+            deleteNote: 'Elimina',
+            done: 'Fine',
             showDetails: 'Mostra di più',
             hideDetails: 'Riduci',
             loadingDetails: 'Caricamento dettagli...',
@@ -14169,6 +14915,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favoritos',
             addToFavorites: 'Adicionar aos favoritos',
             removeFromFavorites: 'Remover dos favoritos',
+            addPersonalNote: 'Adicionar nota pessoal',
+            editPersonalNote: 'Editar nota pessoal',
+            personalNoteLabel: 'Nota pessoal',
+            personalNotePlaceholder: 'Escreva uma nota pessoal para este script...',
+            personalNoteSaved: 'Salvo',
+            deleteNote: 'Excluir',
+            done: 'Concluir',
             showDetails: 'Ver mais',
             hideDetails: 'Reduzir',
             loadingDetails: 'Carregando detalhes...',
@@ -14196,6 +14949,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Избранное',
             addToFavorites: 'Добавить в избранное',
             removeFromFavorites: 'Удалить из избранного',
+            addPersonalNote: 'Добавить личную заметку',
+            editPersonalNote: 'Редактировать личную заметку',
+            personalNoteLabel: 'Личная заметка',
+            personalNotePlaceholder: 'Напишите личную заметку для этого скрипта...',
+            personalNoteSaved: 'Сохранено',
+            deleteNote: 'Удалить',
+            done: 'Готово',
             showDetails: 'Показать больше',
             hideDetails: 'Свернуть',
             loadingDetails: 'Загрузка подробностей...',
@@ -14223,6 +14983,13 @@ License: BSD 3-Clause
             favoriteSetName: 'お気に入り',
             addToFavorites: 'お気に入りに追加',
             removeFromFavorites: 'お気に入りから削除',
+            addPersonalNote: '個人メモを追加',
+            editPersonalNote: '個人メモを編集',
+            personalNoteLabel: '個人メモ',
+            personalNotePlaceholder: 'このスクリプトの個人メモを書く...',
+            personalNoteSaved: '保存済み',
+            deleteNote: '削除',
+            done: '完了',
             showDetails: 'もっと見る',
             hideDetails: '詳細を閉じる',
             loadingDetails: '詳細を読み込み中...',
@@ -14250,6 +15017,13 @@ License: BSD 3-Clause
             favoriteSetName: '收藏',
             addToFavorites: '添加到收藏',
             removeFromFavorites: '从收藏中移除',
+            addPersonalNote: '添加个人备注',
+            editPersonalNote: '编辑个人备注',
+            personalNoteLabel: '个人备注',
+            personalNotePlaceholder: '为此脚本写一条个人备注...',
+            personalNoteSaved: '已保存',
+            deleteNote: '删除',
+            done: '完成',
             showDetails: '查看更多',
             hideDetails: '收起详情',
             loadingDetails: '正在加载详细信息...',
@@ -14277,6 +15051,13 @@ License: BSD 3-Clause
             favoriteSetName: '收藏',
             addToFavorites: '加入收藏',
             removeFromFavorites: '從收藏移除',
+            addPersonalNote: '新增個人備註',
+            editPersonalNote: '編輯個人備註',
+            personalNoteLabel: '個人備註',
+            personalNotePlaceholder: '為此腳本寫一則個人備註...',
+            personalNoteSaved: '已儲存',
+            deleteNote: '刪除',
+            done: '完成',
             showDetails: '查看更多',
             hideDetails: '收合詳情',
             loadingDetails: '正在載入詳細資訊...',
@@ -14304,6 +15085,13 @@ License: BSD 3-Clause
             favoriteSetName: 'المفضلة',
             addToFavorites: 'إضافة إلى المفضلة',
             removeFromFavorites: 'إزالة من المفضلة',
+            addPersonalNote: 'إضافة ملاحظة شخصية',
+            editPersonalNote: 'تعديل الملاحظة الشخصية',
+            personalNoteLabel: 'ملاحظة شخصية',
+            personalNotePlaceholder: 'اكتب ملاحظة شخصية لهذا السكربت...',
+            personalNoteSaved: 'تم الحفظ',
+            deleteNote: 'حذف',
+            done: 'تم',
             showDetails: 'عرض المزيد',
             hideDetails: 'طي التفاصيل',
             loadingDetails: 'جارٍ تحميل التفاصيل...',
@@ -14331,6 +15119,13 @@ License: BSD 3-Clause
             favoriteSetName: 'पसंदीदा',
             addToFavorites: 'पसंदीदा में जोड़ें',
             removeFromFavorites: 'पसंदीदा से हटाएँ',
+            addPersonalNote: 'व्यक्तिगत नोट जोड़ें',
+            editPersonalNote: 'व्यक्तिगत नोट संपादित करें',
+            personalNoteLabel: 'व्यक्तिगत नोट',
+            personalNotePlaceholder: 'इस स्क्रिप्ट के लिए व्यक्तिगत नोट लिखें...',
+            personalNoteSaved: 'सहेजा गया',
+            deleteNote: 'हटाएँ',
+            done: 'पूर्ण',
             showDetails: 'और देखें',
             hideDetails: 'विवरण समेटें',
             loadingDetails: 'विवरण लोड हो रहे हैं...',
@@ -14357,6 +15152,13 @@ License: BSD 3-Clause
             favoriteSetName: 'প্রিয়',
             addToFavorites: 'প্রিয়তে যোগ করুন',
             removeFromFavorites: 'প্রিয় থেকে সরান',
+            addPersonalNote: 'ব্যক্তিগত নোট যোগ করুন',
+            editPersonalNote: 'ব্যক্তিগত নোট সম্পাদনা করুন',
+            personalNoteLabel: 'ব্যক্তিগত নোট',
+            personalNotePlaceholder: 'এই স্ক্রিপ্টের জন্য ব্যক্তিগত নোট লিখুন...',
+            personalNoteSaved: 'সংরক্ষিত',
+            deleteNote: 'মুছুন',
+            done: 'সম্পন্ন',
             showDetails: 'আরও দেখুন',
             hideDetails: 'বিস্তারিত সংকুচিত করুন',
             loadingDetails: 'বিস্তারিত লোড হচ্ছে...',
@@ -14384,6 +15186,13 @@ License: BSD 3-Clause
             favoriteSetName: 'پسندیدہ',
             addToFavorites: 'پسندیدہ میں شامل کریں',
             removeFromFavorites: 'پسندیدہ سے ہٹائیں',
+            addPersonalNote: 'ذاتی نوٹ شامل کریں',
+            editPersonalNote: 'ذاتی نوٹ میں ترمیم کریں',
+            personalNoteLabel: 'ذاتی نوٹ',
+            personalNotePlaceholder: 'اس اسکرپٹ کے لیے ذاتی نوٹ لکھیں...',
+            personalNoteSaved: 'محفوظ ہو گیا',
+            deleteNote: 'حذف کریں',
+            done: 'مکمل',
             showDetails: 'مزید دیکھیں',
             hideDetails: 'تفصیلات سمیٹیں',
             loadingDetails: 'تفصیلات لوڈ ہو رہی ہیں...',
@@ -14411,6 +15220,13 @@ License: BSD 3-Clause
             favoriteSetName: 'പ്രിയപ്പെട്ടവ',
             addToFavorites: 'പ്രിയപ്പെട്ടവയിൽ ചേർക്കുക',
             removeFromFavorites: 'പ്രിയപ്പെട്ടവയിൽ നിന്ന് നീക്കം ചെയ്യുക',
+            addPersonalNote: 'വ്യക്തിഗത കുറിപ്പ് ചേർക്കുക',
+            editPersonalNote: 'വ്യക്തിഗത കുറിപ്പ് തിരുത്തുക',
+            personalNoteLabel: 'വ്യക്തിഗത കുറിപ്പ്',
+            personalNotePlaceholder: 'ഈ സ്ക്രിപ്റ്റിന് വ്യക്തിഗത കുറിപ്പ് എഴുതുക...',
+            personalNoteSaved: 'സംരക്ഷിച്ചു',
+            deleteNote: 'ഇല്ലാതാക്കുക',
+            done: 'പൂർത്തിയായി',
             showDetails: 'കൂടുതൽ കാണിക്കുക',
             hideDetails: 'വിശദാംശങ്ങൾ ചുരുക്കുക',
             loadingDetails: 'വിശദാംശങ്ങൾ ലോഡ് ചെയ്യുന്നു...',
@@ -14438,6 +15254,13 @@ License: BSD 3-Clause
             favoriteSetName: '즐겨찾기',
             addToFavorites: '즐겨찾기에 추가',
             removeFromFavorites: '즐겨찾기에서 제거',
+            addPersonalNote: '개인 메모 추가',
+            editPersonalNote: '개인 메모 편집',
+            personalNoteLabel: '개인 메모',
+            personalNotePlaceholder: '이 스크립트에 대한 개인 메모를 작성하세요...',
+            personalNoteSaved: '저장됨',
+            deleteNote: '삭제',
+            done: '완료',
             showDetails: '더 보기',
             hideDetails: '상세 정보 접기',
             loadingDetails: '상세 정보를 불러오는 중...',
@@ -14465,6 +15288,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favoriler',
             addToFavorites: 'Favorilere ekle',
             removeFromFavorites: 'Favorilerden kaldır',
+            addPersonalNote: 'Kişisel not ekle',
+            editPersonalNote: 'Kişisel notu düzenle',
+            personalNoteLabel: 'Kişisel not',
+            personalNotePlaceholder: 'Bu script için kişisel not yaz...',
+            personalNoteSaved: 'Kaydedildi',
+            deleteNote: 'Sil',
+            done: 'Bitti',
             showDetails: 'Daha fazla göster',
             hideDetails: 'Ayrıntıları daralt',
             loadingDetails: 'Ayrıntılar yükleniyor...',
@@ -14492,6 +15322,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Ulubione',
             addToFavorites: 'Dodaj do ulubionych',
             removeFromFavorites: 'Usuń z ulubionych',
+            addPersonalNote: 'Dodaj osobistą notatkę',
+            editPersonalNote: 'Edytuj osobistą notatkę',
+            personalNoteLabel: 'Osobista notatka',
+            personalNotePlaceholder: 'Napisz osobistą notatkę do tego skryptu...',
+            personalNoteSaved: 'Zapisano',
+            deleteNote: 'Usuń',
+            done: 'Gotowe',
             showDetails: 'Pokaż więcej',
             hideDetails: 'Zwiń szczegóły',
             loadingDetails: 'Ładowanie szczegółów...',
@@ -14519,6 +15356,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favorieten',
             addToFavorites: 'Aan favorieten toevoegen',
             removeFromFavorites: 'Uit favorieten verwijderen',
+            addPersonalNote: 'Persoonlijke notitie toevoegen',
+            editPersonalNote: 'Persoonlijke notitie bewerken',
+            personalNoteLabel: 'Persoonlijke notitie',
+            personalNotePlaceholder: 'Schrijf een persoonlijke notitie voor dit script...',
+            personalNoteSaved: 'Opgeslagen',
+            deleteNote: 'Verwijderen',
+            done: 'Klaar',
             showDetails: 'Meer weergeven',
             hideDetails: 'Details inklappen',
             loadingDetails: 'Details laden...',
@@ -14546,6 +15390,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favoriter',
             addToFavorites: 'Lägg till i favoriter',
             removeFromFavorites: 'Ta bort från favoriter',
+            addPersonalNote: 'Lägg till personlig anteckning',
+            editPersonalNote: 'Redigera personlig anteckning',
+            personalNoteLabel: 'Personlig anteckning',
+            personalNotePlaceholder: 'Skriv en personlig anteckning för det här skriptet...',
+            personalNoteSaved: 'Sparat',
+            deleteNote: 'Ta bort',
+            done: 'Klart',
             showDetails: 'Visa mer',
             hideDetails: 'Dölj detaljer',
             loadingDetails: 'Läser in detaljer...',
@@ -14573,6 +15424,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favorite',
             addToFavorites: 'Adaugă la favorite',
             removeFromFavorites: 'Elimină din favorite',
+            addPersonalNote: 'Adaugă notă personală',
+            editPersonalNote: 'Editează nota personală',
+            personalNoteLabel: 'Notă personală',
+            personalNotePlaceholder: 'Scrie o notă personală pentru acest script...',
+            personalNoteSaved: 'Salvat',
+            deleteNote: 'Șterge',
+            done: 'Gata',
             showDetails: 'Vezi mai mult',
             hideDetails: 'Restrânge detaliile',
             loadingDetails: 'Se încarcă detaliile...',
@@ -14600,6 +15458,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Yêu thích',
             addToFavorites: 'Thêm vào yêu thích',
             removeFromFavorites: 'Xóa khỏi yêu thích',
+            addPersonalNote: 'Thêm ghi chú cá nhân',
+            editPersonalNote: 'Chỉnh sửa ghi chú cá nhân',
+            personalNoteLabel: 'Ghi chú cá nhân',
+            personalNotePlaceholder: 'Viết ghi chú cá nhân cho script này...',
+            personalNoteSaved: 'Đã lưu',
+            deleteNote: 'Xóa',
+            done: 'Xong',
             showDetails: 'Xem thêm',
             hideDetails: 'Thu gọn chi tiết',
             loadingDetails: 'Đang tải chi tiết...',
@@ -14627,6 +15492,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Favorit',
             addToFavorites: 'Tambahkan ke favorit',
             removeFromFavorites: 'Hapus dari favorit',
+            addPersonalNote: 'Tambahkan catatan pribadi',
+            editPersonalNote: 'Edit catatan pribadi',
+            personalNoteLabel: 'Catatan pribadi',
+            personalNotePlaceholder: 'Tulis catatan pribadi untuk skrip ini...',
+            personalNoteSaved: 'Tersimpan',
+            deleteNote: 'Hapus',
+            done: 'Selesai',
             showDetails: 'Lihat selengkapnya',
             hideDetails: 'Sembunyikan detail',
             loadingDetails: 'Memuat detail...',
@@ -14654,6 +15526,13 @@ License: BSD 3-Clause
             favoriteSetName: 'Kegemaran',
             addToFavorites: 'Tambah ke kegemaran',
             removeFromFavorites: 'Alih keluar daripada kegemaran',
+            addPersonalNote: 'Tambah nota peribadi',
+            editPersonalNote: 'Edit nota peribadi',
+            personalNoteLabel: 'Nota peribadi',
+            personalNotePlaceholder: 'Tulis nota peribadi untuk skrip ini...',
+            personalNoteSaved: 'Disimpan',
+            deleteNote: 'Padam',
+            done: 'Selesai',
             showDetails: 'Lihat lagi',
             hideDetails: 'Sembunyikan butiran',
             loadingDetails: 'Memuatkan butiran...',
@@ -14681,6 +15560,13 @@ License: BSD 3-Clause
             favoriteSetName: 'รายการโปรด',
             addToFavorites: 'เพิ่มในรายการโปรด',
             removeFromFavorites: 'ลบออกจากรายการโปรด',
+            addPersonalNote: 'เพิ่มบันทึกส่วนตัว',
+            editPersonalNote: 'แก้ไขบันทึกส่วนตัว',
+            personalNoteLabel: 'บันทึกส่วนตัว',
+            personalNotePlaceholder: 'เขียนบันทึกส่วนตัวสำหรับสคริปต์นี้...',
+            personalNoteSaved: 'บันทึกแล้ว',
+            deleteNote: 'ลบ',
+            done: 'เสร็จสิ้น',
             showDetails: 'ดูเพิ่มเติม',
             hideDetails: 'ย่อรายละเอียด',
             loadingDetails: 'กำลังโหลดรายละเอียด...',
