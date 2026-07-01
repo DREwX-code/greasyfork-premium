@@ -6,6 +6,28 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 ---
 
+## [1.2.1] - 2026-07-01
+
+### Added
+
+* Personal notes attached to scripts with autosave support
+* Automatic light/dark theme switching based on the operating system theme
+* Redesigned theme selector with Light, System, and Dark modes
+
+### Improved
+
+* Unread discussion visibility
+* Pagy pagination styling
+* Script card and script page action layouts
+* Sidebar option wrapping for long website names
+* Overall spacing, alignment, and visual consistency
+
+### Fixed
+
+* Profile website links overflowing outside their container
+
+---
+
 ## [1.2.0] - 2026-06-17
 
 ### Added
