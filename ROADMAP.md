@@ -2,7 +2,7 @@
 
 This roadmap highlights planned improvements and acknowledges ideas contributed by the community.
 
-**Last updated:** June 2026
+**Last updated:** July 2026
 
 ---
 
@@ -12,23 +12,26 @@ These ideas have been suggested by the community and may be implemented in futur
 
 ### Suggested by [ccamel](https://github.com/ccamel) (GitHub Discussions)
 
-- [ ] Personal notes attached to scripts
 - [ ] Interface density modes (Compact / Comfortable / Detailed)
   - Expandable script details are already available, but dedicated density modes are not yet implemented.
-
-### Reported by Keviin560 (GreasyFork Feedback)
-
-- [ ] Automatic light/dark theme switching based on the operating system theme
-
-### Reported by Phil 🥹👍 (GreasyFork Feedback)
-
-- [ ] Prevent profile website links from overflowing outside their container.
 
 ---
 
 ## Community Requests Completed
 
 The following features and fixes were implemented thanks to community feedback.
+
+### Suggested by [ccamel](https://github.com/ccamel) (GitHub Discussions)
+
+- [x] Personal notes attached to scripts
+
+### Reported by Keviin560 (GreasyFork Feedback)
+
+- [x] Automatic light/dark theme switching based on the operating system theme
+
+### Reported by Phil 🥹👍 (GreasyFork Feedback)
+
+- [x] Prevented profile website links from overflowing outside their container
 
 ### Reported by 离火煮青龙 (GreasyFork Feedback)
 
