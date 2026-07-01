@@ -67,15 +67,24 @@ Designed to improve your daily workflow while keeping GreasyFork familiar and li
 ### ⚡ Productivity Boost
 
 - One-click favorites directly from script cards
+- Personal notes attached to scripts
 - Redesigned favorites management (faster, cleaner, more intuitive)
 - Direct install button without opening the script page
 - Expandable script details directly from script cards
+
+### 📝 Personal Notes
+
+- Add personal notes to scripts
+- Notes are saved automatically
+- Preview, edit, and delete notes directly from script cards and script pages
+- Keep track of scripts to test, compare, or revisit later
 
 ### 🎨 Interface & Experience
 
 - Modernized interface with improved visual hierarchy
 - Cleaner layout with improved visual consistency
-- Light and dark themes with instant toggle
+- Light, System, and Dark theme modes
+- Automatic light/dark theme switching based on your operating system
 - Support for both GreasyFork and SleazyFork
 
 ### 🧭 Navigation and Quick Actions
@@ -140,8 +149,9 @@ Suggestions, feature requests, bug reports, and contributions are always welcome
 
 Community suggestions currently under consideration:
 
-- Personal notes attached to scripts
 - Interface density modes (compact / comfortable / detailed)
+
+Recently completed community suggestions include personal notes attached to scripts, system theme mode, and profile website link overflow fixes.
 
 See the full **[Project Roadmap](./ROADMAP.md)**.
 
