@@ -41,6 +41,7 @@ Designed to improve your daily workflow while keeping GreasyFork familiar and li
 - [📚 Documentation](#-documentation)
 - [✨ Main Features](#-main-features)
 - [📦 Third-party Libraries](#-third-party-libraries)
+- [📥 Installation](#-installation)
 - [💬 Feedback & Contribution](#-feedback--contribution)
 - [💡 Community Suggestions](#-community-suggestions)
 - [👤 Author](#-author)
@@ -127,6 +128,20 @@ Designed to improve your daily workflow while keeping GreasyFork familiar and li
 | Library | Purpose | License |
 |---------|---------|---------|
 | Highlight.js | Syntax highlighting | BSD 3-Clause |
+
+---
+
+## 📥 Installation
+
+[![Install](https://img.shields.io/badge/Install-GreasyFork%20Premium-2f7d32?style=for-the-badge&logo=greasyfork&logoColor=white)](https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js)
+[![View Source](https://img.shields.io/badge/View-Source%20Code-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/DREwX-code/greasyfork-premium/blob/main/src/greasyfork-premium.user.js)
+
+1. Install a userscript manager such as **Tampermonkey** or **Violentmonkey**.
+2. Click **Install GreasyFork Premium** above or install it from [GreasyFork](https://greasyfork.org/scripts/562938-greasyfork-premium).
+3. Open **GreasyFork** or **SleazyFork**.
+4. The redesigned interface is applied automatically.
+
+For detailed installation instructions, see the **[Installation Guide](./docs/INSTALLATION.md)**.
 
 ---
 
