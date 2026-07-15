@@ -105,8 +105,6 @@ You can also manually check for updates from your userscript manager dashboard.
 
 ## Need More Help?
 
-## Need More Help?
-
 If you're still experiencing issues, see the **[Troubleshooting Guide](TROUBLESHOOTING.md)** or open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)**.
 
 If you're not sure whether you've found a bug, start a **[GitHub Discussion](../../../discussions)** instead.
