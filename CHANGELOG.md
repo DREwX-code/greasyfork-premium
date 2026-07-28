@@ -6,6 +6,20 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 ---
 
+## [1.2.2] - 2026-07-29
+
+### Added
+
+* Localized Compact, Comfortable, and Detailed density modes across script lists, profiles, and favorites
+
+### Improved
+
+* Card spacing and statistics alignment
+* Action visibility and icon sizing
+* Theme-aware scrollbar styling
+
+---
+
 ## [1.2.1] - 2026-07-01
 
 ### Added
