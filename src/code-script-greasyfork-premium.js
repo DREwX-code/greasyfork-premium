@@ -53,7 +53,7 @@
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.2.1
+// @version      1.2.2
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -104,6 +104,7 @@ License: BSD 3-Clause
     }
 
     const STORAGE_KEY = 'gfplus-theme';
+    const DENSITY_STORAGE_KEY = 'gfplus-interface-density';
     const SIDEBAR_GROUP_STATE_KEY = 'gfplus-sidebar-group-states';
     const LOADING_ATTR = 'data-gfplus-loading';
     const INTERNAL_NAV_FLAG_KEY = 'gfplus-internal-nav';
@@ -113,6 +114,8 @@ License: BSD 3-Clause
     const NO_TRANSITION_STYLE_ID = 'gfplus-no-transition';
     const THEME_STYLE_ID = 'gfplus-theme-style';
     const DARK_THEME_STYLE_ID = 'gfplus-theme-style-dark';
+    const SCROLLBAR_STYLE_ID = 'gfplus-scrollbar-style';
+    const DENSITY_STYLE_ID = 'gfplus-density-style';
     const THEME_MOTION_STYLE_ID = 'gfplus-theme-motion-style';
     const THEME_MOTION_ATTR = 'data-gfplus-theme-motion';
     const THEME_FALLBACK_MOTION_ATTR = 'data-gfplus-theme-fallback-motion';
@@ -120,11 +123,15 @@ License: BSD 3-Clause
     const LIGHTBOX_SCROLL_LOCK_CLASS = 'gfplus-lightbox-open';
     const THEME_MOTION_DURATION = 380;
     const THEME_OPTIONS = ['light', 'system', 'dark'];
+    const DENSITY_OPTIONS = ['compact', 'comfortable', 'detailed'];
     const storedTheme = localStorage.getItem(STORAGE_KEY);
     let currentTheme = THEME_OPTIONS.includes(storedTheme) ? storedTheme : 'system';
+    const storedDensity = localStorage.getItem(DENSITY_STORAGE_KEY);
+    let currentDensity = DENSITY_OPTIONS.includes(storedDensity) ? storedDensity : 'comfortable';
     let internalNavigation = false;
     let themeMotionTimer = 0;
     const root = document.documentElement;
+    root?.setAttribute('data-gfplus-density', currentDensity);
     const systemThemeQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
     const THEME_COLORS = {
         light: {
@@ -528,32 +535,15 @@ License: BSD 3-Clause
         --hljs-del-text: #7f1d1d;
         --focus-ring-color: rgba(79, 70, 229, 0.45);
         --transition-base: 160ms ease;
-    }
-
-    /* Light mode scrollbar styling only */
-    :root {
-        scrollbar-color: #c7d2fe #f5f7fb;
-    }
-
-    ::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: linear-gradient(180deg, #f5f7fb, #eef2ff);
-        border-radius: 999px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #a5b4fc, #6366f1);
-        border-radius: 999px;
-        border: 3px solid #f5f7fb;
-        box-shadow: inset 0 0 0 1px rgba(79, 70, 229, 0.3);
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #818cf8, #4f46e5);
+        --gfplus-scrollbar-track-start: rgba(226, 232, 240, 0.82);
+        --gfplus-scrollbar-track-end: rgba(241, 245, 249, 0.68);
+        --gfplus-scrollbar-track-border: rgba(27, 31, 36, 0.55);
+        --gfplus-scrollbar-thumb-start: #8c959f;
+        --gfplus-scrollbar-thumb-end: #8c959f;
+        --gfplus-scrollbar-hover-start: #6e7781;
+        --gfplus-scrollbar-hover-end: #6e7781;
+        --gfplus-scrollbar-border: rgba(182, 185, 187, 0.82);
+        --gfplus-scrollbar-shadow: rgba(27, 31, 36, 0.15);
     }
 
     *,*::before,*::after {
@@ -6145,7 +6135,6 @@ License: BSD 3-Clause
 
     :root {
         color-scheme: dark;
-        scrollbar-color: #334155 #0b111a;
         --font-family-base: "Inter", "Open Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         --font-family-monospace: "JetBrains Mono", "Fira Code", "Source Code Pro", monospace;
         --overall-background-color: #0d1117;
@@ -6243,6 +6232,15 @@ License: BSD 3-Clause
         --hljs-del-text: #fecaca;
         --focus-ring-color: rgba(59, 130, 246, 0.45);
         --transition-base: 160ms ease;
+        --gfplus-scrollbar-track-start: rgba(22, 27, 34, 0.72);
+        --gfplus-scrollbar-track-end: rgba(13, 17, 23, 0.5);
+        --gfplus-scrollbar-track-border: rgba(240, 246, 252, 0.55);
+        --gfplus-scrollbar-thumb-start: #484f58;
+        --gfplus-scrollbar-thumb-end: #484f58;
+        --gfplus-scrollbar-hover-start: #6e7681;
+        --gfplus-scrollbar-hover-end: #6e7681;
+        --gfplus-scrollbar-border: rgba(57, 58, 59, 0.82);
+        --gfplus-scrollbar-shadow: rgba(240, 246, 252, 0.12);
     }
 
     *,*::before,*::after {
@@ -11950,6 +11948,345 @@ License: BSD 3-Clause
     darkThemeStyle.textContent = DARK_CSS;
     appendStyle(darkThemeStyle);
 
+    const SCROLLBAR_CSS = `
+        :root {
+            scrollbar-color: var(--gfplus-scrollbar-thumb-start) var(--gfplus-scrollbar-track-start);
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(
+                180deg,
+                var(--gfplus-scrollbar-track-start),
+                var(--gfplus-scrollbar-track-end)
+            );
+            border-radius: 999px;
+            border: 1px solid var(--gfplus-scrollbar-track-border);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(
+                180deg,
+                var(--gfplus-scrollbar-thumb-start),
+                var(--gfplus-scrollbar-thumb-end)
+            );
+            border-radius: 999px;
+            border: 3px solid var(--gfplus-scrollbar-border);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(
+                180deg,
+                var(--gfplus-scrollbar-hover-start),
+                var(--gfplus-scrollbar-hover-end)
+            );
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background: var(--gfplus-scrollbar-hover-end);
+        }
+    `;
+
+    const scrollbarStyle = document.createElement('style');
+    scrollbarStyle.id = SCROLLBAR_STYLE_ID;
+    scrollbarStyle.textContent = SCROLLBAR_CSS;
+    appendStyle(scrollbarStyle);
+
+    const DENSITY_CSS = `
+    .gf-script-list-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: .75rem;
+        min-height: 30px;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 10px 0 -8px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .gf-script-list-heading > .script-list-description {
+        min-width: 0;
+        margin: 0;
+    }
+
+    .gf-script-list-heading--control-only > gf-script-density {
+        grid-column: 2;
+    }
+
+    .gf-script-list-section-header {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .gf-script-list-section-header > gf-script-density {
+        margin-left: auto;
+        transform: translateY(23px);
+    }
+
+    gf-script-density {
+        display: inline-flex;
+        justify-self: end;
+        align-items: center;
+    }
+
+    html[data-gfplus-density="comfortable"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) {
+        padding: clamp(.9rem, 2vw, 1.15rem);
+        gap: .4rem;
+    }
+
+    html[data-gfplus-density="comfortable"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        column-gap: .9rem;
+    }
+
+    html[data-gfplus-density="comfortable"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 {
+        grid-column: 1 / -1;
+        font-size: 1.13rem;
+    }
+
+    html[data-gfplus-density="comfortable"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article .description {
+        margin: .38em 0;
+        font-size: .91rem;
+    }
+
+    html[data-gfplus-density="comfortable"] .script-list .script-meta-block {
+        grid-column: 1;
+        min-width: 0;
+    }
+
+    html[data-gfplus-density="comfortable"] .script-list .gf-script-note-panel,
+    html[data-gfplus-density="comfortable"] .script-list .gf-script-extra-info {
+        grid-column: 1 / -1;
+    }
+
+    html[data-gfplus-density="comfortable"] .script-list .gf-script-card-actions {
+        grid-column: 2;
+        align-self: end;
+        margin-top: .3rem;
+        gap: .45rem;
+    }
+
+    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) {
+        padding: .68rem .8rem;
+        gap: .2rem;
+    }
+
+    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info):hover {
+        transform: none;
+    }
+
+    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 {
+        font-size: 1rem;
+        line-height: 1.28;
+        column-gap: 6px;
+        row-gap: .2em;
+    }
+
+    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        column-gap: .75rem;
+    }
+
+    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2,
+    html[data-gfplus-density="compact"] .script-list .gf-script-note-panel,
+    html[data-gfplus-density="compact"] .script-list .gf-script-extra-info {
+        grid-column: 1 / -1;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .script-meta-block {
+        grid-column: 1;
+        min-width: 0;
+        column-count: initial;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats {
+        display: grid;
+        grid-template-columns: max-content minmax(0, 1fr) max-content max-content;
+        align-items: center;
+        column-gap: .75rem;
+        row-gap: .16rem;
+        font-size: .82rem;
+        margin: .25rem 0 0;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dt,
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dd {
+        min-width: 0;
+        min-height: 1.65rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        line-height: 1.25;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dt {
+        justify-content: flex-end;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dt:nth-of-type(1),
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dd:nth-of-type(1) {
+        grid-row: 1;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dt:nth-of-type(2),
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dd:nth-of-type(2) {
+        grid-row: 2;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dt:nth-of-type(3),
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dd:nth-of-type(3) {
+        grid-row: 1;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dt:nth-of-type(4),
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dd:nth-of-type(4) {
+        grid-row: 2;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dt:nth-of-type(-n+2) {
+        grid-column: 1;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dd:nth-of-type(-n+2) {
+        grid-column: 2;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dt:nth-of-type(n+3):nth-of-type(-n+4) {
+        grid-column: 3;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .inline-script-stats dd:nth-of-type(n+3):nth-of-type(-n+4) {
+        grid-column: 4;
+    }
+
+    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 .gf-script-logo {
+        width: 23px;
+        height: 23px;
+        min-width: 23px;
+        min-height: 23px;
+        flex: 0 0 23px;
+        border-radius: 5px;
+    }
+
+    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 .gf-script-title-content {
+        max-width: calc(100% - 29px);
+    }
+
+    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article .description,
+    html[data-gfplus-density="compact"] .script-list .name-description-separator,
+    html[data-gfplus-density="compact"] .script-list dt.script-list-created-date,
+    html[data-gfplus-density="compact"] .script-list dd.script-list-created-date,
+    html[data-gfplus-density="compact"] .script-list dt.script-list-updated-date,
+    html[data-gfplus-density="compact"] .script-list dd.script-list-updated-date {
+        display: none;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .gf-script-card-actions {
+        grid-column: 2;
+        margin-top: .25rem;
+        align-self: end;
+        gap: .35rem;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > .gf-script-card-actions {
+            opacity: 0;
+            transform: translateX(6px);
+            pointer-events: none;
+            transition: opacity .16s ease, transform .16s ease;
+        }
+
+        html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info):hover > article > .gf-script-card-actions,
+        html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info):focus-within > article > .gf-script-card-actions {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+    }
+
+    html[data-gfplus-density="compact"] .script-list .gf-script-install-button,
+    html[data-gfplus-density="compact"] .script-list .gf-script-detail-button,
+    html[data-gfplus-density="compact"] .script-list .gf-script-note-button {
+        height: 1.9rem;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .gf-script-detail-button,
+    html[data-gfplus-density="compact"] .script-list .gf-script-note-button {
+        width: 1.9rem;
+        min-width: 1.9rem;
+    }
+
+    html[data-gfplus-density="compact"] .script-list .gf-script-install-button {
+        padding: 0 .72rem;
+        font-size: .84rem;
+    }
+
+    html[data-gfplus-density="detailed"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) {
+        padding: clamp(1.2rem, 2.5vw, 1.6rem);
+        gap: .55rem;
+    }
+
+    @media screen and (max-width: 600px) {
+        .gf-script-list-heading {
+            width: calc(100% - 1.5rem);
+            margin: 8px .75rem -8px;
+        }
+
+        html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) {
+            padding: .65rem .75rem;
+        }
+
+        html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article {
+            display: block;
+        }
+
+        html[data-gfplus-density="comfortable"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article {
+            display: block;
+        }
+
+        html[data-gfplus-density="comfortable"] .script-list .gf-script-card-actions {
+            margin-top: .65rem;
+        }
+
+        html[data-gfplus-density="compact"] .script-list .gf-script-card-actions {
+            margin-top: .42rem;
+        }
+
+        html[data-gfplus-density="compact"] .script-list .inline-script-stats {
+            grid-template-columns: minmax(6.8rem, 42%) minmax(0, 1fr);
+            column-gap: .65rem;
+        }
+
+        html[data-gfplus-density="compact"] .script-list .inline-script-stats dt {
+            grid-column: 1 !important;
+            grid-row: auto !important;
+        }
+
+        html[data-gfplus-density="compact"] .script-list .inline-script-stats dd {
+            grid-column: 2 !important;
+            grid-row: auto !important;
+        }
+    }
+    `;
+
+    const densityStyle = document.createElement('style');
+    densityStyle.id = DENSITY_STYLE_ID;
+    densityStyle.textContent = DENSITY_CSS;
+    appendStyle(densityStyle);
+
     const syncThemeStyles = (theme) => {
         const resolvedTheme = resolveTheme(theme);
         lightThemeStyle.media = resolvedTheme === 'dark' ? 'not all' : 'all';
@@ -14738,6 +15075,7 @@ License: BSD 3-Clause
         'en': {
             install: 'Install',
             themeToggle: 'Toggle theme',
+            density: { label: 'Density', compact: 'Compact', comfortable: 'Comfortable', detailed: 'Detailed' },
             currentScripts: 'Included scripts',
             emptyScripts: 'No scripts in this list yet.',
             removeScript: 'Remove this script',
@@ -14772,6 +15110,7 @@ License: BSD 3-Clause
         'fr': {
             install: 'Installer',
             themeToggle: 'Changer de thème',
+            density: { label: 'Densité', compact: 'Compact', comfortable: 'Confortable', detailed: 'Détaillé' },
             currentScripts: 'Scripts inclus',
             emptyScripts: 'Aucun script dans cette liste pour le moment.',
             removeScript: 'Retirer ce script',
@@ -14806,6 +15145,7 @@ License: BSD 3-Clause
         'es': {
             install: 'Instalar',
             themeToggle: 'Cambiar tema',
+            density: { label: 'Densidad', compact: 'Compacta', comfortable: 'Cómoda', detailed: 'Detallada' },
             currentScripts: 'Scripts incluidos',
             emptyScripts: 'No hay scripts en esta lista todavía.',
             removeScript: 'Quitar este script',
@@ -14840,6 +15180,7 @@ License: BSD 3-Clause
         'de': {
             install: 'Installieren',
             themeToggle: 'Design wechseln',
+            density: { label: 'Dichte', compact: 'Kompakt', comfortable: 'Komfortabel', detailed: 'Detailliert' },
             currentScripts: 'Enthaltene Skripte',
             emptyScripts: 'Noch keine Skripte in dieser Liste.',
             removeScript: 'Dieses Skript entfernen',
@@ -14874,6 +15215,7 @@ License: BSD 3-Clause
         'it': {
             install: 'Installare',
             themeToggle: 'Cambia tema',
+            density: { label: 'Densità', compact: 'Compatta', comfortable: 'Confortevole', detailed: 'Dettagliata' },
             currentScripts: 'Script inclusi',
             emptyScripts: 'Nessuno script in questa lista per ora.',
             removeScript: 'Rimuovi questo script',
@@ -14908,6 +15250,7 @@ License: BSD 3-Clause
         'pt': {
             install: 'Instalar',
             themeToggle: 'Mudar tema',
+            density: { label: 'Densidade', compact: 'Compacta', comfortable: 'Confortável', detailed: 'Detalhada' },
             currentScripts: 'Scripts incluídos',
             emptyScripts: 'Ainda não há scripts nesta lista.',
             removeScript: 'Remover este script',
@@ -14942,6 +15285,7 @@ License: BSD 3-Clause
         'ru': {
             install: 'Установить',
             themeToggle: 'Переключить тему',
+            density: { label: 'Плотность', compact: 'Компактный', comfortable: 'Комфортный', detailed: 'Подробный' },
             currentScripts: 'Включённые скрипты',
             emptyScripts: 'В этом списке пока нет скриптов.',
             removeScript: 'Удалить этот скрипт',
@@ -14976,6 +15320,7 @@ License: BSD 3-Clause
         'ja': {
             install: 'インストール',
             themeToggle: 'テーマを切り替え',
+            density: { label: '表示密度', compact: 'コンパクト', comfortable: '標準', detailed: '詳細' },
             currentScripts: '含まれるスクリプト',
             emptyScripts: 'このリストにはまだスクリプトがありません。',
             removeScript: 'このスクリプトを削除',
@@ -15010,6 +15355,7 @@ License: BSD 3-Clause
         'zh-CN': {
             install: '安装',
             themeToggle: '切换主题',
+            density: { label: '密度', compact: '紧凑', comfortable: '舒适', detailed: '详细' },
             currentScripts: '已包含的脚本',
             emptyScripts: '此列表中还没有脚本。',
             removeScript: '移除此脚本',
@@ -15044,6 +15390,7 @@ License: BSD 3-Clause
         'zh-TW': {
             install: '安裝',
             themeToggle: '切換主題',
+            density: { label: '密度', compact: '緊湊', comfortable: '舒適', detailed: '詳細' },
             currentScripts: '已包含的腳本',
             emptyScripts: '此清單中還沒有腳本。',
             removeScript: '移除此腳本',
@@ -15078,6 +15425,7 @@ License: BSD 3-Clause
         'ar': {
             install: 'تثبيت',
             themeToggle: 'تبديل المظهر',
+            density: { label: 'الكثافة', compact: 'مضغوط', comfortable: 'مريح', detailed: 'مفصل' },
             currentScripts: 'السكربتات المضمنة',
             emptyScripts: 'لا توجد سكربتات في هذه القائمة بعد.',
             removeScript: 'إزالة هذا السكربت',
@@ -15112,6 +15460,7 @@ License: BSD 3-Clause
         'hi': {
             install: 'इंस्टॉल करें',
             themeToggle: 'थीम बदलें',
+            density: { label: 'घनत्व', compact: 'संक्षिप्त', comfortable: 'आरामदायक', detailed: 'विस्तृत' },
             currentScripts: 'शामिल स्क्रिप्ट',
             emptyScripts: 'इस सूची में अभी कोई स्क्रिप्ट नहीं है.',
             removeScript: 'इस स्क्रिप्ट को हटाएँ',
@@ -15145,6 +15494,7 @@ License: BSD 3-Clause
         'bn': {
             install: 'ইনস্টল করুন',
             themeToggle: 'থিম বদলান',
+            density: { label: 'ঘনত্ব', compact: 'সংক্ষিপ্ত', comfortable: 'আরামদায়ক', detailed: 'বিস্তারিত' },
             currentScripts: 'অন্তর্ভুক্ত স্ক্রিপ্ট',
             emptyScripts: 'এই তালিকায় এখনও কোনো স্ক্রিপ্ট নেই।',
             removeScript: 'এই স্ক্রিপ্ট সরান',
@@ -15179,6 +15529,7 @@ License: BSD 3-Clause
         'ur': {
             install: 'انسٹال کریں',
             themeToggle: 'تھیم تبدیل کریں',
+            density: { label: 'کثافت', compact: 'مختصر', comfortable: 'آرام دہ', detailed: 'تفصیلی' },
             currentScripts: 'شامل اسکرپٹس',
             emptyScripts: 'اس فہرست میں ابھی کوئی اسکرپٹ نہیں ہے۔',
             removeScript: 'یہ اسکرپٹ ہٹائیں',
@@ -15213,6 +15564,7 @@ License: BSD 3-Clause
         'ml': {
             install: 'ഇൻസ്റ്റാൾ ചെയ്യുക',
             themeToggle: 'തീം മാറ്റുക',
+            density: { label: 'സാന്ദ്രത', compact: 'ഒതുക്കമുള്ള', comfortable: 'സുഖപ്രദമായ', detailed: 'വിശദമായ' },
             currentScripts: 'ഉൾപ്പെടുത്തിയ സ്ക്രിപ്റ്റുകൾ',
             emptyScripts: 'ഈ പട്ടികയിൽ ഇതുവരെ സ്ക്രിപ്റ്റുകളൊന്നുമില്ല.',
             removeScript: 'ഈ സ്ക്രിപ്റ്റ് നീക്കം ചെയ്യുക',
@@ -15247,6 +15599,7 @@ License: BSD 3-Clause
         'ko': {
             install: '설치',
             themeToggle: '테마 전환',
+            density: { label: '밀도', compact: '좁게', comfortable: '보통', detailed: '자세히' },
             currentScripts: '포함된 스크립트',
             emptyScripts: '이 목록에는 아직 스크립트가 없습니다.',
             removeScript: '이 스크립트 제거',
@@ -15281,6 +15634,7 @@ License: BSD 3-Clause
         'tr': {
             install: 'Yükle',
             themeToggle: 'Tema değiştir',
+            density: { label: 'Yoğunluk', compact: 'Kompakt', comfortable: 'Rahat', detailed: 'Ayrıntılı' },
             currentScripts: 'Dahil edilen scriptler',
             emptyScripts: 'Bu listede henüz script yok.',
             removeScript: 'Bu scripti kaldır',
@@ -15315,6 +15669,7 @@ License: BSD 3-Clause
         'pl': {
             install: 'Zainstaluj',
             themeToggle: 'Przełącz motyw',
+            density: { label: 'Gęstość', compact: 'Kompaktowy', comfortable: 'Wygodny', detailed: 'Szczegółowy' },
             currentScripts: 'Dołączone skrypty',
             emptyScripts: 'Na tej liście nie ma jeszcze skryptów.',
             removeScript: 'Usuń ten skrypt',
@@ -15349,6 +15704,7 @@ License: BSD 3-Clause
         'nl': {
             install: 'Installeren',
             themeToggle: 'Thema wisselen',
+            density: { label: 'Dichtheid', compact: 'Compact', comfortable: 'Comfortabel', detailed: 'Gedetailleerd' },
             currentScripts: 'Opgenomen scripts',
             emptyScripts: 'Er staan nog geen scripts in deze lijst.',
             removeScript: 'Dit script verwijderen',
@@ -15383,6 +15739,7 @@ License: BSD 3-Clause
         'sv': {
             install: 'Installera',
             themeToggle: 'Växla tema',
+            density: { label: 'Täthet', compact: 'Kompakt', comfortable: 'Bekväm', detailed: 'Detaljerad' },
             currentScripts: 'Inkluderade skript',
             emptyScripts: 'Det finns inga skript i den här listan ännu.',
             removeScript: 'Ta bort det här skriptet',
@@ -15417,6 +15774,7 @@ License: BSD 3-Clause
         'ro': {
             install: 'Instalează',
             themeToggle: 'Comută tema',
+            density: { label: 'Densitate', compact: 'Compact', comfortable: 'Confortabil', detailed: 'Detaliat' },
             currentScripts: 'Scripturi incluse',
             emptyScripts: 'Nu există încă scripturi în această listă.',
             removeScript: 'Elimină acest script',
@@ -15451,6 +15809,7 @@ License: BSD 3-Clause
         'vi': {
             install: 'Cài đặt',
             themeToggle: 'Chuyển giao diện',
+            density: { label: 'Mật độ', compact: 'Thu gọn', comfortable: 'Thoải mái', detailed: 'Chi tiết' },
             currentScripts: 'Script đã thêm',
             emptyScripts: 'Chưa có script nào trong danh sách này.',
             removeScript: 'Xóa script này',
@@ -15485,6 +15844,7 @@ License: BSD 3-Clause
         'id': {
             install: 'Pasang',
             themeToggle: 'Ganti tema',
+            density: { label: 'Kepadatan', compact: 'Ringkas', comfortable: 'Nyaman', detailed: 'Terperinci' },
             currentScripts: 'Skrip yang disertakan',
             emptyScripts: 'Belum ada skrip dalam daftar ini.',
             removeScript: 'Hapus skrip ini',
@@ -15519,6 +15879,7 @@ License: BSD 3-Clause
         'ms': {
             install: 'Pasang',
             themeToggle: 'Tukar tema',
+            density: { label: 'Kepadatan', compact: 'Padat', comfortable: 'Selesa', detailed: 'Terperinci' },
             currentScripts: 'Skrip disertakan',
             emptyScripts: 'Tiada skrip dalam senarai ini lagi.',
             removeScript: 'Alih keluar skrip ini',
@@ -15553,6 +15914,7 @@ License: BSD 3-Clause
         'th': {
             install: 'ติดตั้ง',
             themeToggle: 'สลับธีม',
+            density: { label: 'ความหนาแน่น', compact: 'กะทัดรัด', comfortable: 'สบาย', detailed: 'ละเอียด' },
             currentScripts: 'สคริปต์ที่รวมอยู่',
             emptyScripts: 'ยังไม่มีสคริปต์ในรายการนี้',
             removeScript: 'ลบสคริปต์นี้',
@@ -16602,6 +16964,214 @@ License: BSD 3-Clause
         editorToolbarObserver.observe(document.body, { childList: true, subtree: true });
     };
 
+    // ============================================================================
+    // Script List Density
+    // ============================================================================
+    const setInterfaceDensity = (density) => {
+        if (!DENSITY_OPTIONS.includes(density)) {
+            return;
+        }
+
+        currentDensity = density;
+        root.setAttribute('data-gfplus-density', density);
+        localStorage.setItem(DENSITY_STORAGE_KEY, density);
+
+        document.querySelectorAll('gf-script-density').forEach((host) => {
+            host.syncDensityButtons?.();
+        });
+    };
+
+    const createDensityControl = () => {
+        const i18n = getUserNavI18n(getCurrentLocale()).density;
+        const host = document.createElement('gf-script-density');
+        const shadow = host.attachShadow({ mode: 'open' });
+        shadow.innerHTML = `
+            <style>
+                :host {
+                    --density-border: color-mix(in srgb, var(--content-border-color) 78%, var(--link-color) 22%);
+                    --density-muted: color-mix(in srgb, var(--overall-text-color) 62%, transparent);
+                    --density-surface: color-mix(in srgb, var(--content-background-color) 96%, var(--overall-text-color) 4%);
+                    display: inline-flex;
+                    color: var(--overall-text-color);
+                    font-family: var(--font-family-base);
+                }
+                .density-control {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 2px;
+                    padding: 3px 4px;
+                    border: 1px solid var(--density-border);
+                    border-radius: 10px;
+                    background: linear-gradient(180deg, var(--content-background-color), var(--density-surface));
+                }
+                .label {
+                    align-self: stretch;
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 0 9px 0 7px;
+                    margin-right: 2px;
+                    border-right: 1px solid var(--density-border);
+                    color: var(--density-muted);
+                    font-size: 10.5px;
+                    font-weight: 700;
+                    letter-spacing: .025em;
+                    user-select: none;
+                }
+                button {
+                    all: unset;
+                    width: 29px;
+                    height: 27px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 7px;
+                    color: var(--density-muted);
+                    cursor: pointer;
+                    box-sizing: border-box;
+                    transition: color .16s ease, background-color .16s ease;
+                }
+                button:hover {
+                    color: var(--overall-text-color);
+                    background: color-mix(in srgb, var(--link-color) 10%, transparent);
+                }
+                button[aria-pressed="true"] {
+                    color: var(--link-color);
+                    background: color-mix(in srgb, var(--content-background-color) 86%, var(--link-color) 14%);
+                    outline: 1px solid color-mix(in srgb, var(--link-color) 30%, transparent);
+                    outline-offset: -1px;
+                    cursor: default;
+                }
+                button:focus-visible {
+                    outline: 2px solid var(--link-color);
+                    outline-offset: 1px;
+                }
+                svg {
+                    width: 15.5px;
+                    height: 15.5px;
+                    fill: none;
+                    stroke: currentColor;
+                    stroke-width: 1.7;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                }
+                @media (max-width: 430px) {
+                    .label { display: none; }
+                }
+            </style>
+            <div class="density-control" role="group" aria-label="${i18n.label}">
+                <span class="label">${i18n.label}</span>
+                <button type="button" data-density="compact" aria-label="${i18n.compact}" title="${i18n.compact}">
+                    <svg viewBox="0 0 18 18" aria-hidden="true">
+                        <line x1="3" y1="6" x2="15" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                        <line x1="3" y1="9" x2="15" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                        <line x1="3" y1="12" x2="15" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                    </svg>
+                </button>
+                <button type="button" data-density="comfortable" aria-label="${i18n.comfortable}" title="${i18n.comfortable}">
+                    <svg viewBox="0 0 18 18" aria-hidden="true">
+                        <line x1="3" y1="5" x2="15" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                        <line x1="3" y1="9" x2="15" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                        <line x1="3" y1="13" x2="15" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                    </svg>
+                </button>
+                <button type="button" data-density="detailed" aria-label="${i18n.detailed}" title="${i18n.detailed}">
+                    <svg viewBox="0 0 18 18" aria-hidden="true">
+                        <line x1="3" y1="4" x2="15" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                        <line x1="3" y1="7" x2="15" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                        <line x1="3" y1="10" x2="15" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                        <line x1="3" y1="13" x2="15" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
+                    </svg>
+                </button>
+            </div>
+        `;
+
+        const buttons = Array.from(shadow.querySelectorAll('button[data-density]'));
+        const syncButtons = () => {
+            buttons.forEach((button) => {
+                const isActive = button.dataset.density === currentDensity;
+                button.setAttribute('aria-pressed', String(isActive));
+                button.tabIndex = isActive ? 0 : -1;
+            });
+        };
+
+        buttons.forEach((button) => {
+            button.addEventListener('click', () => setInterfaceDensity(button.dataset.density));
+            button.addEventListener('keydown', (event) => {
+                if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+                    return;
+                }
+
+                event.preventDefault();
+                const currentIndex = DENSITY_OPTIONS.indexOf(currentDensity);
+                const nextIndex = event.key === 'Home'
+                    ? 0
+                    : event.key === 'End'
+                        ? DENSITY_OPTIONS.length - 1
+                        : (currentIndex + (event.key === 'ArrowRight' ? 1 : -1) + DENSITY_OPTIONS.length) % DENSITY_OPTIONS.length;
+                const nextDensity = DENSITY_OPTIONS[nextIndex];
+                setInterfaceDensity(nextDensity);
+                buttons[nextIndex]?.focus();
+            });
+        });
+
+        host.syncDensityButtons = syncButtons;
+        syncButtons();
+        return host;
+    };
+
+    const applyScriptDensityControls = () => {
+        document.querySelectorAll('.script-list').forEach((scriptList) => {
+            if (
+                scriptList.getAttribute('data-gfplus-density-control') === 'done'
+                || scriptList.id === 'user-library-script-list'
+                || !scriptList.querySelector(':scope > li[data-script-id]')
+            ) {
+                return;
+            }
+
+            const precedingDescription = scriptList.previousElementSibling?.matches('p.script-list-description')
+                ? scriptList.previousElementSibling
+                : null;
+            const densityControl = createDensityControl();
+            const profileScriptsHeader = scriptList.id === 'user-script-list'
+                ? scriptList.closest('#user-script-list-section')?.querySelector(':scope > header')
+                : null;
+
+            if (profileScriptsHeader) {
+                profileScriptsHeader.classList.add('gf-script-list-section-header');
+                profileScriptsHeader.appendChild(densityControl);
+            } else {
+                const heading = document.createElement('div');
+                heading.className = `gf-script-list-heading${precedingDescription ? '' : ' gf-script-list-heading--control-only'}`;
+
+                if (precedingDescription) {
+                    precedingDescription.insertAdjacentElement('beforebegin', heading);
+                    heading.append(precedingDescription, densityControl);
+                } else {
+                    scriptList.insertAdjacentElement('beforebegin', heading);
+                    heading.appendChild(densityControl);
+                }
+            }
+
+            scriptList.setAttribute('data-gfplus-density-control', 'done');
+        });
+    };
+
+    let densityControlObserver = null;
+    const initScriptDensityControls = () => {
+        applyScriptDensityControls();
+
+        if (densityControlObserver || !document.body) {
+            return;
+        }
+
+        densityControlObserver = new MutationObserver(applyScriptDensityControls);
+        densityControlObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    };
+
     let fastMenuObserver = null;
     let fastMenuFrame = 0;
 
@@ -16671,6 +17241,7 @@ License: BSD 3-Clause
         initLightboxScrollLock();
         initStandaloneImageLightboxes();
         initPreviewableEditorToolbars();
+        initScriptDensityControls();
         initScriptLogos();
         initScriptCardActions();
         initUserNavigation();
