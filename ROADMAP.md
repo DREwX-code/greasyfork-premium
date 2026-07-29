@@ -10,17 +10,11 @@ This roadmap highlights planned improvements and acknowledges ideas contributed 
 
 These ideas have been suggested by the community and may be implemented in future releases.
 
-### Suggested by [ccamel](https://github.com/ccamel) (GitHub Discussions)
-
-- [ ] Interface density modes (Compact / Comfortable / Detailed)
-  - Expandable script details are already available, but dedicated density modes are not yet implemented.
-
 ### Suggested by Türk-Atilla (GreasyFork Feedback)
 
 - [ ] Optional interface element hiding
   - Hide selected interface sections such as the “How to install” block.
 - [ ] Initial loading performance review
-- [ ] Smooth scrollbar styling
 
 ### Suggested by MUSTAFA HAKAN (GreasyFork Feedback)
 
@@ -36,6 +30,7 @@ The following features and fixes were implemented thanks to community feedback.
 ### Suggested by [ccamel](https://github.com/ccamel) (GitHub Discussions)
 
 - [x] Added personal notes attached to scripts
+- [x] Added Compact, Comfortable, and Detailed interface density modes
 
 ### Reported by Keviin560 (GreasyFork Feedback)
 
@@ -52,6 +47,10 @@ The following features and fixes were implemented thanks to community feedback.
 - [x] Reduced original layout flash before script styling is applied
 - [x] Added one-click favorites button on script cards
 - [x] Fixed favorites state persistence on iPhone Safari
+
+### Suggested by Türk-Atilla (GreasyFork Feedback)
+
+- [x] Added subtle, theme-aware scrollbar styling
 
 ---
 
