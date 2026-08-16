@@ -1,4 +1,4 @@
-# Privacy Policy for GreasyFork Premium
+# Privacy Policy for GreasyFork Premium Chrome Extension
 
 **Effective date:** August 16, 2026
 
@@ -74,3 +74,8 @@ If you have any questions about this Privacy Policy, you can:
 * Open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)** if you believe you've found a privacy-related problem.
 
 Do not include passwords, authentication cookies, private notes, or other sensitive information in a public issue.
+
+---
+
+> [!NOTE]
+> **Userscript:** See the [Userscript Privacy Policy](PRIVACY.md).
