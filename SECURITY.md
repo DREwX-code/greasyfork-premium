@@ -4,7 +4,7 @@
 
 Security fixes are released in the latest available version of GreasyFork Premium.
 
-Users are encouraged to keep the script up to date to receive security improvements and bug fixes.
+Users are encouraged to keep GreasyFork Premium up to date to receive security improvements and bug fixes.
 
 ---
 
@@ -25,6 +25,10 @@ If the vulnerability is confirmed, a fix will be prepared before public disclosu
 Please include as much information as possible:
 
 - Description of the vulnerability
+- Affected installation type: **Userscript** or **Chrome Extension**
+- GreasyFork Premium version
+- Browser and version
+- Userscript manager and version, if applicable
 - Steps to reproduce
 - Potential impact
 - Proof of concept (if applicable)
@@ -44,4 +48,7 @@ When appropriate, confirmed reporters will be credited in the release notes or s
 
 Security and privacy are closely related, but they are not the same.
 
-For information about data collection, local storage, and third-party resources, see the **[Privacy Policy](./docs/PRIVACY.md)**.
+For information about data processing, storage, and third-party resources, see:
+
+- **[Userscript Privacy Policy](./docs/PRIVACY.md)**
+- **[Chrome Extension Privacy Policy](./docs/PRIVACY_EXTENSION.md)**
