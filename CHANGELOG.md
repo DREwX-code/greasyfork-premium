@@ -46,7 +46,7 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 ### Added
 
-* SleazyFork support
+* Sleazy Fork support
 * Script details directly inside script cards
 * Modern editor toolbar for comments and discussions
 * Lightbox support for standalone content images
@@ -164,7 +164,7 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 ### Added
 
 * Initial release of GreasyFork Premium
-* Modernized GreasyFork interface
+* Modernized Greasy Fork interface
 * Theme support
 * Productivity-focused enhancements
 * User experience improvements
