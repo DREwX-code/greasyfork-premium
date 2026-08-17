@@ -2,7 +2,7 @@
 
 This roadmap highlights planned improvements and acknowledges ideas contributed by the community.
 
-**Last updated:** July 2026
+**Last updated:** August 2026
 
 ---
 
@@ -10,13 +10,13 @@ This roadmap highlights planned improvements and acknowledges ideas contributed 
 
 These ideas have been suggested by the community and may be implemented in future releases.
 
-### Suggested by Türk-Atilla (GreasyFork Feedback)
+### Suggested by Türk-Atilla (Greasy Fork Feedback)
 
 - [ ] Optional interface element hiding
   - Hide selected interface sections such as the “How to install” block.
 - [ ] Initial loading performance review
 
-### Suggested by MUSTAFA HAKAN (GreasyFork Feedback)
+### Suggested by MUSTAFA HAKAN (Greasy Fork Feedback)
 
 - [ ] Additional theme ideas / visual theme variants
   - Chalkboard-style theme inspiration was suggested as a possible visual direction.
@@ -32,23 +32,23 @@ The following features and fixes were implemented thanks to community feedback.
 - [x] Added personal notes attached to scripts
 - [x] Added Compact, Comfortable, and Detailed interface density modes
 
-### Reported by Keviin560 (GreasyFork Feedback)
+### Reported by Keviin560 (Greasy Fork Feedback)
 
 - [x] Improved favorites reliability when saving scripts from script pages
 - [x] Added automatic light/dark theme switching based on the operating system theme
 
-### Reported by Phil 🥹👍 (GreasyFork Feedback)
+### Reported by Phil 🥹👍 (Greasy Fork Feedback)
 
 - [x] Prevented profile website links from overflowing outside their container
 
-### Reported by 离火煮青龙 (GreasyFork Feedback)
+### Reported by 离火煮青龙 (Greasy Fork Feedback)
 
 - [x] Improved mobile layout spacing
 - [x] Reduced original layout flash before script styling is applied
 - [x] Added one-click favorites button on script cards
 - [x] Fixed favorites state persistence on iPhone Safari
 
-### Suggested by Türk-Atilla (GreasyFork Feedback)
+### Suggested by Türk-Atilla (Greasy Fork Feedback)
 
 - [x] Added subtle, theme-aware scrollbar styling
 
@@ -60,5 +60,5 @@ Have an idea or found a bug? Community feedback helps shape the future of Greasy
 
 - 💬 [GitHub Discussions](../../discussions) - Share ideas and feature requests
 - 🐞 [GitHub Issues](../../issues/new?template=bug_report.yml) - Report bugs
-- 💡 [GreasyFork Feedback](https://greasyfork.org/scripts/562938-greasyfork-premium/feedback) - Leave general feedback
+- 💡 [Greasy Fork Feedback](https://greasyfork.org/scripts/562938-greasyfork-premium/feedback) - Leave general feedback
 - 🔧 [CONTRIBUTING.md](CONTRIBUTING.md) - Contribute code and improvements
