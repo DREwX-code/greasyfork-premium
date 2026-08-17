@@ -4,7 +4,7 @@
 
 ### What is GreasyFork Premium?
 
-GreasyFork Premium is a userscript that enhances GreasyFork and SleazyFork with a modern interface, improved navigation, productivity features, and quality-of-life improvements.
+GreasyFork Premium is a userscript that enhances Greasy Fork and Sleazy Fork with a modern interface, improved navigation, productivity features, and quality-of-life improvements.
 
 ### Is GreasyFork Premium free?
 
@@ -16,7 +16,7 @@ Yes. SleazyFork support was added in v1.2.0.
 
 ### Which websites are supported?
 
-GreasyFork Premium is designed for GreasyFork and SleazyFork.
+GreasyFork Premium is designed for Greasy Fork and Sleazy Fork.
 
 Support for additional websites is not planned at this time.
 
@@ -24,7 +24,7 @@ Support for additional websites is not planned at this time.
 
 No. GreasyFork Premium only improves the website interface and user experience.
 
-### Why do I briefly see the original GreasyFork theme when a page loads?
+### Why do I briefly see the original Greasy Fork theme when a page loads?
 
 This is known as a Flash of Unstyled Content (FOUC). It may occasionally occur before the userscript finishes loading.
 
