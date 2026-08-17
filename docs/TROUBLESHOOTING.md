@@ -28,11 +28,11 @@ Fixed in v1.1.2.
 
 1. Update to the latest version of GreasyFork Premium.
 2. Reinstall the script if necessary.
-3. Refresh GreasyFork.
+3. Refresh Greasy Fork.
 
 ---
 
-## The original GreasyFork theme briefly appears before the Premium theme loads
+## The original Greasy Fork theme briefly appears before the Premium theme loads
 
 ### Status
 
@@ -54,7 +54,7 @@ While GreasyFork Premium minimizes this behavior, it cannot be completely elimin
 
 - Browser caching
 - Delayed Chart.js initialization
-- Temporary GreasyFork page issues
+- Temporary Greasy Fork page issues
 
 ### Solution
 
