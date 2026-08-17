@@ -2,7 +2,7 @@
 
 <h1>GreasyFork Premium</h1>
 
-<p><strong>Transform GreasyFork &amp; SleazyFork into a modern, productivity-focused experience.</strong></p>
+<p><strong>Transform Greasy Fork &amp; Sleazy Fork into a modern, productivity-focused experience.</strong></p>
 
 <a href="https://greasyfork.org/scripts/562938-greasyfork-premium">
     <img height="32" alt="GreasyFork Premium" src="https://img.shields.io/badge/GreasyFork-Premium-960000?style=for-the-badge&logo=greasyfork&logoColor=white"></a>
@@ -26,13 +26,13 @@
 <br>
 
 
-**[GreasyFork Premium](https://greasyfork.org/scripts/562938-greasyfork-premium)** modernizes GreasyFork and SleazyFork with a redesigned interface, faster navigation, powerful editing tools, and productivity-focused improvements, while preserving the core functionality of both websites.
+**[GreasyFork Premium](https://greasyfork.org/scripts/562938-greasyfork-premium)** modernizes Greasy Fork and Sleazy Fork with a redesigned interface, faster navigation, powerful editing tools, and productivity-focused improvements, while preserving the core functionality of both websites.
 <p align="center">
   <img src="https://github.com/DREwX-code/greasyfork-premium/blob/main/assets/media/script-preview.png" 
        alt="GreasyFork Premium Preview"
        width="100%">
 </p>
-Designed to improve your daily workflow while keeping GreasyFork familiar and lightweight.
+Designed to improve your daily workflow while keeping Greasy Fork familiar and lightweight.
 
 ---
 
@@ -86,7 +86,7 @@ Designed to improve your daily workflow while keeping GreasyFork familiar and li
 - Cleaner layout with improved visual consistency
 - Light, System, and Dark theme modes
 - Automatic light/dark theme switching based on your operating system
-- Support for both GreasyFork and SleazyFork
+- Support for both Greasy Fork and Sleazy Fork
 
 ### 🧭 Navigation and Quick Actions
 
@@ -137,8 +137,8 @@ Designed to improve your daily workflow while keeping GreasyFork familiar and li
 [![View Source](https://img.shields.io/badge/View-Source%20Code-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/DREwX-code/greasyfork-premium/blob/main/src/greasyfork-premium.user.js)
 
 1. Install a userscript manager such as **Tampermonkey** or **Violentmonkey**.
-2. Click **Install GreasyFork Premium** above or install it from [GreasyFork](https://greasyfork.org/scripts/562938-greasyfork-premium).
-3. Open **GreasyFork** or **SleazyFork**.
+2. Click **Install GreasyFork Premium** above or install it from [Greasy Fork](https://greasyfork.org/scripts/562938-greasyfork-premium).
+3. Open **Greasy Fork** or **Sleazy Fork**.
 4. The redesigned interface is applied automatically.
 
 For detailed installation instructions, see the **[Installation Guide](./docs/INSTALLATION.md)**.
@@ -153,7 +153,7 @@ Suggestions, feature requests, bug reports, and contributions are always welcome
 |---------|----------|
 | [GitHub Discussions](https://github.com/DREwX-code/greasyfork-premium/discussions) | Ideas, feature requests, and questions |
 | [GitHub Issues](https://github.com/DREwX-code/greasyfork-premium/issues) | Bug reports and technical issues |
-| [GreasyFork Feedback](https://greasyfork.org/scripts/562938-greasyfork-premium/feedback) | General feedback and comments |
+| [Greasy Fork Feedback](https://greasyfork.org/scripts/562938-greasyfork-premium/feedback) | General feedback and comments |
 | [Contributing Guide](./CONTRIBUTING.md) | Contribute code, documentation, or translations |
 
 > Before opening a bug report, please check the **[Troubleshooting Guide](./docs/TROUBLESHOOTING.md)** and include clear steps to reproduce the issue.
