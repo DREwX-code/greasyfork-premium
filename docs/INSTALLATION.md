@@ -88,7 +88,7 @@ Open the **[GreasyFork Premium page](https://greasyfork.org/scripts/562938-greas
 
 Click **Install this script**, then confirm the installation in your userscript manager.
 
-## Step 3 — Refresh GreasyFork
+## Step 3 — Refresh Greasy Fork
 
 After installation, open or refresh:
 
