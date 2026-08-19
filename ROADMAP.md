@@ -15,6 +15,8 @@ These ideas have been suggested by the community and may be implemented in futur
 - [ ] Optional interface element hiding
   - Hide selected interface sections such as the “How to install” block.
 - [ ] Initial loading performance review
+- [ ] Additional dark theme option
+  - Explore a deeper, more neutral dark palette inspired by `#121212`, while keeping it visually balanced with the rest of GreasyFork Premium.
 
 ### Suggested by MUSTAFA HAKAN (Greasy Fork Feedback)
 
