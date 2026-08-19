@@ -9,12 +9,23 @@ body:
       value: |
         Thanks for taking the time to report a bug! Please fill out the form below.
 
+  - type: dropdown
+    id: version_type
+    attributes:
+      label: GreasyFork Premium Version
+      description: Which version of GreasyFork Premium are you using?
+      options:
+        - Chrome Extension
+        - Userscript
+    validations:
+      required: true
+
   - type: input
     id: version
     attributes:
-      label: GreasyFork Premium Version
+      label: Version Number
       description: What version are you using?
-      placeholder: e.g., 1.2.0
+      placeholder: e.g., 1.2.2
     validations:
       required: true
 
@@ -37,8 +48,9 @@ body:
     id: manager
     attributes:
       label: Userscript Manager
-      description: Which userscript manager are you using?
+      description: If you are using the userscript, which userscript manager are you using?
       options:
+        - Not applicable (Chrome Extension)
         - Tampermonkey
         - Violentmonkey
         - Greasemonkey
@@ -64,6 +76,8 @@ body:
         1. Go to '...'
         2. Click on '...'
         3. See the issue
+    validations:
+      required: true
 
   - type: textarea
     id: expected
