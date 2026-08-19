@@ -4,7 +4,7 @@
 
 ### What is GreasyFork Premium?
 
-GreasyFork Premium is a userscript that enhances Greasy Fork and Sleazy Fork with a modern interface, improved navigation, productivity features, and quality-of-life improvements.
+GreasyFork Premium is available as both a Chrome extension and a userscript. It enhances Greasy Fork and Sleazy Fork with a modern interface, improved navigation, productivity features, and quality-of-life improvements.
 
 ### Is GreasyFork Premium free?
 
@@ -17,30 +17,38 @@ Yes. SleazyFork support was added in v1.2.0.
 ### Which websites are supported?
 
 GreasyFork Premium is designed for Greasy Fork and Sleazy Fork.
-
 Support for additional websites is not planned at this time.
 
 ### Does it modify installed scripts?
 
 No. GreasyFork Premium only improves the website interface and user experience.
 
+### Should I use the Chrome extension or the userscript?
+
+The Chrome extension is recommended for supported Chromium-based browsers because it integrates more directly with the browser and completely eliminates the original interface flash during page loading.  
+The userscript remains available for users who prefer a userscript manager or use browsers where the extension is not available.
+
+See the **[Installation Guide](INSTALLATION.md)** for both installation methods.
+
 ### Why do I briefly see the original Greasy Fork theme when a page loads?
 
-This is known as a Flash of Unstyled Content (FOUC). It may occasionally occur before the userscript finishes loading.
+This is known as a Flash of Unstyled Content (FOUC).  
+The Chrome extension completely eliminates this issue by applying the required styles earlier in the page loading process.
 
-GreasyFork Premium minimizes this behavior, but it cannot be completely eliminated due to how userscript managers inject scripts into web pages.
+The userscript version minimizes FOUC as much as possible, but it cannot completely eliminate it because of how userscript managers inject scripts into web pages.
 
-For more information, see the **[Troubleshooting Guide](TROUBLESHOOTING.md)**.
+For more information, see the **[Troubleshooting Guide](TROUBLESHOOTING.md#the-original-greasy-fork-theme-briefly-appears-before-the-premium-theme-loads)**.
 
 ## Compatibility
 
 ### Which browsers are supported?
 
-GreasyFork Premium is designed to work on modern browsers including Chrome, Firefox, Edge, Safari, Brave, and Opera.
+- The Chrome extension is designed for Chromium-based browsers such as Chrome, Edge, Brave, and Opera.
+- The userscript version supports modern browsers including Chrome, Firefox, Edge, Safari, Brave, and Opera when used with a compatible userscript manager.
 
 ### Which userscript managers are supported?
 
-The script works best with:
+The userscript works best with:
 
 * Tampermonkey
 * Violentmonkey
@@ -54,11 +62,12 @@ Favorites can be added directly from script cards using the star button.
 
 ### Can I switch between light and dark themes?
 
-Yes. GreasyFork Premium includes support for both light and dark themes.
+Yes. GreasyFork Premium includes light, dark, and automatic system theme modes.
 
 ### Does it support mobile devices?
 
-Yes. Mobile support has been continuously improved through recent updates.
+The userscript includes mobile interface improvements, although compatibility may vary depending on the browser and userscript manager.  
+The Chrome extension is intended for desktop Chromium-based browsers.
 
 ## Support
 
@@ -76,4 +85,7 @@ Absolutely! Share your ideas through **[GitHub Discussions](../../../discussions
 
 No. GreasyFork Premium does not collect, transmit, sell, or share personal data.
 
-For more information, see the **[Privacy Policy](PRIVACY.md)**.
+For more information, see:
+
+* **[Chrome Extension Privacy Policy](PRIVACY-EXTENSION.md)**
+* **[Userscript Privacy Policy](PRIVACY-USERSCRIPT.md)**
