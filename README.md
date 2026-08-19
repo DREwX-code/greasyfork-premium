@@ -13,6 +13,11 @@
 
 <br>
 
+<a href="https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi">
+    <img height="32" alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome%20Web%20Store-Get%20extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"></a>
+
+<br>
+
 <a href="https://github.com/DREwX-code/greasyfork-premium/stargazers">
     <img height="32" alt="GitHub Stars" src="https://img.shields.io/github/stars/DREwX-code/greasyfork-premium?style=for-the-badge&logo=github&color=FFD700"></a>
 <a href="https://github.com/DREwX-code/greasyfork-premium/commits/main">
@@ -56,7 +61,8 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 | [Installation Guide](./docs/INSTALLATION.md) | Install GreasyFork Premium on supported browsers |
 | [FAQ](./docs/FAQ.md) | Answers to common questions |
 | [Troubleshooting](./docs/TROUBLESHOOTING.md) | Fix common issues and known limitations |
-| [Privacy Policy](./docs/PRIVACY.md) | Learn how data and local settings are handled |
+| [Extension Privacy Policy](./docs/PRIVACY-EXTENSION.md) | Learn how the Chrome extension handles data and local settings |
+| [Userscript Privacy Policy](./docs/PRIVACY-USERSCRIPT.md) | Learn how the userscript handles data and local settings |
 | [Changelog](./CHANGELOG.md) | View version history and release notes |
 | [Roadmap](./ROADMAP.md) | See planned improvements and community suggestions |
 | [Contributing](./CONTRIBUTING.md) | Learn how to report bugs, suggest ideas, or contribute |
@@ -133,11 +139,21 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 
 ## 📥 Installation
 
-[![Install](https://img.shields.io/badge/Install-GreasyFork%20Premium-2f7d32?style=for-the-badge&logo=greasyfork&logoColor=white)](https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js)
+### Chrome Extension
+
+[![Get it on Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Get%20Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)
+
+1. Install **GreasyFork Premium** from the [Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi).
+2. Open **Greasy Fork** or **Sleazy Fork**.
+3. The redesigned interface is applied automatically.
+
+### Userscript
+
+[![Install Userscript](https://img.shields.io/badge/Install-Userscript-960000?style=for-the-badge&logo=greasyfork&logoColor=white)](https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js)
 [![View Source](https://img.shields.io/badge/View-Source%20Code-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/DREwX-code/greasyfork-premium/blob/main/src/greasyfork-premium.user.js)
 
 1. Install a userscript manager such as **Tampermonkey** or **Violentmonkey**.
-2. Click **Install GreasyFork Premium** above or install it from [Greasy Fork](https://greasyfork.org/scripts/562938-greasyfork-premium).
+2. Click **Install Userscript** above or install it from [Greasy Fork](https://greasyfork.org/scripts/562938-greasyfork-premium).
 3. Open **Greasy Fork** or **Sleazy Fork**.
 4. The redesigned interface is applied automatically.
 
@@ -162,11 +178,16 @@ Suggestions, feature requests, bug reports, and contributions are always welcome
 
 ## 💡 Community Suggestions
 
-Community suggestions currently under consideration:
+GreasyFork Premium continues to evolve based on community feedback.
 
+Several community-requested features have already been implemented, including:
 - Interface density modes (compact / comfortable / detailed)
+- Personal notes for scripts
+- Automatic system theme support
+- Profile website link overflow fixes
+- Various interface and usability improvements
 
-Recently completed community suggestions include personal notes attached to scripts, system theme mode, and profile website link overflow fixes.
+Have an idea or suggestion? Feel free to share it on **[GitHub Discussions](https://github.com/DREwX-code/greasyfork-premium/discussions)**.
 
 See the full **[Project Roadmap](./ROADMAP.md)**.
 
