@@ -36,15 +36,23 @@ Fixed in v1.1.2.
 
 ### Status
 
-Reduced in v1.0.1.
+Reduced in the userscript version and fully resolved in the Chrome extension.
 
 ### Explanation
 
 This effect is known as a Flash of Unstyled Content (FOUC). It can occasionally occur before the userscript finishes loading.
 
+Because userscript managers inject scripts after the page has already started loading, the original Greasy Fork interface may briefly appear before GreasyFork Premium is applied.
+
+### Solution
+
+The **Chrome extension completely eliminates this issue** by applying the required styles earlier in the page loading process.
+
+You can install it from the **[Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)**.
+
 ### Note
 
-While GreasyFork Premium minimizes this behavior, it cannot be completely eliminated due to how userscript managers inject scripts into web pages.
+The userscript version still minimizes FOUC as much as possible, but it cannot completely eliminate it because of how userscript managers inject scripts into web pages.
 
 ---
 
