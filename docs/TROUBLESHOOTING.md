@@ -7,7 +7,7 @@ This guide covers the most common issues and their solutions.
 ### Possible Causes
 
 - An outdated version of GreasyFork Premium is installed.
-- The userscript manager failed to save local data.
+- Local browser storage could not be saved correctly.
 - Browser storage has been cleared.
 
 ### Solution
@@ -27,7 +27,7 @@ Fixed in v1.1.2.
 ### Solution
 
 1. Update to the latest version of GreasyFork Premium.
-2. Reinstall the script if necessary.
+2. Reinstall the userscript if necessary.
 3. Refresh Greasy Fork.
 
 ---
@@ -46,8 +46,7 @@ Because userscript managers inject scripts after the page has already started lo
 
 ### Solution
 
-The **Chrome extension completely eliminates this issue** by applying the required styles earlier in the page loading process.
-
+The **Chrome extension completely eliminates this issue** by applying the required styles earlier in the page loading process.  
 You can install it from the **[Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)**.
 
 ### Note
@@ -90,8 +89,9 @@ The userscript version still minimizes FOUC as much as possible, but it cannot c
 ### Solution
 
 1. Refresh the page.
-2. Disable conflicting userscripts.
-3. Verify that GreasyFork Premium is enabled.
+2. Verify that GreasyFork Premium is enabled.
+3. If you are using the userscript, disable potentially conflicting userscripts.
+4. If you are using the Chrome extension, check for conflicting extensions that modify Greasy Fork or Sleazy Fork.
 
 ---
 
@@ -99,9 +99,10 @@ The userscript version still minimizes FOUC as much as possible, but it cannot c
 
 If your issue is not listed here, please open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)** and include:
 
-- Browser version
-- Userscript manager
 - GreasyFork Premium version
+- Installation type (Chrome extension or userscript)
+- Browser and browser version
+- Userscript manager, if applicable
 - Steps to reproduce the issue
 - Screenshots (if available)
 
