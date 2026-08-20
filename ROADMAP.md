@@ -17,6 +17,7 @@ These ideas have been suggested by the community and may be implemented in futur
 - [ ] Initial loading performance review
 - [ ] Additional dark theme option
   - Explore a deeper, more neutral dark palette inspired by `#121212`, while keeping it visually balanced with the rest of GreasyFork Premium.
+- [ ] Add a shortcut to the “Favorites” tab in `nav-user-info`.
 
 ### Suggested by MUSTAFA HAKAN (Greasy Fork Feedback)
 
