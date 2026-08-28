@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         GreasyFork Premium - Chalkboard Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.0.0
+// @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
+// @version      1.0.2
 // @description  Chalkboard light and dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
+// @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
 // ==/UserScript==
 
@@ -222,14 +224,14 @@ html[data-theme="dark"][data-theme-variant="chalkboard"] body {
 
 html[data-theme="light"][data-theme-variant="chalkboard"] #main-header {
     background-color: #2c554c;
-    background-image: linear-gradient(180deg, #38665c, #23473f);
+    background-image: linear-gradient(180deg, #22473f, #23473f);
     border-bottom: 1px solid #203f38;
     box-shadow: 0 9px 26px rgba(35, 57, 50, .24);
 }
 
 html[data-theme="dark"][data-theme-variant="chalkboard"] #main-header {
-    background-color: #172822;
-    background-image: linear-gradient(180deg, #213b34, #13231e);
+    background-color: #142621;
+    background-image: linear-gradient(180deg, #13241e, #13231e);
     border-bottom: 1px solid #34453e;
     box-shadow: 0 9px 26px rgba(0, 0, 0, .46);
 }
@@ -238,7 +240,8 @@ html[data-theme-variant="chalkboard"] #main-header .subtitle {
     text-shadow: -1px -1px 0 rgba(14, 38, 30, .9), 1px -1px 0 rgba(14, 38, 30, .9), -1px 1px 0 rgba(14, 38, 30, .9), 1px 1px 0 rgba(14, 38, 30, .9);
 }
 
-html[data-theme="light"][data-theme-variant="chalkboard"] nav nav {
+html[data-theme="light"][data-theme-variant="chalkboard"] nav nav,
+html[data-theme="light"][data-theme-variant="chalkboard"] nav[data-gfplus-favorites-shortcut="ready"] {
     background: #2c554c;
 }
 
@@ -252,8 +255,51 @@ html[data-theme="light"][data-theme-variant="chalkboard"] #site-nav nav nav a:fo
     color: #ffffff;
 }
 
-html[data-theme="dark"][data-theme-variant="chalkboard"] nav nav {
-    background: #172822;
+html[data-theme="dark"][data-theme-variant="chalkboard"] nav nav,
+html[data-theme="dark"][data-theme-variant="chalkboard"] nav[data-gfplus-favorites-shortcut="ready"] {
+    background: #142621;
+}
+
+html[data-theme="light"][data-theme-variant="chalkboard"] #mobile-nav,
+html[data-theme="light"][data-theme-variant="chalkboard"] #mobile-nav nav,
+html[data-theme="light"][data-theme-variant="chalkboard"] #mobile-nav-menu {
+    background-color: #2c554c;
+    background-image: linear-gradient(180deg, #22473f, #23473f);
+    border-color: #486b61;
+    color: #ffffff;
+}
+
+html[data-theme="dark"][data-theme-variant="chalkboard"] #mobile-nav,
+html[data-theme="dark"][data-theme-variant="chalkboard"] #mobile-nav nav,
+html[data-theme="dark"][data-theme-variant="chalkboard"] #mobile-nav-menu {
+    background-color: #142621;
+    background-image: linear-gradient(180deg, #13241e, #13231e);
+    border-color: #34453e;
+    color: #eef7f2;
+}
+
+html[data-theme-variant="chalkboard"] #mobile-nav-menu a {
+    color: inherit;
+}
+
+html[data-theme="light"][data-theme-variant="chalkboard"] #mobile-nav-menu select {
+    background-color: #fffefa;
+    border-color: #c5d1c9;
+    color: #28332f;
+}
+
+html[data-theme="dark"][data-theme-variant="chalkboard"] #mobile-nav-menu select {
+    background-color: #18211e;
+    border-color: #3b4b44;
+    color: #e8e9e5;
+}
+
+html[data-theme-variant="chalkboard"] .pagination [aria-current="page"],
+html[data-theme-variant="chalkboard"] .pagy.series-nav [aria-current="page"] {
+    background-color: var(--expander-background-color);
+    border-color: var(--link-color);
+    color: var(--link-color);
+    box-shadow: inset 0 0 0 1px var(--link-color);
 }
 
 html[data-theme="dark"][data-theme-variant="chalkboard"] #site-nav nav nav a {
@@ -485,6 +531,122 @@ html[data-theme-variant="chalkboard"] textarea {
     background-color: var(--chalk-field);
     border-color: var(--chalk-field-border);
     color: var(--overall-text-color);
+}
+
+html[data-theme-variant="chalkboard"] .form-control textarea[name="script_version[code]"],
+html[data-theme-variant="chalkboard"] textarea[name="script_version[changelog]"],
+html[data-theme-variant="chalkboard"] textarea.comment-entry,
+html[data-theme-variant="chalkboard"] .form-control textarea[name*="[additional_info]"][name$="[attribute_value]"],
+html[data-theme-variant="chalkboard"] .previewable textarea {
+    background-color: var(--chalk-surface-alt);
+    border-color: var(--chalk-field-border);
+    color: var(--overall-text-color);
+    box-shadow: inset 0 1px 2px rgba(21, 35, 29, .12);
+}
+
+html[data-theme="dark"][data-theme-variant="chalkboard"] .form-control textarea[name="script_version[code]"],
+html[data-theme="dark"][data-theme-variant="chalkboard"] textarea[name="script_version[changelog]"],
+html[data-theme="dark"][data-theme-variant="chalkboard"] textarea.comment-entry,
+html[data-theme="dark"][data-theme-variant="chalkboard"] .form-control textarea[name*="[additional_info]"][name$="[attribute_value]"],
+html[data-theme="dark"][data-theme-variant="chalkboard"] .previewable textarea {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .38);
+}
+
+html[data-theme-variant="chalkboard"] input[disabled],
+html[data-theme-variant="chalkboard"] select[disabled],
+html[data-theme-variant="chalkboard"] textarea[disabled],
+html[data-theme-variant="chalkboard"] input[readonly],
+html[data-theme-variant="chalkboard"] textarea[readonly] {
+    background-color: var(--inactive-item-background-color) !important;
+    border-color: var(--chalk-field-border) !important;
+    color: var(--texty-link-visited-color) !important;
+}
+
+html[data-theme="light"][data-theme-variant="chalkboard"] .field_with_errors textarea,
+html[data-theme="light"][data-theme-variant="chalkboard"] .field_with_errors input {
+    background-color: #faeeee !important;
+    border-color: #b85d5d !important;
+}
+
+html[data-theme="dark"][data-theme-variant="chalkboard"] .field_with_errors textarea,
+html[data-theme="dark"][data-theme-variant="chalkboard"] .field_with_errors input {
+    background-color: #2b1718 !important;
+    border-color: #9b5558 !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm {
+    background-color: var(--chalk-surface-alt) !important;
+    border-color: var(--chalk-field-border) !important;
+    color: var(--overall-text-color) !important;
+    box-shadow: inset 0 1px 2px rgba(21, 35, 29, .12);
+}
+
+html[data-theme="dark"][data-theme-variant="chalkboard"] #ace-editor.ace-tm {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .38);
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_scroller,
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_content {
+    background-color: var(--chalk-surface-alt) !important;
+}
+
+html[data-theme="light"][data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_gutter {
+    background: #e8ece7 !important;
+    border-right-color: #c9d2cb;
+    color: #718078 !important;
+}
+
+html[data-theme="dark"][data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_gutter {
+    background: #18211e !important;
+    border-right-color: #34423c;
+    color: #8fa098 !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_print-margin {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_cursor {
+    color: var(--overall-text-color) !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_marker-layer .ace_active-line,
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_gutter-active-line {
+    background: color-mix(in srgb, var(--link-color) 10%, transparent) !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_marker-layer .ace_selection {
+    background: color-mix(in srgb, var(--link-color) 24%, transparent) !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_marker-layer .ace_selected-word {
+    background: color-mix(in srgb, var(--link-color) 12%, transparent) !important;
+    border-color: color-mix(in srgb, var(--link-color) 48%, transparent) !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_storage,
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_keyword {
+    color: var(--hljs-keyword) !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_constant,
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_constant.ace_numeric {
+    color: var(--hljs-number) !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_string {
+    color: var(--hljs-string) !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_comment {
+    color: var(--hljs-comment) !important;
+}
+
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_variable,
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_support.ace_function,
+html[data-theme-variant="chalkboard"] #ace-editor.ace-tm .ace_entity.ace_name.ace_function {
+    color: var(--hljs-title) !important;
 }
 
 html[data-theme-variant="chalkboard"] .gf-user-panel,
