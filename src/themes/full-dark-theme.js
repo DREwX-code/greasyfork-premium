@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         GreasyFork Premium - Full Dark Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.0.0
+// @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
+// @version      1.0.2
 // @description  Full dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
+// @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
 // ==/UserScript==
 
@@ -175,9 +177,30 @@ html[data-theme-variant="full-dark"] .gf-editor-toolbar-color-tool:focus-within 
 }
 
 html[data-theme-variant="full-dark"] #mobile-nav,
-html[data-theme-variant="full-dark"] #mobile-nav nav {
+html[data-theme-variant="full-dark"] #mobile-nav nav,
+html[data-theme-variant="full-dark"] #mobile-nav-menu {
     background-color: #0d0d0d;
+    background-image: linear-gradient(360deg, #0e0e0e, #090909);
     border-color: #292929;
+    color: #f2f2f2;
+}
+
+html[data-theme-variant="full-dark"] #mobile-nav-menu a {
+    color: inherit;
+}
+
+html[data-theme-variant="full-dark"] #mobile-nav-menu select {
+    background-color: #171717;
+    border-color: #343434;
+    color: #eeeeee;
+}
+
+html[data-theme-variant="full-dark"] .pagination [aria-current="page"],
+html[data-theme-variant="full-dark"] .pagy.series-nav [aria-current="page"] {
+    background-color: rgba(138, 180, 248, .12);
+    border-color: #8ab4f8;
+    color: #8ab4f8;
+    box-shadow: inset 0 0 0 1px #8ab4f8;
 }
 
 html[data-theme-variant="full-dark"] .script-list > li:not(.ad-entry),
@@ -289,6 +312,98 @@ html[data-theme-variant="full-dark"] textarea {
     border-color: #333333;
     color: #eeeeee;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, .6);
+}
+
+html[data-theme-variant="full-dark"] .form-control textarea[name="script_version[code]"],
+html[data-theme-variant="full-dark"] textarea[name="script_version[changelog]"],
+html[data-theme-variant="full-dark"] textarea.comment-entry,
+html[data-theme-variant="full-dark"] .form-control textarea[name*="[additional_info]"][name$="[attribute_value]"],
+html[data-theme-variant="full-dark"] .previewable textarea {
+    background-color: #090909;
+    border-color: #303030;
+    color: #eeeeee;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .72), 0 0 0 1px rgba(255, 255, 255, .02);
+}
+
+html[data-theme-variant="full-dark"] input[disabled],
+html[data-theme-variant="full-dark"] select[disabled],
+html[data-theme-variant="full-dark"] textarea[disabled],
+html[data-theme-variant="full-dark"] input[readonly],
+html[data-theme-variant="full-dark"] textarea[readonly] {
+    background-color: #171717 !important;
+    border-color: #303030 !important;
+    color: #a8a8a8 !important;
+}
+
+html[data-theme-variant="full-dark"] .field_with_errors textarea,
+html[data-theme-variant="full-dark"] .field_with_errors input {
+    background-color: #1d0d0d !important;
+    border-color: #743737 !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm {
+    background-color: #090909 !important;
+    border-color: #303030 !important;
+    color: #eeeeee !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .72);
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_scroller,
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_content {
+    background-color: #090909 !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_gutter {
+    background: #111111 !important;
+    border-right-color: #292929;
+    color: #858585 !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_print-margin {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_cursor {
+    color: #eeeeee !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_marker-layer .ace_active-line,
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_gutter-active-line {
+    background: #171717 !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_marker-layer .ace_selection {
+    background: #263d58 !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_marker-layer .ace_selected-word {
+    background: #172332 !important;
+    border-color: #44698f !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_storage,
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_keyword {
+    color: var(--hljs-keyword) !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_constant,
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_constant.ace_numeric {
+    color: var(--hljs-number) !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_string {
+    color: var(--hljs-string) !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_comment {
+    color: var(--hljs-comment) !important;
+}
+
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_variable,
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_support.ace_function,
+html[data-theme-variant="full-dark"] #ace-editor.ace-tm .ace_entity.ace_name.ace_function {
+    color: var(--hljs-title) !important;
 }
 
 html[data-theme-variant="full-dark"] .gf-user-panel,
