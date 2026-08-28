@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         GreasyFork Premium - Classic Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.0.0
+// @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
+// @version      1.0.1
 // @description  Classic light and dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
+// @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
 // ==/UserScript==
 
@@ -1091,7 +1093,7 @@
         display: none
     }
 
-    .pagination .current,.pagy.series-nav [aria-current="page"] {
+    .pagination .current,.pagination [aria-current="page"],.pagy.series-nav [aria-current="page"] {
         font-style: normal;
         font-weight: 700
     }
@@ -1103,7 +1105,7 @@
         cursor: default
     }
 
-    .pagination .current,.pagy.series-nav [aria-current="page"] {
+    .pagination .current,.pagination [aria-current="page"],.pagy.series-nav [aria-current="page"] {
         border-color: var(--link-color);
         color: var(--link-color);
         box-shadow: inset 0 0 0 1px var(--link-color);
@@ -2731,19 +2733,31 @@
         align-items: center;
         justify-content: space-between;
         gap: 0.75rem;
+        min-width: 0;
         padding: 0.2rem 0 0;
+    }
+
+    #gf-mobile-user-meta .user-profile-link {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
     }
 
     #gf-mobile-user-row .user-profile-link a {
         display: inline-block;
+        max-width: 100%;
         padding: 0;
         font-weight: 700;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     #gf-mobile-user-meta {
         display: inline-flex;
         align-items: center;
         gap: 0.45rem;
+        flex: 1 1 auto;
         min-width: 0;
     }
 
@@ -6713,7 +6727,7 @@
         display: none
     }
 
-    .pagination .current,.pagy.series-nav [aria-current="page"] {
+    .pagination .current,.pagination [aria-current="page"],.pagy.series-nav [aria-current="page"] {
         font-style: normal;
         font-weight: 700
     }
@@ -6725,7 +6739,7 @@
         cursor: default
     }
 
-    .pagination .current,.pagy.series-nav [aria-current="page"] {
+    .pagination .current,.pagination [aria-current="page"],.pagy.series-nav [aria-current="page"] {
         border-color: var(--link-color);
         color: var(--link-color);
         box-shadow: inset 0 0 0 1px var(--link-color);
@@ -8574,19 +8588,31 @@
         align-items: center;
         justify-content: space-between;
         gap: 0.75rem;
+        min-width: 0;
         padding: 0.2rem 0 0;
+    }
+
+    #gf-mobile-user-meta .user-profile-link {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
     }
 
     #gf-mobile-user-row .user-profile-link a {
         display: inline-block;
+        max-width: 100%;
         padding: 0;
         font-weight: 700;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     #gf-mobile-user-meta {
         display: inline-flex;
         align-items: center;
         gap: 0.45rem;
+        flex: 1 1 auto;
         min-width: 0;
     }
 
