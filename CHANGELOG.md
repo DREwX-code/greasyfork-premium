@@ -6,6 +6,23 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 ---
 
+## [1.3.0] - 2026-08-29
+
+### Added
+
+* Full Dark and Chalkboard theme styles, with light and dark variants for Chalkboard
+* Theme style menu with Classic, Full Dark, and Chalkboard options
+* Favorites shortcut in the desktop “More” menu and mobile navigation
+* Interface translations for 19 additional languages
+
+### Improved
+
+* Reduced main userscript size by moving theme styles into dedicated libraries
+* Mobile navigation and theme selector responsiveness
+* Syntax highlighting loading and visual consistency
+
+---
+
 ## [1.2.2] - 2026-07-29
 
 ### Added
