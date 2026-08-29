@@ -10,19 +10,10 @@ This roadmap highlights planned improvements and acknowledges ideas contributed 
 
 These ideas have been suggested by the community and may be implemented in future releases.
 
-### Suggested by Türk-Atilla (Greasy Fork Feedback)
+### Suggested by Atilla-TR (Greasy Fork Feedback)
 
 - [ ] Optional interface element hiding
   - Hide selected interface sections such as the “How to install” block.
-- [ ] Initial loading performance review
-- [ ] Additional dark theme option
-  - Explore a deeper, more neutral dark palette inspired by `#121212`, while keeping it visually balanced with the rest of GreasyFork Premium.
-- [ ] Add a shortcut to the “Favorites” tab in `nav-user-info`.
-
-### Suggested by MUSTAFA HAKAN (Greasy Fork Feedback)
-
-- [ ] Additional theme ideas / visual theme variants
-  - Chalkboard-style theme inspiration was suggested as a possible visual direction.
 
 ---
 
@@ -51,9 +42,17 @@ The following features and fixes were implemented thanks to community feedback.
 - [x] Added one-click favorites button on script cards
 - [x] Fixed favorites state persistence on iPhone Safari
 
-### Suggested by Türk-Atilla (Greasy Fork Feedback)
+### Suggested by Atilla-TR (Greasy Fork Feedback)
 
 - [x] Added subtle, theme-aware scrollbar styling
+- [x] Reviewed initial loading performance
+  - The Chrome extension applies GreasyFork Premium at document start and eliminates the flash of unstyled content (FOUC).
+- [x] Added a Full Dark theme option
+- [x] Added Favorites shortcuts to desktop and mobile user navigation
+
+### Suggested by MUSTAFA HAKAN (Greasy Fork Feedback)
+
+- [x] Added a Chalkboard theme variant
 
 ---
 
