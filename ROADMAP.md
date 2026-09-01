@@ -14,7 +14,12 @@ These ideas have been suggested by the community and may be implemented in futur
 
 - [ ] Optional interface element hiding
   - Hide selected interface sections such as the “How to install” block.
+- [ ] Show `@grant` permissions for userscripts in their information on Greasy Fork.
 
+### Reported by Spok (Greasy Fork Feedback)
+
+- [ ] Investigate compatibility with Android 5.1, particularly with browsers such as Via.
+ 
 ---
 
 ## Community Requests Completed
