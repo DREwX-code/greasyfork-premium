@@ -169,6 +169,7 @@ License: BSD 3-Clause
     const CHALKBOARD_THEME_STYLE_ID = 'gfplus-theme-style-chalkboard';
     const SCROLLBAR_STYLE_ID = 'gfplus-scrollbar-style';
     const DENSITY_STYLE_ID = 'gfplus-density-style';
+    const SCRIPT_PERMISSIONS_STYLE_ID = 'gfplus-script-permissions-style';
     const THEME_MOTION_STYLE_ID = 'gfplus-theme-motion-style';
     const THEME_MOTION_ATTR = 'data-gfplus-theme-motion';
     const THEME_FALLBACK_MOTION_ATTR = 'data-gfplus-theme-fallback-motion';
@@ -956,6 +957,161 @@ License: BSD 3-Clause
     densityStyle.id = DENSITY_STYLE_ID;
     densityStyle.textContent = DENSITY_CSS;
     appendStyle(densityStyle);
+
+    const SCRIPT_PERMISSIONS_CSS = `
+    :root {
+        --gf-permission-network: #0369a1;
+        --gf-permission-storage: #6d28d9;
+        --gf-permission-tabs: #1d4ed8;
+        --gf-permission-transfer: #b45309;
+        --gf-permission-interface: #047857;
+        --gf-permission-resource: #475569;
+        --gf-permission-page: #be123c;
+        --gf-permission-media: #0f766e;
+        --gf-permission-none: #15803d;
+        --gf-permission-other: #4b5563;
+    }
+
+    :root[data-theme="dark"] {
+        --gf-permission-network: #7dd3fc;
+        --gf-permission-storage: #c4b5fd;
+        --gf-permission-tabs: #93c5fd;
+        --gf-permission-transfer: #fcd34d;
+        --gf-permission-interface: #6ee7b7;
+        --gf-permission-resource: #cbd5e1;
+        --gf-permission-page: #fda4af;
+        --gf-permission-media: #5eead4;
+        --gf-permission-none: #86efac;
+        --gf-permission-other: #cbd5e1;
+    }
+
+    .gf-script-permissions {
+        box-sizing: border-box;
+        margin: 1rem 0;
+        padding: 0.6rem 1rem;
+        color: var(--overall-text-color);
+        background: color-mix(in srgb, var(--content-background-color) 96%, var(--overall-text-color));
+        border: 1px solid var(--content-border-color);
+        border-radius: var(--border-radius-medium);
+    }
+
+    #script-content .gf-script-permissions-heading {
+        margin: 0 0 .625rem;
+        color: inherit;
+        font-size: 16px;
+        line-height: 1.25;
+    }
+
+    .gf-script-permissions-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .gf-script-permissions-list > li {
+        display: flex;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .gf-script-permission-chip {
+        --gf-permission-accent: var(--gf-permission-other);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        min-width: 0;
+        max-width: 100%;
+        padding: .4em .8em;
+        color: var(--gf-permission-accent);
+        background: color-mix(in srgb, var(--gf-permission-accent) 12%, var(--content-background-color));
+        border: 1px solid color-mix(in srgb, var(--gf-permission-accent) 46%, var(--content-border-color));
+        border-radius: 999px;
+        font-size: .85rem;
+        line-height: 1.1;
+    }
+
+
+    .gf-script-permission-chip[data-permission-category="network"] {
+        --gf-permission-accent: var(--gf-permission-network);
+    }
+
+    .gf-script-permission-chip[data-permission-category="storage"] {
+        --gf-permission-accent: var(--gf-permission-storage);
+    }
+
+    .gf-script-permission-chip[data-permission-category="tabs"] {
+        --gf-permission-accent: var(--gf-permission-tabs);
+    }
+
+    .gf-script-permission-chip[data-permission-category="transfer"] {
+        --gf-permission-accent: var(--gf-permission-transfer);
+    }
+
+    .gf-script-permission-chip[data-permission-category="interface"] {
+        --gf-permission-accent: var(--gf-permission-interface);
+    }
+
+    .gf-script-permission-chip[data-permission-category="resource"] {
+        --gf-permission-accent: var(--gf-permission-resource);
+    }
+
+    .gf-script-permission-chip[data-permission-category="page"] {
+        --gf-permission-accent: var(--gf-permission-page);
+    }
+
+    .gf-script-permission-chip[data-permission-category="media"] {
+        --gf-permission-accent: var(--gf-permission-media);
+    }
+
+    .gf-script-permission-chip[data-permission-category="none"] {
+        --gf-permission-accent: var(--gf-permission-none);
+    }
+
+    .gf-script-permission-chip[data-permission-category="other"] {
+        --gf-permission-accent: var(--gf-permission-other);
+    }
+
+    .gf-script-permission-chip > svg {
+        flex: 0 0 auto;
+        width: 1em;
+        height: 1em;
+    }
+
+    .gf-script-permission-chip > code {
+        min-width: 0;
+        padding: 0;
+        color: inherit;
+        background: none;
+        font-size: inherit;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+
+    .gf-script-permissions-status {
+        margin: 0;
+        color: color-mix(in srgb, var(--overall-text-color) 78%, transparent);
+        overflow-wrap: anywhere;
+    }
+
+    @media screen and (max-width: 600px) {
+        .gf-script-permissions {
+            padding: .8rem;
+        }
+
+        .gf-script-permissions-list {
+            gap: 4px;
+        }
+    }
+    `;
+
+    const scriptPermissionsStyle = document.createElement('style');
+    scriptPermissionsStyle.id = SCRIPT_PERMISSIONS_STYLE_ID;
+    scriptPermissionsStyle.textContent = SCRIPT_PERMISSIONS_CSS;
+    appendStyle(scriptPermissionsStyle);
 
     const syncThemeStyles = (theme, variant = currentThemeVariant) => {
         const resolvedTheme = resolveTheme(theme);
@@ -2415,7 +2571,7 @@ License: BSD 3-Clause
     // ============================================================================
     const SCRIPT_LOGO_ATTR = 'data-gfplus-logo';
     const SCRIPT_TITLE_CONTENT_CLASS = 'gf-script-title-content';
-    const scriptIconCache = new Map();
+    const scriptMetadataCache = new Map();
     let scriptLogoObserver = null;
     const LOGO_SIZE_LIST = 26;
     const LOGO_SIZE_TITLE = 34;
@@ -2440,13 +2596,15 @@ License: BSD 3-Clause
         }
     };
 
-    const extractMetaIcon = (scriptText, baseUrl) => {
+    const extractScriptMetadata = (scriptText, baseUrl) => {
         const metaMatch = scriptText.match(/\/\/\s*==UserScript==[\s\S]*?\/\/\s*==\/UserScript==/);
         if (!metaMatch) {
             return null;
         }
 
         const lines = metaMatch[0].split(/\r?\n/);
+        const grants = [];
+        const seenGrants = new Set();
         let iconValue = null;
         let icon64Value = null;
 
@@ -2469,52 +2627,170 @@ License: BSD 3-Clause
                 if (!iconValue) {
                     iconValue = value;
                 }
+            } else if (tag === '@grant' && !seenGrants.has(value)) {
+                seenGrants.add(value);
+                grants.push(value);
             }
         });
 
-        return normalizeIconUrl(icon64Value || iconValue, baseUrl);
+        return {
+            iconUrl: normalizeIconUrl(icon64Value || iconValue, baseUrl),
+            grants
+        };
     };
 
-    const fetchScriptIcon = (codeUrl) => {
+    const fetchScriptMetadata = (codeUrl) => {
         if (!codeUrl) {
             return Promise.resolve(null);
         }
 
-        if (scriptIconCache.has(codeUrl)) {
-            return scriptIconCache.get(codeUrl);
+        if (scriptMetadataCache.has(codeUrl)) {
+            return scriptMetadataCache.get(codeUrl);
         }
 
         const fetchPromise = (async () => {
-            let scriptText = '';
-            let iconUrl = null;
-
             try {
                 const ranged = await fetch(codeUrl, { headers: { Range: 'bytes=0-8191' } });
                 if (ranged.ok) {
-                    scriptText = await ranged.text();
-                    iconUrl = extractMetaIcon(scriptText, codeUrl);
+                    const metadata = extractScriptMetadata(await ranged.text(), codeUrl);
+                    if (metadata) {
+                        return metadata;
+                    }
                 }
             } catch (error) {
-                scriptText = '';
+                // Fall back to a full response below.
             }
 
-            if (!iconUrl) {
-                try {
-                    const response = await fetch(codeUrl);
-                    if (response.ok) {
-                        scriptText = await response.text();
-                        iconUrl = extractMetaIcon(scriptText, codeUrl);
-                    }
-                } catch (error) {
-                    iconUrl = null;
+            try {
+                const response = await fetch(codeUrl);
+                if (response.ok) {
+                    return extractScriptMetadata(await response.text(), codeUrl);
                 }
+            } catch (error) {
+                // The caller renders its existing fallback or unavailable state.
             }
 
-            return iconUrl;
+            return null;
         })();
 
-        scriptIconCache.set(codeUrl, fetchPromise);
+        scriptMetadataCache.set(codeUrl, fetchPromise);
         return fetchPromise;
+    };
+
+    const PERMISSION_CATEGORY_ICONS = {
+        none: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="m8 12 2.5 2.5L16 9"></path>
+            </svg>
+        `,
+        network: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path>
+            </svg>
+        `,
+        storage: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <ellipse cx="12" cy="5.5" rx="8" ry="3"></ellipse>
+                <path d="M4 5.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6M4 11.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>
+            </svg>
+        `,
+        tabs: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 5h5v5M19 5l-8 8"></path>
+                <path d="M18 13v6H5V6h6"></path>
+            </svg>
+        `,
+        transfer: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 8h14M14 4l4 4-4 4M20 16H6M10 12l-4 4 4 4"></path>
+            </svg>
+        `,
+        interface: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 6h6M14 6h6M4 12h10M18 12h2M4 18h2M10 18h10"></path>
+                <circle cx="12" cy="6" r="2"></circle>
+                <circle cx="16" cy="12" r="2"></circle>
+                <circle cx="8" cy="18" r="2"></circle>
+            </svg>
+        `,
+        resource: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"></path>
+            </svg>
+        `,
+        page: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"></path>
+            </svg>
+        `,
+        media: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 9v6h4l5 4V5L9 9zM17 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path>
+            </svg>
+        `,
+        other: `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3 20 6v5c0 5-3.4 8.2-8 10-4.6-1.8-8-5-8-10V6z"></path>
+            </svg>
+        `
+    };
+
+    const getPermissionCategory = (grantName) => {
+        const canonicalGrant = grantName.replace(/^GM\./i, 'GM_').toLowerCase();
+
+        if (canonicalGrant === 'none') {
+            return 'none';
+        }
+        if (
+            canonicalGrant === 'gm_xmlhttprequest' ||
+            canonicalGrant === 'gm_webrequest' ||
+            canonicalGrant.startsWith('gm_cookie')
+        ) {
+            return 'network';
+        }
+        if ([
+            'gm_getvalue',
+            'gm_setvalue',
+            'gm_deletevalue',
+            'gm_listvalues',
+            'gm_getvalues',
+            'gm_setvalues',
+            'gm_deletevalues',
+            'gm_addvaluechangelistener',
+            'gm_removevaluechangelistener'
+        ].includes(canonicalGrant)) {
+            return 'storage';
+        }
+        if (['gm_openintab', 'gm_gettab', 'gm_gettabs', 'gm_savetab'].includes(canonicalGrant)) {
+            return 'tabs';
+        }
+        if (['gm_setclipboard', 'gm_download'].includes(canonicalGrant)) {
+            return 'transfer';
+        }
+        if ([
+            'gm_addstyle',
+            'gm_addelement',
+            'gm_notification',
+            'gm_registermenucommand',
+            'gm_unregistermenucommand'
+        ].includes(canonicalGrant)) {
+            return 'interface';
+        }
+        if (['gm_getresourcetext', 'gm_getresourceurl', 'gm_info', 'gm_log'].includes(canonicalGrant)) {
+            return 'resource';
+        }
+        if (
+            canonicalGrant === 'unsafewindow' ||
+            ['window.close', 'window.focus', 'window.onurlchange'].includes(canonicalGrant)
+        ) {
+            return 'page';
+        }
+        if (canonicalGrant.startsWith('gm_audio.')) {
+            return 'media';
+        }
+        return 'other';
     };
 
     const createScriptLogoElement = (iconUrl) => {
@@ -2603,8 +2879,8 @@ License: BSD 3-Clause
         }
 
         link.setAttribute(SCRIPT_LOGO_ATTR, 'pending');
-        fetchScriptIcon(codeUrl)
-            .then((iconUrl) => {
+        fetchScriptMetadata(codeUrl)
+            .then((metadata) => {
                 const parent = link.parentNode;
                 if (!parent) {
                     link.removeAttribute(SCRIPT_LOGO_ATTR);
@@ -2618,7 +2894,7 @@ License: BSD 3-Clause
                     return;
                 }
 
-                const logoEl = createScriptLogoElement(iconUrl);
+                const logoEl = createScriptLogoElement(metadata?.iconUrl);
                 if (!logoEl) {
                     link.removeAttribute(SCRIPT_LOGO_ATTR);
                     return;
@@ -2646,14 +2922,14 @@ License: BSD 3-Clause
         }
 
         headerTitle.setAttribute(SCRIPT_LOGO_ATTR, 'pending');
-        fetchScriptIcon(codeUrl)
-            .then((iconUrl) => {
+        fetchScriptMetadata(codeUrl)
+            .then((metadata) => {
                 if (headerTitle.querySelector('.gf-script-logo')) {
                     headerTitle.setAttribute(SCRIPT_LOGO_ATTR, 'done');
                     return;
                 }
 
-                const logoEl = createScriptLogoElement(iconUrl);
+                const logoEl = createScriptLogoElement(metadata?.iconUrl);
                 if (!logoEl) {
                     headerTitle.removeAttribute(SCRIPT_LOGO_ATTR);
                     return;
@@ -2693,6 +2969,7 @@ License: BSD 3-Clause
     const SCRIPT_CARD_ACTIONS_ATTR = 'data-gfplus-actions';
     const SCRIPT_DETAIL_ACTIONS_ATTR = 'data-gfplus-detail-actions';
     const SCRIPT_DETAIL_ACTIONS_CONTAINER_ID = 'gfplus-script-detail-actions';
+    const SCRIPT_PERMISSIONS_ID = 'gfplus-script-permissions';
     const SCRIPT_EXTRA_INFO_ATTR = 'data-gfplus-extra-info';
     const SCRIPT_EXTRA_INFO_CACHE = new Map();
     const SCRIPT_LIBRARY_NAME_PATTERN = /\b(?:library|librairie|biblioth[eè]que)\b/i;
@@ -3931,8 +4208,119 @@ License: BSD 3-Clause
 
         return detailButton;
     };
+    const applyScriptPermissions = (locale) => {
+        const metaBlock = document.querySelector('#script-info #script-content > .script-meta-block');
+        const installLink = document.querySelector(
+            '#install-area a.install-link[data-install-format="js"][href]'
+        );
+        const codeUrl = installLink?.href || '';
+        const isEligible = Boolean(metaBlock && /\.user\.js(?:[?#]|$)/i.test(codeUrl));
+        const sections = Array.from(document.querySelectorAll(`#${SCRIPT_PERMISSIONS_ID}`));
+
+        if (!isEligible) {
+            sections.forEach((section) => section.remove());
+            return;
+        }
+
+        let section = sections.shift() || null;
+        sections.forEach((duplicate) => duplicate.remove());
+        if (section && metaBlock.nextElementSibling !== section) {
+            metaBlock.insertAdjacentElement('afterend', section);
+        }
+
+        const state = section?.getAttribute('data-state');
+        if (
+            section?.getAttribute('data-code-url') === codeUrl &&
+            ['loading', 'loaded', 'undeclared', 'unavailable'].includes(state)
+        ) {
+            return;
+        }
+
+        const i18n = getUserNavI18n(locale);
+        if (!section) {
+            section = document.createElement('section');
+            section.id = SCRIPT_PERMISSIONS_ID;
+            section.className = 'gf-script-permissions';
+            metaBlock.insertAdjacentElement('afterend', section);
+        }
+
+        section.setAttribute('data-code-url', codeUrl);
+        section.setAttribute('data-state', 'loading');
+        section.setAttribute('aria-busy', 'true');
+
+        const heading = document.createElement('h3');
+        heading.className = 'gf-script-permissions-heading';
+        heading.textContent = i18n.permissions;
+        const loadingStatus = document.createElement('p');
+        loadingStatus.className = 'gf-script-permissions-status';
+        loadingStatus.textContent = i18n.permissionsLoading;
+        section.replaceChildren(heading, loadingStatus);
+
+        const isCurrentSection = () => (
+            section.isConnected &&
+            section.getAttribute('data-code-url') === codeUrl &&
+            document.getElementById(SCRIPT_PERMISSIONS_ID) === section
+        );
+
+        void fetchScriptMetadata(codeUrl).then((metadata) => {
+            if (!isCurrentSection()) {
+                return;
+            }
+
+            section.setAttribute('aria-busy', 'false');
+            if (!metadata) {
+                section.setAttribute('data-state', 'unavailable');
+                const status = document.createElement('p');
+                status.className = 'gf-script-permissions-status';
+                status.textContent = i18n.permissionsUnavailable;
+                section.replaceChildren(heading, status);
+                return;
+            }
+
+            if (metadata.grants.length === 0) {
+                section.setAttribute('data-state', 'undeclared');
+                const status = document.createElement('p');
+                status.className = 'gf-script-permissions-status';
+                status.textContent = i18n.permissionsUndeclared;
+                section.replaceChildren(heading, status);
+                return;
+            }
+
+            const list = document.createElement('ul');
+            list.className = 'gf-script-permissions-list';
+            metadata.grants.forEach((grant) => {
+                const category = getPermissionCategory(grant);
+                const item = document.createElement('li');
+                const chip = document.createElement('span');
+                chip.className = 'gf-script-permission-chip';
+                chip.setAttribute('data-permission-category', category);
+                chip.insertAdjacentHTML('beforeend', PERMISSION_CATEGORY_ICONS[category]);
+                const code = document.createElement('code');
+                code.textContent = grant;
+                chip.appendChild(code);
+                item.appendChild(chip);
+                list.appendChild(item);
+            });
+
+            section.setAttribute('data-state', 'loaded');
+            section.replaceChildren(heading, list);
+        }).catch(() => {
+            if (!isCurrentSection()) {
+                return;
+            }
+
+            section.setAttribute('data-state', 'unavailable');
+            section.setAttribute('aria-busy', 'false');
+            const status = document.createElement('p');
+            status.className = 'gf-script-permissions-status';
+            status.textContent = i18n.permissionsUnavailable;
+            section.replaceChildren(heading, status);
+        });
+    };
+
     const applyScriptCardActions = () => {
         const locale = getCurrentLocale();
+        applyScriptPermissions(locale);
 
         document.querySelectorAll('li[data-script-id]:not(.ad-entry)').forEach((listItem) => {
             const isLibraryListItem = isScriptLibraryListItem(listItem);
@@ -4037,6 +4425,10 @@ License: BSD 3-Clause
                 chalkboard: 'Chalkboard'
             },
             density: { label: 'Density', compact: 'Compact', comfortable: 'Comfortable', detailed: 'Detailed' },
+            permissions: 'Permissions',
+            permissionsLoading: 'Loading permissions...',
+            permissionsUnavailable: 'Permission metadata unavailable.',
+            permissionsUndeclared: 'No @grant permissions declared.',
             currentScripts: 'Included scripts',
             emptyScripts: 'No scripts in this list yet.',
             removeScript: 'Remove this script',
@@ -4078,6 +4470,10 @@ License: BSD 3-Clause
                 chalkboard: 'Chalkboard'
             },
             density: { label: 'Densité', compact: 'Compact', comfortable: 'Confortable', detailed: 'Détaillé' },
+            permissions: 'Autorisations',
+            permissionsLoading: 'Chargement des autorisations...',
+            permissionsUnavailable: 'Métadonnées des autorisations indisponibles.',
+            permissionsUndeclared: 'Aucune autorisation @grant déclarée.',
             currentScripts: 'Scripts inclus',
             emptyScripts: 'Aucun script dans cette liste pour le moment.',
             removeScript: 'Retirer ce script',
@@ -4114,6 +4510,10 @@ License: BSD 3-Clause
             themeToggle: 'Cambiar tema',
             themeVariants: { menu: 'Estilos de tema', normal: 'Clásico', fullDark: 'Negro profundo', chalkboard: 'Chalkboard' },
             density: { label: 'Densidad', compact: 'Compacta', comfortable: 'Cómoda', detailed: 'Detallada' },
+            permissions: 'Permisos',
+            permissionsLoading: 'Cargando permisos...',
+            permissionsUnavailable: 'Los metadatos de los permisos no están disponibles.',
+            permissionsUndeclared: 'No se han declarado permisos @grant.',
             currentScripts: 'Scripts incluidos',
             emptyScripts: 'No hay scripts en esta lista todavía.',
             removeScript: 'Quitar este script',
@@ -4150,6 +4550,10 @@ License: BSD 3-Clause
             themeToggle: 'Design wechseln',
             themeVariants: { menu: 'Themenstile', normal: 'Klassisch', fullDark: 'Tiefschwarz', chalkboard: 'Chalkboard' },
             density: { label: 'Dichte', compact: 'Kompakt', comfortable: 'Komfortabel', detailed: 'Detailliert' },
+            permissions: 'Berechtigungen',
+            permissionsLoading: 'Berechtigungen werden geladen...',
+            permissionsUnavailable: 'Berechtigungsmetadaten nicht verfügbar.',
+            permissionsUndeclared: 'Keine @grant-Berechtigungen deklariert.',
             currentScripts: 'Enthaltene Skripte',
             emptyScripts: 'Noch keine Skripte in dieser Liste.',
             removeScript: 'Dieses Skript entfernen',
@@ -4186,6 +4590,10 @@ License: BSD 3-Clause
             themeToggle: 'Cambia tema',
             themeVariants: { menu: 'Stili del tema', normal: 'Classico', fullDark: 'Nero profondo', chalkboard: 'Chalkboard' },
             density: { label: 'Densità', compact: 'Compatta', comfortable: 'Confortevole', detailed: 'Dettagliata' },
+            permissions: 'Autorizzazioni',
+            permissionsLoading: 'Caricamento delle autorizzazioni...',
+            permissionsUnavailable: 'Metadati delle autorizzazioni non disponibili.',
+            permissionsUndeclared: 'Nessuna autorizzazione @grant dichiarata.',
             currentScripts: 'Script inclusi',
             emptyScripts: 'Nessuno script in questa lista per ora.',
             removeScript: 'Rimuovi questo script',
@@ -4222,6 +4630,10 @@ License: BSD 3-Clause
             themeToggle: 'Mudar tema',
             themeVariants: { menu: 'Estilos de tema', normal: 'Clássico', fullDark: 'Preto profundo', chalkboard: 'Chalkboard' },
             density: { label: 'Densidade', compact: 'Compacta', comfortable: 'Confortável', detailed: 'Detalhada' },
+            permissions: 'Permissões',
+            permissionsLoading: 'A carregar permissões...',
+            permissionsUnavailable: 'Metadados das permissões indisponíveis.',
+            permissionsUndeclared: 'Nenhuma permissão @grant declarada.',
             currentScripts: 'Scripts incluídos',
             emptyScripts: 'Ainda não há scripts nesta lista.',
             removeScript: 'Remover este script',
@@ -4258,6 +4670,10 @@ License: BSD 3-Clause
             themeToggle: 'Переключить тему',
             themeVariants: { menu: 'Стили темы', normal: 'Классическая', fullDark: 'Глубокий чёрный', chalkboard: 'Chalkboard' },
             density: { label: 'Плотность', compact: 'Компактный', comfortable: 'Комфортный', detailed: 'Подробный' },
+            permissions: 'Разрешения',
+            permissionsLoading: 'Загрузка разрешений...',
+            permissionsUnavailable: 'Метаданные разрешений недоступны.',
+            permissionsUndeclared: 'Разрешения @grant не объявлены.',
             currentScripts: 'Включённые скрипты',
             emptyScripts: 'В этом списке пока нет скриптов.',
             removeScript: 'Удалить этот скрипт',
@@ -4294,6 +4710,10 @@ License: BSD 3-Clause
             themeToggle: 'テーマを切り替え',
             themeVariants: { menu: 'テーマスタイル', normal: 'クラシック', fullDark: 'ディープブラック', chalkboard: 'Chalkboard' },
             density: { label: '表示密度', compact: 'コンパクト', comfortable: '標準', detailed: '詳細' },
+            permissions: '権限',
+            permissionsLoading: '権限を読み込んでいます...',
+            permissionsUnavailable: '権限のメタデータを取得できません。',
+            permissionsUndeclared: '@grant 権限は宣言されていません。',
             currentScripts: '含まれるスクリプト',
             emptyScripts: 'このリストにはまだスクリプトがありません。',
             removeScript: 'このスクリプトを削除',
@@ -4330,6 +4750,10 @@ License: BSD 3-Clause
             themeToggle: '切换主题',
             themeVariants: { menu: '主题样式', normal: '经典', fullDark: '深黑', chalkboard: 'Chalkboard' },
             density: { label: '密度', compact: '紧凑', comfortable: '舒适', detailed: '详细' },
+            permissions: '权限',
+            permissionsLoading: '正在加载权限...',
+            permissionsUnavailable: '权限元数据不可用。',
+            permissionsUndeclared: '未声明任何 @grant 权限。',
             currentScripts: '已包含的脚本',
             emptyScripts: '此列表中还没有脚本。',
             removeScript: '移除此脚本',
@@ -4366,6 +4790,10 @@ License: BSD 3-Clause
             themeToggle: '切換主題',
             themeVariants: { menu: '主題樣式', normal: '經典', fullDark: '深黑', chalkboard: 'Chalkboard' },
             density: { label: '密度', compact: '緊湊', comfortable: '舒適', detailed: '詳細' },
+            permissions: '權限',
+            permissionsLoading: '正在載入權限...',
+            permissionsUnavailable: '權限中繼資料無法使用。',
+            permissionsUndeclared: '未宣告任何 @grant 權限。',
             currentScripts: '已包含的腳本',
             emptyScripts: '此清單中還沒有腳本。',
             removeScript: '移除此腳本',
@@ -4402,6 +4830,10 @@ License: BSD 3-Clause
             themeToggle: 'تبديل المظهر',
             themeVariants: { menu: 'أنماط السمة', normal: 'كلاسيكي', fullDark: 'أسود عميق', chalkboard: 'Chalkboard' },
             density: { label: 'الكثافة', compact: 'مضغوط', comfortable: 'مريح', detailed: 'مفصل' },
+            permissions: 'الأذونات',
+            permissionsLoading: 'جارٍ تحميل الأذونات...',
+            permissionsUnavailable: 'بيانات الأذونات الوصفية غير متاحة.',
+            permissionsUndeclared: 'لم يتم الإعلان عن أي أذونات @grant.',
             currentScripts: 'السكربتات المضمنة',
             emptyScripts: 'لا توجد سكربتات في هذه القائمة بعد.',
             removeScript: 'إزالة هذا السكربت',
@@ -4438,6 +4870,10 @@ License: BSD 3-Clause
             themeToggle: 'थीम बदलें',
             themeVariants: { menu: 'थीम शैलियाँ', normal: 'क्लासिक', fullDark: 'गहरा काला', chalkboard: 'Chalkboard' },
             density: { label: 'घनत्व', compact: 'संक्षिप्त', comfortable: 'आरामदायक', detailed: 'विस्तृत' },
+            permissions: 'अनुमतियाँ',
+            permissionsLoading: 'अनुमतियाँ लोड हो रही हैं...',
+            permissionsUnavailable: 'अनुमति मेटाडेटा उपलब्ध नहीं है।',
+            permissionsUndeclared: 'कोई @grant अनुमति घोषित नहीं की गई है।',
             currentScripts: 'शामिल स्क्रिप्ट',
             emptyScripts: 'इस सूची में अभी कोई स्क्रिप्ट नहीं है.',
             removeScript: 'इस स्क्रिप्ट को हटाएँ',
@@ -4473,6 +4909,10 @@ License: BSD 3-Clause
             themeToggle: 'থিম বদলান',
             themeVariants: { menu: 'থিমের ধরন', normal: 'ক্লাসিক', fullDark: 'গভীর কালো', chalkboard: 'Chalkboard' },
             density: { label: 'ঘনত্ব', compact: 'সংক্ষিপ্ত', comfortable: 'আরামদায়ক', detailed: 'বিস্তারিত' },
+            permissions: 'অনুমতিসমূহ',
+            permissionsLoading: 'অনুমতিসমূহ লোড হচ্ছে...',
+            permissionsUnavailable: 'অনুমতির মেটাডেটা উপলভ্য নয়।',
+            permissionsUndeclared: 'কোনো @grant অনুমতি ঘোষণা করা হয়নি।',
             currentScripts: 'অন্তর্ভুক্ত স্ক্রিপ্ট',
             emptyScripts: 'এই তালিকায় এখনও কোনো স্ক্রিপ্ট নেই।',
             removeScript: 'এই স্ক্রিপ্ট সরান',
@@ -4509,6 +4949,10 @@ License: BSD 3-Clause
             themeToggle: 'تھیم تبدیل کریں',
             themeVariants: { menu: 'تھیم کے انداز', normal: 'کلاسک', fullDark: 'گہرا سیاہ', chalkboard: 'Chalkboard' },
             density: { label: 'کثافت', compact: 'مختصر', comfortable: 'آرام دہ', detailed: 'تفصیلی' },
+            permissions: 'اجازتیں',
+            permissionsLoading: 'اجازتیں لوڈ ہو رہی ہیں...',
+            permissionsUnavailable: 'اجازتوں کا میٹا ڈیٹا دستیاب نہیں ہے۔',
+            permissionsUndeclared: 'کسی @grant اجازت کا اعلان نہیں کیا گیا۔',
             currentScripts: 'شامل اسکرپٹس',
             emptyScripts: 'اس فہرست میں ابھی کوئی اسکرپٹ نہیں ہے۔',
             removeScript: 'یہ اسکرپٹ ہٹائیں',
@@ -4545,6 +4989,10 @@ License: BSD 3-Clause
             themeToggle: 'തീം മാറ്റുക',
             themeVariants: { menu: 'തീം ശൈലികൾ', normal: 'ക്ലാസിക്', fullDark: 'കടും കറുപ്പ്', chalkboard: 'Chalkboard' },
             density: { label: 'സാന്ദ്രത', compact: 'ഒതുക്കമുള്ള', comfortable: 'സുഖപ്രദമായ', detailed: 'വിശദമായ' },
+            permissions: 'അനുമതികൾ',
+            permissionsLoading: 'അനുമതികൾ ലോഡ് ചെയ്യുന്നു...',
+            permissionsUnavailable: 'അനുമതി മെറ്റാഡാറ്റ ലഭ്യമല്ല.',
+            permissionsUndeclared: '@grant അനുമതികളൊന്നും പ്രഖ്യാപിച്ചിട്ടില്ല.',
             currentScripts: 'ഉൾപ്പെടുത്തിയ സ്ക്രിപ്റ്റുകൾ',
             emptyScripts: 'ഈ പട്ടികയിൽ ഇതുവരെ സ്ക്രിപ്റ്റുകളൊന്നുമില്ല.',
             removeScript: 'ഈ സ്ക്രിപ്റ്റ് നീക്കം ചെയ്യുക',
@@ -4581,6 +5029,10 @@ License: BSD 3-Clause
             themeToggle: '테마 전환',
             themeVariants: { menu: '테마 스타일', normal: '클래식', fullDark: '딥 블랙', chalkboard: 'Chalkboard' },
             density: { label: '밀도', compact: '좁게', comfortable: '보통', detailed: '자세히' },
+            permissions: '권한',
+            permissionsLoading: '권한을 불러오는 중...',
+            permissionsUnavailable: '권한 메타데이터를 사용할 수 없습니다.',
+            permissionsUndeclared: '선언된 @grant 권한이 없습니다.',
             currentScripts: '포함된 스크립트',
             emptyScripts: '이 목록에는 아직 스크립트가 없습니다.',
             removeScript: '이 스크립트 제거',
@@ -4617,6 +5069,10 @@ License: BSD 3-Clause
             themeToggle: 'Tema değiştir',
             themeVariants: { menu: 'Tema stilleri', normal: 'Klasik', fullDark: 'Derin siyah', chalkboard: 'Chalkboard' },
             density: { label: 'Yoğunluk', compact: 'Kompakt', comfortable: 'Rahat', detailed: 'Ayrıntılı' },
+            permissions: 'İzinler',
+            permissionsLoading: 'İzinler yükleniyor...',
+            permissionsUnavailable: 'İzin meta verileri kullanılamıyor.',
+            permissionsUndeclared: 'Hiçbir @grant izni bildirilmemiş.',
             currentScripts: 'Dahil edilen scriptler',
             emptyScripts: 'Bu listede henüz script yok.',
             removeScript: 'Bu scripti kaldır',
@@ -4653,6 +5109,10 @@ License: BSD 3-Clause
             themeToggle: 'Przełącz motyw',
             themeVariants: { menu: 'Style motywu', normal: 'Klasyczny', fullDark: 'Głęboka czerń', chalkboard: 'Chalkboard' },
             density: { label: 'Gęstość', compact: 'Kompaktowy', comfortable: 'Wygodny', detailed: 'Szczegółowy' },
+            permissions: 'Uprawnienia',
+            permissionsLoading: 'Wczytywanie uprawnień...',
+            permissionsUnavailable: 'Metadane uprawnień są niedostępne.',
+            permissionsUndeclared: 'Nie zadeklarowano żadnych uprawnień @grant.',
             currentScripts: 'Dołączone skrypty',
             emptyScripts: 'Na tej liście nie ma jeszcze skryptów.',
             removeScript: 'Usuń ten skrypt',
@@ -4689,6 +5149,10 @@ License: BSD 3-Clause
             themeToggle: 'Thema wisselen',
             themeVariants: { menu: 'Themastijlen', normal: 'Klassiek', fullDark: 'Diepzwart', chalkboard: 'Chalkboard' },
             density: { label: 'Dichtheid', compact: 'Compact', comfortable: 'Comfortabel', detailed: 'Gedetailleerd' },
+            permissions: 'Machtigingen',
+            permissionsLoading: 'Machtigingen laden...',
+            permissionsUnavailable: 'Metagegevens van machtigingen zijn niet beschikbaar.',
+            permissionsUndeclared: 'Er zijn geen @grant-machtigingen gedeclareerd.',
             currentScripts: 'Opgenomen scripts',
             emptyScripts: 'Er staan nog geen scripts in deze lijst.',
             removeScript: 'Dit script verwijderen',
@@ -4725,6 +5189,10 @@ License: BSD 3-Clause
             themeToggle: 'Växla tema',
             themeVariants: { menu: 'Temastilar', normal: 'Klassisk', fullDark: 'Djupsvart', chalkboard: 'Chalkboard' },
             density: { label: 'Täthet', compact: 'Kompakt', comfortable: 'Bekväm', detailed: 'Detaljerad' },
+            permissions: 'Behörigheter',
+            permissionsLoading: 'Läser in behörigheter...',
+            permissionsUnavailable: 'Metadata för behörigheter är inte tillgängliga.',
+            permissionsUndeclared: 'Inga @grant-behörigheter har deklarerats.',
             currentScripts: 'Inkluderade skript',
             emptyScripts: 'Det finns inga skript i den här listan ännu.',
             removeScript: 'Ta bort det här skriptet',
@@ -4761,6 +5229,10 @@ License: BSD 3-Clause
             themeToggle: 'Comută tema',
             themeVariants: { menu: 'Stiluri de temă', normal: 'Clasic', fullDark: 'Negru profund', chalkboard: 'Chalkboard' },
             density: { label: 'Densitate', compact: 'Compact', comfortable: 'Confortabil', detailed: 'Detaliat' },
+            permissions: 'Permisiuni',
+            permissionsLoading: 'Se încarcă permisiunile...',
+            permissionsUnavailable: 'Metadatele permisiunilor nu sunt disponibile.',
+            permissionsUndeclared: 'Nu a fost declarată nicio permisiune @grant.',
             currentScripts: 'Scripturi incluse',
             emptyScripts: 'Nu există încă scripturi în această listă.',
             removeScript: 'Elimină acest script',
@@ -4797,6 +5269,10 @@ License: BSD 3-Clause
             themeToggle: 'Chuyển giao diện',
             themeVariants: { menu: 'Kiểu giao diện', normal: 'Cổ điển', fullDark: 'Đen sâu', chalkboard: 'Chalkboard' },
             density: { label: 'Mật độ', compact: 'Thu gọn', comfortable: 'Thoải mái', detailed: 'Chi tiết' },
+            permissions: 'Quyền',
+            permissionsLoading: 'Đang tải quyền...',
+            permissionsUnavailable: 'Siêu dữ liệu về quyền không khả dụng.',
+            permissionsUndeclared: 'Không có quyền @grant nào được khai báo.',
             currentScripts: 'Script đã thêm',
             emptyScripts: 'Chưa có script nào trong danh sách này.',
             removeScript: 'Xóa script này',
@@ -4833,6 +5309,10 @@ License: BSD 3-Clause
             themeToggle: 'Ganti tema',
             themeVariants: { menu: 'Gaya tema', normal: 'Klasik', fullDark: 'Hitam pekat', chalkboard: 'Chalkboard' },
             density: { label: 'Kepadatan', compact: 'Ringkas', comfortable: 'Nyaman', detailed: 'Terperinci' },
+            permissions: 'Izin',
+            permissionsLoading: 'Memuat izin...',
+            permissionsUnavailable: 'Metadata izin tidak tersedia.',
+            permissionsUndeclared: 'Tidak ada izin @grant yang dideklarasikan.',
             currentScripts: 'Skrip yang disertakan',
             emptyScripts: 'Belum ada skrip dalam daftar ini.',
             removeScript: 'Hapus skrip ini',
@@ -4869,6 +5349,10 @@ License: BSD 3-Clause
             themeToggle: 'Tukar tema',
             themeVariants: { menu: 'Gaya tema', normal: 'Klasik', fullDark: 'Hitam pekat', chalkboard: 'Chalkboard' },
             density: { label: 'Kepadatan', compact: 'Padat', comfortable: 'Selesa', detailed: 'Terperinci' },
+            permissions: 'Kebenaran',
+            permissionsLoading: 'Memuatkan kebenaran...',
+            permissionsUnavailable: 'Metadata kebenaran tidak tersedia.',
+            permissionsUndeclared: 'Tiada kebenaran @grant diisytiharkan.',
             currentScripts: 'Skrip disertakan',
             emptyScripts: 'Tiada skrip dalam senarai ini lagi.',
             removeScript: 'Alih keluar skrip ini',
@@ -4905,6 +5389,10 @@ License: BSD 3-Clause
             themeToggle: 'Пераключыць тэму',
             themeVariants: { menu: 'Стылі тэмы', normal: 'Класічная', fullDark: 'Глыбокі чорны', chalkboard: 'Chalkboard' },
             density: { label: 'Шчыльнасць', compact: 'Кампактна', comfortable: 'Зручна', detailed: 'Падрабязна' },
+            permissions: 'Дазволы',
+            permissionsLoading: 'Загрузка дазволаў...',
+            permissionsUnavailable: 'Метаданыя дазволаў недаступныя.',
+            permissionsUndeclared: 'Дазволы @grant не абвешчаны.',
             currentScripts: 'Уключаныя скрыпты',
             emptyScripts: 'У гэтым спісе пакуль няма скрыптоў.',
             removeScript: 'Выдаліць гэты скрыпт',
@@ -4941,6 +5429,10 @@ License: BSD 3-Clause
             themeToggle: 'Bytt tema',
             themeVariants: { menu: 'Temastiler', normal: 'Klassisk', fullDark: 'Dypsvart', chalkboard: 'Chalkboard' },
             density: { label: 'Tetthet', compact: 'Kompakt', comfortable: 'Komfortabel', detailed: 'Detaljert' },
+            permissions: 'Tillatelser',
+            permissionsLoading: 'Laster inn tillatelser...',
+            permissionsUnavailable: 'Metadata for tillatelser er ikke tilgjengelige.',
+            permissionsUndeclared: 'Ingen @grant-tillatelser er deklarert.',
             currentScripts: 'Inkluderte skript',
             emptyScripts: 'Det er ingen skript i denne listen ennå.',
             removeScript: 'Fjern dette skriptet',
@@ -4977,6 +5469,10 @@ License: BSD 3-Clause
             themeToggle: 'Смяна на темата',
             themeVariants: { menu: 'Стилове на темата', normal: 'Класическа', fullDark: 'Дълбоко черно', chalkboard: 'Chalkboard' },
             density: { label: 'Плътност', compact: 'Компактна', comfortable: 'Удобна', detailed: 'Подробна' },
+            permissions: 'Разрешения',
+            permissionsLoading: 'Зареждане на разрешенията...',
+            permissionsUnavailable: 'Метаданните за разрешенията не са налични.',
+            permissionsUndeclared: 'Няма декларирани разрешения @grant.',
             currentScripts: 'Включени скриптове',
             emptyScripts: 'Все още няма скриптове в този списък.',
             removeScript: 'Премахване на този скрипт',
@@ -5013,6 +5509,10 @@ License: BSD 3-Clause
             themeToggle: 'Promijeni temu',
             themeVariants: { menu: 'Stilovi teme', normal: 'Klasična', fullDark: 'Duboka crna', chalkboard: 'Chalkboard' },
             density: { label: 'Gustoća', compact: 'Kompaktno', comfortable: 'Udobno', detailed: 'Detaljno' },
+            permissions: 'Dopuštenja',
+            permissionsLoading: 'Učitavanje dopuštenja...',
+            permissionsUnavailable: 'Metapodaci dopuštenja nisu dostupni.',
+            permissionsUndeclared: 'Nisu deklarirana @grant dopuštenja.',
             currentScripts: 'Uključene skripte',
             emptyScripts: 'Na ovom popisu još nema skripti.',
             removeScript: 'Ukloni ovu skriptu',
@@ -5049,6 +5549,10 @@ License: BSD 3-Clause
             themeToggle: 'Přepnout motiv',
             themeVariants: { menu: 'Styly motivu', normal: 'Klasický', fullDark: 'Hluboká černá', chalkboard: 'Chalkboard' },
             density: { label: 'Hustota', compact: 'Kompaktní', comfortable: 'Pohodlná', detailed: 'Podrobná' },
+            permissions: 'Oprávnění',
+            permissionsLoading: 'Načítání oprávnění...',
+            permissionsUnavailable: 'Metadata oprávnění nejsou k dispozici.',
+            permissionsUndeclared: 'Nebyla deklarována žádná oprávnění @grant.',
             currentScripts: 'Zahrnuté skripty',
             emptyScripts: 'V tomto seznamu zatím nejsou žádné skripty.',
             removeScript: 'Odebrat tento skript',
@@ -5085,6 +5589,10 @@ License: BSD 3-Clause
             themeToggle: 'Skift tema',
             themeVariants: { menu: 'Temastile', normal: 'Klassisk', fullDark: 'Dyb sort', chalkboard: 'Chalkboard' },
             density: { label: 'Tæthed', compact: 'Kompakt', comfortable: 'Behagelig', detailed: 'Detaljeret' },
+            permissions: 'Tilladelser',
+            permissionsLoading: 'Indlæser tilladelser...',
+            permissionsUnavailable: 'Metadata for tilladelser er ikke tilgængelige.',
+            permissionsUndeclared: 'Der er ikke erklæret nogen @grant-tilladelser.',
             currentScripts: 'Inkluderede scripts',
             emptyScripts: 'Der er endnu ingen scripts på denne liste.',
             removeScript: 'Fjern dette script',
@@ -5121,6 +5629,10 @@ License: BSD 3-Clause
             themeToggle: 'Ŝanĝi etoson',
             themeVariants: { menu: 'Etosaj stiloj', normal: 'Klasika', fullDark: 'Profunde nigra', chalkboard: 'Chalkboard' },
             density: { label: 'Denseco', compact: 'Kompakta', comfortable: 'Komforta', detailed: 'Detala' },
+            permissions: 'Permesoj',
+            permissionsLoading: 'Ŝargante permesojn...',
+            permissionsUnavailable: 'Metadatumoj pri permesoj ne disponeblas.',
+            permissionsUndeclared: 'Neniuj @grant-permesoj estas deklaritaj.',
             currentScripts: 'Inkluzivitaj skriptoj',
             emptyScripts: 'Ankoraŭ ne estas skriptoj en ĉi tiu listo.',
             removeScript: 'Forigi ĉi tiun skripton',
@@ -5157,6 +5669,10 @@ License: BSD 3-Clause
             themeToggle: 'Palitan ang tema',
             themeVariants: { menu: 'Mga estilo ng tema', normal: 'Klasiko', fullDark: 'Napakaitim', chalkboard: 'Chalkboard' },
             density: { label: 'Densidad', compact: 'Siksik', comfortable: 'Komportable', detailed: 'Detalyado' },
+            permissions: 'Mga Pahintulot',
+            permissionsLoading: 'Nilo-load ang mga pahintulot...',
+            permissionsUnavailable: 'Hindi available ang metadata ng pahintulot.',
+            permissionsUndeclared: 'Walang idineklarang mga pahintulot na @grant.',
             currentScripts: 'Mga kasamang script',
             emptyScripts: 'Wala pang script sa listahang ito.',
             removeScript: 'Alisin ang script na ito',
@@ -5193,6 +5709,10 @@ License: BSD 3-Clause
             themeToggle: 'Vaihda teemaa',
             themeVariants: { menu: 'Teematyylit', normal: 'Klassinen', fullDark: 'Syvänmusta', chalkboard: 'Chalkboard' },
             density: { label: 'Tiheys', compact: 'Tiivis', comfortable: 'Mukava', detailed: 'Yksityiskohtainen' },
+            permissions: 'Käyttöoikeudet',
+            permissionsLoading: 'Ladataan käyttöoikeuksia...',
+            permissionsUnavailable: 'Käyttöoikeuksien metatiedot eivät ole saatavilla.',
+            permissionsUndeclared: '@grant-käyttöoikeuksia ei ole määritetty.',
             currentScripts: 'Sisällytetyt skriptit',
             emptyScripts: 'Tässä luettelossa ei ole vielä skriptejä.',
             removeScript: 'Poista tämä skripti',
@@ -5229,6 +5749,10 @@ License: BSD 3-Clause
             themeToggle: 'گۆڕینی ڕووکار',
             themeVariants: { menu: 'شێوازەکانی ڕووکار', normal: 'کلاسیک', fullDark: 'ڕەشی قووڵ', chalkboard: 'Chalkboard' },
             density: { label: 'چڕی', compact: 'پڕ', comfortable: 'ئاسوودە', detailed: 'ورد' },
+            permissions: 'ڕێگەپێدانەکان',
+            permissionsLoading: 'بارکردنی ڕێگەپێدانەکان...',
+            permissionsUnavailable: 'مێتاداتای ڕێگەپێدان بەردەست نییە.',
+            permissionsUndeclared: 'هیچ ڕێگەپێدانێکی @grant ڕانەگەیەنراوە.',
             currentScripts: 'سکریپتە لەخۆگیراوەکان',
             emptyScripts: 'هێشتا هیچ سکریپتێک لەم لیستەدا نییە.',
             removeScript: 'ئەم سکریپتە بسڕەوە',
@@ -5265,6 +5789,10 @@ License: BSD 3-Clause
             themeToggle: 'თემის შეცვლა',
             themeVariants: { menu: 'თემის სტილები', normal: 'კლასიკური', fullDark: 'ღრმა შავი', chalkboard: 'Chalkboard' },
             density: { label: 'სიმჭიდროვე', compact: 'კომპაქტური', comfortable: 'კომფორტული', detailed: 'დეტალური' },
+            permissions: 'ნებართვები',
+            permissionsLoading: 'ნებართვები იტვირთება...',
+            permissionsUnavailable: 'ნებართვების მეტამონაცემები მიუწვდომელია.',
+            permissionsUndeclared: '@grant ნებართვები დეკლარირებული არ არის.',
             currentScripts: 'ჩართული სკრიპტები',
             emptyScripts: 'ამ სიაში ჯერ სკრიპტები არ არის.',
             removeScript: 'ამ სკრიპტის წაშლა',
@@ -5301,6 +5829,10 @@ License: BSD 3-Clause
             themeToggle: 'Εναλλαγή θέματος',
             themeVariants: { menu: 'Στυλ θέματος', normal: 'Κλασικό', fullDark: 'Βαθύ μαύρο', chalkboard: 'Chalkboard' },
             density: { label: 'Πυκνότητα', compact: 'Συμπαγής', comfortable: 'Άνετη', detailed: 'Λεπτομερής' },
+            permissions: 'Δικαιώματα',
+            permissionsLoading: 'Φόρτωση δικαιωμάτων...',
+            permissionsUnavailable: 'Τα μεταδεδομένα δικαιωμάτων δεν είναι διαθέσιμα.',
+            permissionsUndeclared: 'Δεν έχουν δηλωθεί δικαιώματα @grant.',
             currentScripts: 'Συμπεριλαμβανόμενα script',
             emptyScripts: 'Δεν υπάρχουν ακόμη script σε αυτή τη λίστα.',
             removeScript: 'Αφαίρεση αυτού του script',
@@ -5337,6 +5869,10 @@ License: BSD 3-Clause
             themeToggle: 'החלפת ערכת נושא',
             themeVariants: { menu: 'סגנונות ערכת נושא', normal: 'קלאסי', fullDark: 'שחור עמוק', chalkboard: 'Chalkboard' },
             density: { label: 'צפיפות', compact: 'קומפקטית', comfortable: 'נוחה', detailed: 'מפורטת' },
+            permissions: 'הרשאות',
+            permissionsLoading: 'ההרשאות בטעינה...',
+            permissionsUnavailable: 'המטא-נתונים של ההרשאות אינם זמינים.',
+            permissionsUndeclared: 'לא הוצהרו הרשאות @grant.',
             currentScripts: 'סקריפטים כלולים',
             emptyScripts: 'עדיין אין סקריפטים ברשימה זו.',
             removeScript: 'הסרת הסקריפט הזה',
@@ -5373,6 +5909,10 @@ License: BSD 3-Clause
             themeToggle: 'Téma váltása',
             themeVariants: { menu: 'Témastílusok', normal: 'Klasszikus', fullDark: 'Mélyfekete', chalkboard: 'Chalkboard' },
             density: { label: 'Sűrűség', compact: 'Kompakt', comfortable: 'Kényelmes', detailed: 'Részletes' },
+            permissions: 'Engedélyek',
+            permissionsLoading: 'Engedélyek betöltése...',
+            permissionsUnavailable: 'Az engedélyek metaadatai nem érhetők el.',
+            permissionsUndeclared: 'Nincsenek deklarálva @grant-engedélyek.',
             currentScripts: 'Tartalmazott szkriptek',
             emptyScripts: 'Még nincs szkript ebben a listában.',
             removeScript: 'Szkript eltávolítása',
@@ -5409,6 +5949,10 @@ License: BSD 3-Clause
             themeToggle: 'थीम बदला',
             themeVariants: { menu: 'थीम शैली', normal: 'क्लासिक', fullDark: 'गडद काळा', chalkboard: 'Chalkboard' },
             density: { label: 'घनता', compact: 'संक्षिप्त', comfortable: 'आरामदायी', detailed: 'तपशीलवार' },
+            permissions: 'परवानग्या',
+            permissionsLoading: 'परवानग्या लोड होत आहेत...',
+            permissionsUnavailable: 'परवानगीचा मेटाडेटा उपलब्ध नाही.',
+            permissionsUndeclared: 'कोणत्याही @grant परवानग्या घोषित केलेल्या नाहीत.',
             currentScripts: 'समाविष्ट स्क्रिप्ट',
             emptyScripts: 'या यादीत अजून कोणतीही स्क्रिप्ट नाही.',
             removeScript: 'ही स्क्रिप्ट काढा',
@@ -5445,6 +5989,10 @@ License: BSD 3-Clause
             themeToggle: 'Promeni temu',
             themeVariants: { menu: 'Stilovi teme', normal: 'Klasična', fullDark: 'Duboka crna', chalkboard: 'Chalkboard' },
             density: { label: 'Gustina', compact: 'Kompaktno', comfortable: 'Udobno', detailed: 'Detaljno' },
+            permissions: 'Дозволе',
+            permissionsLoading: 'Учитавање дозвола...',
+            permissionsUnavailable: 'Метаподаци дозвола нису доступни.',
+            permissionsUndeclared: 'Нису декларисане @grant дозволе.',
             currentScripts: 'Uključene skripte',
             emptyScripts: 'Na ovoj listi još nema skripti.',
             removeScript: 'Ukloni ovu skriptu',
@@ -5481,6 +6029,10 @@ License: BSD 3-Clause
             themeToggle: 'Prepnúť tému',
             themeVariants: { menu: 'Štýly témy', normal: 'Klasický', fullDark: 'Hlboká čierna', chalkboard: 'Chalkboard' },
             density: { label: 'Hustota', compact: 'Kompaktná', comfortable: 'Pohodlná', detailed: 'Podrobná' },
+            permissions: 'Povolenia',
+            permissionsLoading: 'Načítavajú sa povolenia...',
+            permissionsUnavailable: 'Metadáta povolení nie sú k dispozícii.',
+            permissionsUndeclared: 'Neboli deklarované žiadne povolenia @grant.',
             currentScripts: 'Zahrnuté skripty',
             emptyScripts: 'V tomto zozname zatiaľ nie sú žiadne skripty.',
             removeScript: 'Odstrániť tento skript',
@@ -5517,6 +6069,10 @@ License: BSD 3-Clause
             themeToggle: 'تېمىنى ئالماشتۇرۇش',
             themeVariants: { menu: 'تېما ئۇسلۇبلىرى', normal: 'كلاسسىك', fullDark: 'قېنىق قارا', chalkboard: 'Chalkboard' },
             density: { label: 'زىچلىق', compact: 'ئىخچام', comfortable: 'راھەت', detailed: 'تەپسىلىي' },
+            permissions: 'ئىجازەتلەر',
+            permissionsLoading: 'ئىجازەتلەر يۈكلىنىۋاتىدۇ...',
+            permissionsUnavailable: 'ئىجازەت مېتا سانلىق مەلۇماتلىرىنى ئىشلەتكىلى بولمايدۇ.',
+            permissionsUndeclared: 'ھېچقانداق @grant ئىجازىتى ئېلان قىلىنمىغان.',
             currentScripts: 'قوشۇلغان سىكرىپتلار',
             emptyScripts: 'بۇ تىزىملىكتە تېخى سىكرىپت يوق.',
             removeScript: 'بۇ سىكرىپتنى چىقىرىۋېتىش',
@@ -5553,6 +6109,10 @@ License: BSD 3-Clause
             themeToggle: 'Перемкнути тему',
             themeVariants: { menu: 'Стилі теми', normal: 'Класична', fullDark: 'Глибокий чорний', chalkboard: 'Chalkboard' },
             density: { label: 'Щільність', compact: 'Компактна', comfortable: 'Зручна', detailed: 'Докладна' },
+            permissions: 'Дозволи',
+            permissionsLoading: 'Завантаження дозволів...',
+            permissionsUnavailable: 'Метадані дозволів недоступні.',
+            permissionsUndeclared: 'Дозволи @grant не оголошено.',
             currentScripts: 'Включені скрипти',
             emptyScripts: 'У цьому списку ще немає скриптів.',
             removeScript: 'Видалити цей скрипт',
@@ -5589,6 +6149,10 @@ License: BSD 3-Clause
             themeToggle: 'สลับธีม',
             themeVariants: { menu: 'รูปแบบธีม', normal: 'คลาสสิก', fullDark: 'ดำสนิท', chalkboard: 'Chalkboard' },
             density: { label: 'ความหนาแน่น', compact: 'กะทัดรัด', comfortable: 'สบาย', detailed: 'ละเอียด' },
+            permissions: 'สิทธิ์',
+            permissionsLoading: 'กำลังโหลดสิทธิ์...',
+            permissionsUnavailable: 'ไม่มีข้อมูลเมตาของสิทธิ์',
+            permissionsUndeclared: 'ไม่มีการประกาศสิทธิ์ @grant',
             currentScripts: 'สคริปต์ที่รวมอยู่',
             emptyScripts: 'ยังไม่มีสคริปต์ในรายการนี้',
             removeScript: 'ลบสคริปต์นี้',
