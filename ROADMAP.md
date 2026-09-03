@@ -2,7 +2,7 @@
 
 This roadmap highlights planned improvements and acknowledges ideas contributed by the community.
 
-**Last updated:** August 2026
+**Last updated:** September 2026
 
 ---
 
@@ -14,7 +14,6 @@ These ideas have been suggested by the community and may be implemented in futur
 
 - [ ] Optional interface element hiding
   - Hide selected interface sections such as the “How to install” block.
-- [ ] Show `@grant` permissions for userscripts in their information on Greasy Fork.
 
 ### Reported by Spok (Greasy Fork Feedback)
 
@@ -54,6 +53,7 @@ The following features and fixes were implemented thanks to community feedback.
   - The Chrome extension applies GreasyFork Premium at document start and eliminates the flash of unstyled content (FOUC).
 - [x] Added a Full Dark theme option
 - [x] Added Favorites shortcuts to desktop and mobile user navigation
+- [x] Show `@grant` permissions for userscripts on script information pages
 
 ### Suggested by MUSTAFA HAKAN (Greasy Fork Feedback)
 
