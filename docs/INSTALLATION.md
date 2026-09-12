@@ -33,17 +33,20 @@ GreasyFork Premium will be applied automatically.
 
 ## Option 2 - Userscript
 
-If you prefer the userscript version, or if your browser does not support the Chrome extension, install it using a userscript manager.
+If you prefer the userscript version, or if your browser does not support the Chrome extension, install GreasyFork Premium using a userscript manager.
 
 ### Step 1 - Install a Userscript Manager
 
-Choose a userscript manager for your browser:
+To use the userscript version of GreasyFork Premium, install a userscript manager compatible with your browser.
+
+**Tampermonkey is recommended for most users.**
 
 <table>
   <thead>
     <tr>
       <th>Browser</th>
-      <th>Recommended userscript manager(s)</th>
+      <th>Recommended</th>
+      <th>Alternatives</th>
     </tr>
   </thead>
   <tbody>
@@ -53,8 +56,11 @@ Choose a userscript manager for your browser:
         Chrome
       </td>
       <td>
-        <a href="https://www.tampermonkey.net/">Tampermonkey</a> ·
-        <a href="https://violentmonkey.github.io/">Violentmonkey</a>
+        <a href="https://www.tampermonkey.net/">Tampermonkey</a>
+      </td>
+      <td>
+        <a href="https://violentmonkey.github.io/get-it/">Violentmonkey</a> ·
+        <a href="https://scriptcat.org/">ScriptCat</a>
       </td>
     </tr>
     <tr>
@@ -63,8 +69,11 @@ Choose a userscript manager for your browser:
         Firefox
       </td>
       <td>
-        <a href="https://www.tampermonkey.net/">Tampermonkey</a> ·
-        <a href="https://violentmonkey.github.io/">Violentmonkey</a>
+        <a href="https://www.tampermonkey.net/">Tampermonkey</a>
+      </td>
+      <td>
+        <a href="https://violentmonkey.github.io/get-it/">Violentmonkey</a> ·
+        <a href="https://scriptcat.org/">ScriptCat</a>
       </td>
     </tr>
     <tr>
@@ -73,8 +82,11 @@ Choose a userscript manager for your browser:
         Edge
       </td>
       <td>
-        <a href="https://www.tampermonkey.net/">Tampermonkey</a> ·
-        <a href="https://violentmonkey.github.io/">Violentmonkey</a>
+        <a href="https://www.tampermonkey.net/">Tampermonkey</a>
+      </td>
+      <td>
+        <a href="https://violentmonkey.github.io/get-it/">Violentmonkey</a> ·
+        <a href="https://scriptcat.org/">ScriptCat</a>
       </td>
     </tr>
     <tr>
@@ -83,8 +95,10 @@ Choose a userscript manager for your browser:
         Brave
       </td>
       <td>
-        <a href="https://www.tampermonkey.net/">Tampermonkey</a> ·
-        <a href="https://violentmonkey.github.io/">Violentmonkey</a>
+        <a href="https://www.tampermonkey.net/">Tampermonkey</a>
+      </td>
+      <td>
+        <a href="https://violentmonkey.github.io/get-it/">Violentmonkey</a>
       </td>
     </tr>
     <tr>
@@ -93,22 +107,41 @@ Choose a userscript manager for your browser:
         Opera
       </td>
       <td>
-        <a href="https://www.tampermonkey.net/">Tampermonkey</a> ·
-        <a href="https://violentmonkey.github.io/">Violentmonkey</a>
+        <a href="https://www.tampermonkey.net/">Tampermonkey</a>
+      </td>
+      <td>
+        <a href="https://violentmonkey.github.io/get-it/">Violentmonkey</a>
       </td>
     </tr>
     <tr>
       <td>
         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/safari/safari-original.svg" width="16" alt="Safari">
-        Safari
+        Safari (macOS)
       </td>
       <td>
-        <a href="https://apps.apple.com/app/userscripts/id1463298887">Userscripts</a> ·
+        <a href="https://www.tampermonkey.net/">Tampermonkey</a>
+      </td>
+      <td>
+        <a href="https://apps.apple.com/app/userscripts/id1463298887">Userscripts</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/safari/safari-original.svg" width="16" alt="Safari">
+        Safari (iPhone / iPad)
+      </td>
+      <td>
+        <a href="https://apps.apple.com/app/userscripts/id1463298887">Userscripts</a>
+      </td>
+      <td>
         <a href="https://www.tampermonkey.net/">Tampermonkey</a>
       </td>
     </tr>
   </tbody>
 </table>
+
+> [!NOTE]
+> GreasyFork Premium uses external libraries through `@require`. If you encounter loading issues with Violentmonkey, try **Tampermonkey** instead. See [#3](../../../issues/3) for more information.
 
 ### Step 2 - Install GreasyFork Premium
 
