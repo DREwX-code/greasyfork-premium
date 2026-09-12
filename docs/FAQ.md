@@ -25,7 +25,7 @@ No. GreasyFork Premium only improves the website interface and user experience.
 
 ### Should I use the Chrome extension or the userscript?
 
-The Chrome extension is recommended for supported Chromium-based browsers because it integrates more directly with the browser and completely eliminates the original interface flash during page loading.  
+The Chrome extension is recommended for Chromium-based browsers because it integrates more directly with the browser and completely eliminates the original interface flash during page loading.  
 The userscript remains available for users who prefer a userscript manager or use browsers where the extension is not available.
 
 See the **[Installation Guide](INSTALLATION.md)** for both installation methods.
@@ -43,16 +43,32 @@ For more information, see the **[Troubleshooting Guide](TROUBLESHOOTING.md#the-o
 
 ### Which browsers are supported?
 
-- The Chrome extension is designed for Chromium-based browsers such as Chrome, Edge, Brave, and Opera.
-- The userscript version supports modern browsers including Chrome, Firefox, Edge, Safari, Brave, and Opera when used with a compatible userscript manager.
+The **Chrome extension** is designed for Chromium-based browsers, including:
+
+- Google Chrome
+- Microsoft Edge
+- Brave
+- Opera
+- Other compatible Chromium-based browsers
+
+The **userscript version** can be used on modern browsers including Chrome, Firefox, Edge, Brave, Opera, and Safari with a compatible userscript manager.
+
+See the **[Installation Guide](INSTALLATION.md)** for browser-specific installation options.
 
 ### Which userscript managers are supported?
 
-The userscript works best with:
+**Tampermonkey is recommended for most users.**
 
-* Tampermonkey
-* Violentmonkey
-* Userscripts (Safari)
+Depending on your browser, GreasyFork Premium can also be installed with:
+
+- Violentmonkey
+- ScriptCat
+- Userscripts (Safari)
+
+> [!NOTE]
+> Some users have experienced issues with Violentmonkey failing to load external libraries required by GreasyFork Premium. If the script does not load correctly, try Tampermonkey instead. See [#3](../../../issues/3) for more information.
+
+For a complete browser and userscript manager compatibility table, see the **[Installation Guide](INSTALLATION.md)**.
 
 ## Features
 
@@ -66,18 +82,21 @@ Yes. GreasyFork Premium includes light, dark, and automatic system theme modes.
 
 ### Does it support mobile devices?
 
-The userscript includes mobile interface improvements, although compatibility may vary depending on the browser and userscript manager.  
-The Chrome extension is intended for desktop Chromium-based browsers.
+Yes. The userscript includes a responsive interface and mobile-specific improvements.
+
+Compatibility may vary depending on the mobile browser and userscript manager. Safari on iPhone and iPad can use the userscript through compatible managers such as **Userscripts**.
+
+The Chrome extension is primarily intended for desktop Chromium-based browsers.
 
 ## Support
 
 ### I found a bug. What should I do?
 
-Open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)** and include as much information as possible.
+Open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)** and include as much information as possible, including your browser, GreasyFork Premium version, installation method, and steps to reproduce the issue.
 
 ### Can I suggest a new feature?
 
-Absolutely! Share your ideas through **[GitHub Discussions](../../../discussions)**. Community feedback helps shape future updates.
+Yes. Share your idea through **[GitHub Discussions](../../../discussions)**. Community suggestions may be considered for future releases.
 
 ## Privacy
 
