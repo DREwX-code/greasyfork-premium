@@ -18,7 +18,12 @@ These ideas have been suggested by the community and may be implemented in futur
 ### Reported by Spok (Greasy Fork Feedback)
 
 - [ ] Investigate compatibility with Android 5.1, particularly with browsers such as Via.
- 
+
+### Suggested by huqiu2 (Greasy Fork Feedback)
+
+- [ ] Improve the user interface of the profile control panel using icons
+  - Consider a cleaner and more compact layout to improve readability and usability.
+
 ---
 
 ## Community Requests Completed
