@@ -4,6 +4,8 @@ This guide explains how to install GreasyFork Premium on supported browsers.
 
 ## Option 1 - Chrome Extension
 
+[![Chrome Extension](https://img.shields.io/badge/Chrome_Extension-Install-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)
+
 For Chromium-based browsers, the easiest way to install GreasyFork Premium is through the Chrome Web Store.
 
 ### Supported browsers
@@ -32,6 +34,8 @@ GreasyFork Premium will be applied automatically.
 ---
 
 ## Option 2 - Userscript
+
+[![Install Userscript](https://img.shields.io/badge/Install-Userscript-2ea44f?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js)
 
 If you prefer the userscript version, or if your browser does not support the Chrome extension, install GreasyFork Premium using a userscript manager.
 
