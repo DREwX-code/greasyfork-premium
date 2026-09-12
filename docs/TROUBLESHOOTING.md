@@ -95,6 +95,22 @@ The userscript version still minimizes FOUC as much as possible, but it cannot c
 
 ---
 
+## Script does not load correctly with Violentmonkey
+
+### Possible Cause
+
+Violentmonkey may fail to load the external libraries required by GreasyFork Premium, which can prevent the script from starting correctly.
+
+See [#3](../../../issues/3) for more details.
+
+### Solution
+
+1. Try reinstalling or refreshing the userscript.
+2. If the issue persists, use **[Tampermonkey](https://www.tampermonkey.net/)** instead of Violentmonkey.
+3. Alternatively, use the **[Chrome extension](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)**.
+
+---
+
 ## Still need help?
 
 If your issue is not listed here, please open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)** and include:
