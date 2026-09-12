@@ -69,7 +69,7 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 
 ---
 
-## ✨ Main features
+## ✨ Main Features
 
 ### ⚡ Productivity Boost
 
@@ -152,7 +152,7 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 [![Install Userscript](https://img.shields.io/badge/Install-Userscript-960000?style=for-the-badge&logo=greasyfork&logoColor=white)](https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js)
 [![View Source](https://img.shields.io/badge/View-Source%20Code-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/DREwX-code/greasyfork-premium/blob/main/src/greasyfork-premium.user.js)
 
-1. Install a userscript manager such as **Tampermonkey** or **Violentmonkey**.
+1. Install a compatible userscript manager. **[Tampermonkey](https://www.tampermonkey.net/) is recommended.**
 2. Click **Install Userscript** above or install it from [Greasy Fork](https://greasyfork.org/scripts/562938-greasyfork-premium).
 3. Open **Greasy Fork** or **Sleazy Fork**.
 4. The redesigned interface is applied automatically.
@@ -181,6 +181,7 @@ Suggestions, feature requests, bug reports, and contributions are always welcome
 GreasyFork Premium continues to evolve based on community feedback.
 
 Several community-requested features have already been implemented, including:
+
 - Interface density modes (compact / comfortable / detailed)
 - Personal notes for scripts
 - Automatic system theme support
