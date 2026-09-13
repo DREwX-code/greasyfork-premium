@@ -2,7 +2,7 @@
 // @name         GreasyFork Premium - Full Dark Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
-// @version      1.0.2
+// @version      1.0.3
 // @description  Full dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
@@ -455,6 +455,42 @@ html[data-theme-variant="full-dark"] .change-script-set.gf-set-editor-enhanced .
 html[data-theme-variant="full-dark"] ::selection {
     background-color: #315a85;
     color: #ffffff;
+}
+
+#gf-mobile-user-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#gf-mobile-user-meta {
+    display: contents;
+}
+
+#gf-mobile-user-meta > .user-profile-link {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    text-align: start;
+}
+
+#gf-mobile-user-actions {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: flex-end;
+}
+
+#gf-mobile-user-meta > #gf-mobile-theme-switch {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: end;
+    margin: 0;
+    padding: 0;
+}
+
+#gf-mobile-user-meta[data-gfplus-user-name-truncated] > #gf-mobile-theme-switch {
+    margin: 0;
 }
 `;
 })(globalThis);
