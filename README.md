@@ -75,6 +75,7 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 
 - One-click favorites directly from script cards
 - Personal notes attached to scripts
+- Script permissions viewer for `@grant` declarations
 - Redesigned favorites management (faster, cleaner, more intuitive)
 - Direct install button without opening the script page
 - Expandable script details directly from script cards
@@ -88,20 +89,22 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 
 ### 🎨 Interface & Experience
 
-- Modernized interface with improved visual hierarchy
-- Cleaner layout with improved visual consistency
-- Light, System, and Dark theme modes
+- Classic, Full Dark, and Chalkboard theme styles, with Light, System, and Dark modes
 - Automatic light/dark theme switching based on your operating system
+- Modernized interface with improved visual hierarchy
+- Compact, Comfortable, and Detailed interface density modes
+- Cleaner layout with improved visual consistency
+- Interface translations across 47 supported languages
 - Support for both Greasy Fork and Sleazy Fork
 
 ### 🧭 Navigation and Quick Actions
 
 - Immediate access to essential actions
-- Settings and script edit buttons directly accessible
+- Direct access to settings, Favorites, and script editing
 - Replaced logout text link with a modern icon
-- Reduced number of clicks for common actions
 - Collapsible sidebar groups with saved state
 - Quick navigation buttons for jumping to the top or bottom
+- Swipe gestures to open and close the mobile sidebar
 
 ### 🖼️ Image Experience
 
