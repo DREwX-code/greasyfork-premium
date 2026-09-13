@@ -6,6 +6,35 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 ---
 
+## [1.4.0] - 2026-09-13
+
+### Added
+
+- Script permissions viewer
+- Swipe gestures to open and close the mobile sidebar
+- Profile control panel icons and a saved list/grid preference
+- Dependency warning with issue-report links, copyable diagnostics, and temporary or permanent dismissal
+- Editor toolbar translations across all 47 supported languages, including inserted text
+- Loading safeguard that removes the loading mask after four seconds
+
+### Fixed
+
+- Installation URL selection to match the current script
+- False library detection caused by title-based heuristics
+- Mobile sidebar positioning and scroll jumps during interactions
+- Install button overlaps, with an icon-only fallback when needed
+
+### Improved
+
+- Handling of missing theme libraries and syntax highlighting to keep the site usable
+- Mobile sidebar interactions, preserving vertical scrolling and clearing control focus after touch input
+- Mobile navigation, list spacing, and Notes/Favorites alignment
+- Account name and email fields that adapt their width to their content
+- Theme resolution and UI initialization
+- Updated dependencies for all three themes
+
+---
+
 ## [1.3.0] - 2026-08-29
 
 ### Added
