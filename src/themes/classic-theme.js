@@ -2,7 +2,7 @@
 // @name         GreasyFork Premium - Classic Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
-// @version      1.0.1
+// @version      1.0.2
 // @description  Classic light and dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
@@ -2729,9 +2729,9 @@
     }
 
     #gf-mobile-user-row {
-        display: flex;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
         align-items: center;
-        justify-content: space-between;
         gap: 0.75rem;
         min-width: 0;
         padding: 0.2rem 0 0;
@@ -2754,18 +2754,36 @@
     }
 
     #gf-mobile-user-meta {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.45rem;
-        flex: 1 1 auto;
+        display: contents;
         min-width: 0;
+    }
+
+    #gf-mobile-user-meta > .user-profile-link {
+        grid-column: 1;
+        grid-row: 1;
+        min-width: 0;
+        text-align: start;
+    }
+
+    #gf-mobile-user-meta > #gf-mobile-theme-switch {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: end;
+        margin: 0;
+        padding: 0;
+    }
+
+    #gf-mobile-user-meta[data-gfplus-user-name-truncated] > #gf-mobile-theme-switch {
+        margin: 0;
     }
 
     #gf-mobile-user-actions {
         display: inline-flex;
         align-items: center;
         gap: 0.45rem;
-        flex: none;
+        grid-column: 2;
+        grid-row: 1;
+        justify-content: flex-end;
     }
 
     #gf-mobile-user-actions .gf-user-icon {
@@ -3559,7 +3577,7 @@
         border-end-start-radius: 0 !important;
         border-start-end-radius: 9px !important;
         border-end-end-radius: 9px !important;
-        background: rgba(255, 255, 255, .56) !important;
+        background: rgba(255, 255, 255, .72) !important;
         cursor: pointer !important;
         box-shadow: none !important;
         transition: background-color var(--transition-base), border-color var(--transition-base), transform var(--transition-base), box-shadow var(--transition-base) !important;
@@ -3569,7 +3587,7 @@
     .gf-editor-toolbar button.gf-editor-toolbar-color-swatch-button:focus-visible,
     .gf-editor-toolbar-color-tool:hover button.gf-editor-toolbar-color-swatch-button,
     .gf-editor-toolbar-color-tool:focus-within button.gf-editor-toolbar-color-swatch-button {
-        background: rgba(79, 70, 229, .1) !important;
+        background: rgba(79, 70, 229, .12) !important;
         border-color: rgba(79, 70, 229, .34) !important;
         transform: none !important;
         outline: none !important;
@@ -4626,7 +4644,36 @@
     }
 
     .close-sidebar,.open-sidebar {
-        cursor: pointer
+        cursor: pointer;
+        touch-action: pan-y;
+        user-select: none
+    }
+
+    .close-sidebar[data-gfplus-swipe-active="true"],
+    .open-sidebar[data-gfplus-swipe-active="true"] {
+        transform: translate3d(var(--gfplus-sidebar-swipe-x, 0px), 0, 0);
+        transition: none
+    }
+
+    .close-sidebar:not([data-gfplus-swipe-active="true"]),
+    .open-sidebar:not([data-gfplus-swipe-active="true"]) {
+        transition: transform .18s ease-out
+    }
+
+    .sidebar[data-gfplus-swipe-active="true"] {
+        transform: translate3d(var(--gfplus-sidebar-swipe-x, 0px), 0, 0)
+    }
+
+    .sidebar[data-gfplus-sidebar-settling="true"] {
+        transform: translate3d(var(--gfplus-sidebar-swipe-x, 0px), 0, 0);
+        transition: transform .2s cubic-bezier(.22, 1, .36, 1)
+    }
+
+    .gfplus-mobile-sidebar-placeholder {
+        box-sizing: border-box;
+        display: block;
+        float: right;
+        visibility: hidden
     }
 
     .close-sidebar {
@@ -4734,6 +4781,12 @@
             display: none
         }
 
+        html.gfplus-mobile-sidebar-stuck .sidebar:not(.collapsed) {
+            position: fixed;
+            top: .75rem;
+            right: 0;
+        }
+
         .close-sidebar {
             display: flex;
             margin-bottom: 1.5em;
@@ -4751,12 +4804,6 @@
             right: -0.35rem;
             z-index: 39;
             box-shadow: var(--shadow-soft)
-        }
-
-        html.gfplus-mobile-sidebar-stuck .sidebar:not(.collapsed) {
-            position: fixed;
-            top: .75rem;
-            right: 0;
         }
 
         html.gfplus-mobile-sidebar-stuck .open-sidebar.sidebar-collapsed {
@@ -8584,9 +8631,9 @@
     }
 
     #gf-mobile-user-row {
-        display: flex;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
         align-items: center;
-        justify-content: space-between;
         gap: 0.75rem;
         min-width: 0;
         padding: 0.2rem 0 0;
@@ -8609,18 +8656,36 @@
     }
 
     #gf-mobile-user-meta {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.45rem;
-        flex: 1 1 auto;
+        display: contents;
         min-width: 0;
+    }
+
+    #gf-mobile-user-meta > .user-profile-link {
+        grid-column: 1;
+        grid-row: 1;
+        min-width: 0;
+        text-align: start;
+    }
+
+    #gf-mobile-user-meta > #gf-mobile-theme-switch {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: end;
+        margin: 0;
+        padding: 0;
+    }
+
+    #gf-mobile-user-meta[data-gfplus-user-name-truncated] > #gf-mobile-theme-switch {
+        margin: 0;
     }
 
     #gf-mobile-user-actions {
         display: inline-flex;
         align-items: center;
         gap: 0.45rem;
-        flex: none;
+        grid-column: 2;
+        grid-row: 1;
+        justify-content: flex-end;
     }
 
     #gf-mobile-user-actions .gf-user-icon {
@@ -9418,7 +9483,7 @@
         border-end-start-radius: 0 !important;
         border-start-end-radius: 9px !important;
         border-end-end-radius: 9px !important;
-        background: rgba(11, 18, 32, .58) !important;
+        background: rgba(11, 18, 32, .72) !important;
         cursor: pointer !important;
         box-shadow: none !important;
         transition: background-color var(--transition-base), border-color var(--transition-base), transform var(--transition-base), box-shadow var(--transition-base) !important;
@@ -9428,7 +9493,7 @@
     .gf-editor-toolbar button.gf-editor-toolbar-color-swatch-button:focus-visible,
     .gf-editor-toolbar-color-tool:hover button.gf-editor-toolbar-color-swatch-button,
     .gf-editor-toolbar-color-tool:focus-within button.gf-editor-toolbar-color-swatch-button {
-        background: rgba(120, 169, 255, .14) !important;
+        background: rgba(120, 169, 255, .16) !important;
         border-color: rgba(120, 169, 255, .44) !important;
         transform: none !important;
         outline: none !important;
@@ -10485,7 +10550,36 @@
     }
 
     .close-sidebar,.open-sidebar {
-        cursor: pointer
+        cursor: pointer;
+        touch-action: pan-y;
+        user-select: none
+    }
+
+    .close-sidebar[data-gfplus-swipe-active="true"],
+    .open-sidebar[data-gfplus-swipe-active="true"] {
+        transform: translate3d(var(--gfplus-sidebar-swipe-x, 0px), 0, 0);
+        transition: none
+    }
+
+    .close-sidebar:not([data-gfplus-swipe-active="true"]),
+    .open-sidebar:not([data-gfplus-swipe-active="true"]) {
+        transition: transform .18s ease-out
+    }
+
+    .sidebar[data-gfplus-swipe-active="true"] {
+        transform: translate3d(var(--gfplus-sidebar-swipe-x, 0px), 0, 0)
+    }
+
+    .sidebar[data-gfplus-sidebar-settling="true"] {
+        transform: translate3d(var(--gfplus-sidebar-swipe-x, 0px), 0, 0);
+        transition: transform .2s cubic-bezier(.22, 1, .36, 1)
+    }
+
+    .gfplus-mobile-sidebar-placeholder {
+        box-sizing: border-box;
+        display: block;
+        float: right;
+        visibility: hidden
     }
 
     .close-sidebar {
@@ -10593,6 +10687,12 @@
             display: none
         }
 
+        html.gfplus-mobile-sidebar-stuck .sidebar:not(.collapsed) {
+            position: fixed;
+            top: .75rem;
+            right: 0;
+        }
+
         .close-sidebar {
             display: flex;
             margin-bottom: 1.5em;
@@ -10610,12 +10710,6 @@
             right: -0.35rem;
             z-index: 39;
             box-shadow: var(--shadow-soft)
-        }
-
-        html.gfplus-mobile-sidebar-stuck .sidebar:not(.collapsed) {
-            position: fixed;
-            top: .75rem;
-            right: 0;
         }
 
         html.gfplus-mobile-sidebar-stuck .open-sidebar.sidebar-collapsed {
