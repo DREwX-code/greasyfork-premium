@@ -19,11 +19,6 @@ These ideas have been suggested by the community and may be implemented in futur
 
 - [ ] Investigate compatibility with Android 5.1, particularly with browsers such as Via.
 
-### Suggested by huqiu2 (Greasy Fork Feedback)
-
-- [ ] Improve the user interface of the profile control panel using icons
-  - Consider a cleaner and more compact layout to improve readability and usability.
-
 ---
 
 ## Community Requests Completed
@@ -63,6 +58,10 @@ The following features and fixes were implemented thanks to community feedback.
 ### Suggested by MUSTAFA HAKAN (Greasy Fork Feedback)
 
 - [x] Added a Chalkboard theme variant
+
+### Suggested by huqiu2 (Greasy Fork Feedback)
+
+- [x] Improved the profile control panel with icons and a saved list/grid preference
 
 ---
 
