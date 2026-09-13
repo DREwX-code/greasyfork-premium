@@ -97,7 +97,7 @@
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.3.0
+// @version      1.4.0
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -106,9 +106,9 @@
 // @match        https://sleazyfork.org/*
 // @run-at       document-start
 // @require      https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
-// @require      https://update.greasyfork.org/scripts/593320/1915335/GreasyFork%20Premium%20-%20Classic%20Theme.js
-// @require      https://update.greasyfork.org/scripts/593322/1915381/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
-// @require      https://update.greasyfork.org/scripts/593323/1915385/GreasyFork%20Premium%20-%20Full%20Dark%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593320/1930735/GreasyFork%20Premium%20-%20Classic%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593322/1930808/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593323/1930809/GreasyFork%20Premium%20-%20Full%20Dark%20Theme.js
 // @grant        unsafeWindow
 
 // @downloadURL https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js
@@ -179,13 +179,231 @@ License: BSD 3-Clause
     const THEME_OPTIONS = ['light', 'system', 'dark'];
     const THEME_VARIANT_OPTIONS = ['normal', 'full-dark', 'chalkboard'];
     const DENSITY_OPTIONS = ['compact', 'comfortable', 'detailed'];
+    // @require runs before this script. Missing exports must never abort startup.
+    const dependencyWarnings = new Map();
+    const DEPENDENCY_NOTICE_STORAGE_KEY = 'gfplus-hide-dependency-warning';
+    const DEPENDENCY_NOTICE_ID = 'gfplus-dependency-warning';
+    let dependencyNoticeDismissed = false;
+    let dependencyNoticeScheduled = false;
+    let dependencyNoticeReady = false;
+
+    const buildDependencyErrorReport = () => {
+        let info;
+        try {
+            info = typeof GM_info !== 'undefined' ? GM_info : (typeof GM !== 'undefined' ? GM.info : undefined);
+        } catch (error) {
+            // Manager metadata is optional; never let diagnostics break the page.
+        }
+        const browser = [info?.platform?.browserName, info?.platform?.browserVersion].filter(Boolean).join(' ');
+        return [
+            'GreasyFork Premium — dependency error',
+            `Script version: ${info?.script?.version || '1.4.0 (metadata unavailable)'}`,
+            `Browser: ${browser || navigator.userAgent || 'Unavailable'}`,
+            `Userscript manager: ${[info?.scriptHandler, info?.version].filter(Boolean).join(' ') || 'Unavailable'}`,
+            '',
+            ...Array.from(dependencyWarnings, ([name, details]) =>
+                `Dependency: ${name}\nError: ${details.message}\nFallback: ${details.fallback}\n`)
+        ].join('\n');
+    };
+
+    const showDependencyNotice = () => {
+        // @require checks run before the shared translation catalog is initialized.
+        if (!dependencyNoticeReady || dependencyNoticeDismissed || document.getElementById(DEPENDENCY_NOTICE_ID)) return;
+        try {
+            if (localStorage.getItem(DEPENDENCY_NOTICE_STORAGE_KEY) === '1') {
+                dependencyNoticeDismissed = true;
+                return;
+            }
+        } catch (error) {
+            // Unavailable storage must not prevent the warning or the script from working.
+        }
+
+        if (!document.body) {
+            if (!dependencyNoticeScheduled) {
+                dependencyNoticeScheduled = true;
+                document.addEventListener('DOMContentLoaded', () => {
+                    dependencyNoticeScheduled = false;
+                    showDependencyNotice();
+                }, { once: true });
+            }
+            return;
+        }
+
+        const locale = getCurrentLocale();
+        const i18n = getUserNavI18n(locale).dependencyNotice;
+        const host = document.createElement('div');
+        host.id = DEPENDENCY_NOTICE_ID;
+        host.style.cssText = 'display:block!important;position:fixed!important;bottom:16px!important;right:16px!important;width:min(440px,calc(100vw - 32px))!important;z-index:2147483647!important;';
+        const shadow = host.attachShadow({ mode: 'open' });
+        shadow.innerHTML = `
+            <style>
+                :host { all: initial; }
+                section { box-sizing: border-box; padding: 16px; border: 1px solid #b45309;
+                    border-radius: 8px; background: #fffbeb; color: #292524;
+                    box-shadow: 0 4px 16px #0003; font: 14px/1.5 system-ui, sans-serif;
+                    text-align: start; overflow-wrap: anywhere; color-scheme: light;
+                    max-height: calc(100dvh - 32px); overflow-y: auto; }
+                header, .actions { display: flex; gap: 8px 16px; align-items: center; }
+                header strong { flex: 1; }
+                svg { width: 22px; height: 22px; flex-shrink: 0; }
+                p { margin: 8px 0 12px; }
+                .actions { flex-wrap: wrap; }
+                .report { margin-bottom: 12px; }
+                a, button { color: #78350f; font: inherit; text-decoration: underline; }
+                button { padding: 0; border: 0; background: transparent; cursor: pointer; text-align: start; }
+                .copy-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+                .copy-button { display: inline-flex; align-items: center; justify-content: center;
+                    box-sizing: border-box; width: 30px; height: 30px; flex: 0 0 30px;
+                    border: 1px solid #d6b98c; border-radius: 5px; background: #fff;
+                    text-decoration: none; }
+                .copy-button svg { width: 16px; height: 16px; }
+                .copy-button:hover { background: #fef3c7; border-color: #b45309; }
+                .copy-button.is-copied { color: #15803d; border-color: #15803d; background: #dcfce7; }
+                .copy-button:disabled { opacity: .55; cursor: wait; }
+                .preference { padding-top: 10px; border-top: 1px solid #e7dcc7; }
+                .preference button { color: #66605a; font-size: 12px; text-decoration: none; }
+                .preference button:hover { color: #292524; text-decoration: underline; }
+                .close { display: inline-flex; padding: 4px; text-decoration: none; }
+                a:focus-visible, button:focus-visible { outline: 2px solid #78350f; outline-offset: 3px; }
+                textarea { box-sizing: border-box; width: 100%; height: 140px; margin-top: 8px;
+                    background: #fff; color: #292524; font: 12px/1.4 monospace; }
+                [hidden] { display: none; }
+                .status:empty { display: none; }
+            </style>
+            <section role="alert" aria-label="GreasyFork Premium">
+                <header>
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5m0 3h.01"/></svg>
+                    <strong>GreasyFork Premium</strong>
+                    <button class="close" type="button" data-action="close"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M6 18 18 6"/></svg></button>
+                </header>
+                <p data-i18n="message"></p>
+                <div class="copy-row">
+                    <span data-i18n="copy"></span>
+                    <button class="copy-button" type="button" data-action="copy"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"/></svg></button>
+                </div>
+                <p class="status" role="status" aria-live="polite"></p>
+                <textarea readonly hidden dir="ltr"></textarea>
+                <div class="report">
+                    <span data-i18n="report"></span> :
+                    <div class="actions">
+                        <a href="https://github.com/DREwX-code/greasyfork-premium/issues/new" target="_blank" rel="noopener noreferrer">GitHub Issues</a>
+                        <a href="https://greasyfork.org/en/scripts/562938/feedback" data-feedback target="_blank" rel="noopener noreferrer">Greasy Fork Feedback</a>
+                    </div>
+                </div>
+                <div class="preference">
+                    <button type="button" data-action="dismiss" data-i18n="dismiss"></button>
+                </div>
+            </section>
+        `;
+        const section = shadow.querySelector('section');
+        section.lang = locale;
+        section.dir = /^(ar|he|ur|ckb|ug)(-|$)/.test(locale) ? 'rtl' : 'ltr';
+        shadow.querySelectorAll('[data-i18n]').forEach((element) => {
+            element.textContent = i18n[element.dataset.i18n];
+        });
+        shadow.querySelector('[data-feedback]').href = `https://greasyfork.org/${encodeURIComponent(locale)}/scripts/562938/feedback`;
+        const closeButton = shadow.querySelector('[data-action="close"]');
+        closeButton.title = i18n.close;
+        closeButton.setAttribute('aria-label', i18n.close);
+        const closeNotice = () => {
+            dependencyNoticeDismissed = true;
+            host.remove();
+        };
+        closeButton.addEventListener('click', closeNotice);
+        shadow.querySelector('[data-action="dismiss"]').addEventListener('click', () => {
+            try {
+                localStorage.setItem(DEPENDENCY_NOTICE_STORAGE_KEY, '1');
+            } catch (error) {
+                console.warn('GreasyFork Premium: unable to save the warning preference; hidden for this page only.', error);
+            }
+            closeNotice();
+        });
+        const copyButton = shadow.querySelector('[data-action="copy"]');
+        copyButton.title = i18n.copy;
+        copyButton.setAttribute('aria-label', i18n.copy);
+        const copyIcon = copyButton.querySelector('svg');
+        const originalCopyIcon = copyIcon.innerHTML;
+        let copyFeedbackTimer = 0;
+        const resetCopyFeedback = () => {
+            window.clearTimeout(copyFeedbackTimer);
+            copyButton.classList.remove('is-copied');
+            copyIcon.innerHTML = originalCopyIcon;
+            copyButton.setAttribute('aria-label', i18n.copy);
+        };
+        copyButton.addEventListener('click', async () => {
+            const report = buildDependencyErrorReport();
+            const status = shadow.querySelector('.status');
+            const manualCopy = shadow.querySelector('textarea');
+            resetCopyFeedback();
+            copyButton.disabled = true;
+            try {
+                await navigator.clipboard.writeText(report);
+                manualCopy.hidden = true;
+                status.textContent = '';
+                copyIcon.innerHTML = '<path d="m5 12 4 4L19 6"/>';
+                copyButton.classList.add('is-copied');
+                copyButton.setAttribute('aria-label', i18n.copied);
+                copyFeedbackTimer = window.setTimeout(resetCopyFeedback, 1800);
+            } catch (error) {
+                status.textContent = i18n.copyFailed;
+                manualCopy.value = report;
+                manualCopy.setAttribute('aria-label', i18n.copy);
+                manualCopy.hidden = false;
+                manualCopy.focus();
+                manualCopy.select();
+            } finally {
+                copyButton.disabled = false;
+            }
+        });
+        document.body.appendChild(host);
+    };
+
+    const warnDependency = (name, fallback, error) => {
+        if (dependencyWarnings.has(name)) return;
+        const message = error ? String(error.message || error) : 'Missing or invalid @require export.';
+        dependencyWarnings.set(name, { message, fallback });
+        console.warn(
+            `GreasyFork Premium: missing or invalid @require dependency "${name}". ${fallback} Try reloading the script or refreshing external dependencies in your userscript manager.`, ...(error ? [error] : [])
+        );
+        showDependencyNotice();
+    };
+
+    const readThemeLibrary = (themeName) => {
+        let readError;
+        // Managers may expose @require globals in the sandbox or in the page realm.
+        for (const scope of new Set([globalThis, window, pageWindow])) {
+            try {
+                const css = scope.GFPlusThemeLibraries?.[themeName];
+                if (typeof css === 'string' && css.trim()) return css;
+            } catch (error) {
+                // A cross-realm export may be inaccessible; try the remaining scopes.
+                readError ||= error;
+            }
+        }
+        warnDependency(`theme:${themeName}`, 'Using an available base theme or the native site styles; your saved preference is preserved.', readError);
+        return '';
+    };
+
+    const LIGHT_CSS = readThemeLibrary('light');
+    const DARK_CSS = readThemeLibrary('dark');
+    const FULL_DARK_CSS = readThemeLibrary('fullDark');
+    const CHALKBOARD_CSS = readThemeLibrary('chalkboard');
+    const HAS_BASE_THEME = Boolean(LIGHT_CSS || DARK_CSS);
+    if (!HAS_BASE_THEME) {
+        console.warn('GreasyFork Premium: no usable base theme. Keeping native site styles and controls; enhancements that require theme CSS are disabled for this page.');
+    }
+    const resolveThemeVariant = (variant) => (
+        !HAS_BASE_THEME
+        || (variant === 'full-dark' && (!FULL_DARK_CSS || !DARK_CSS))
+        || (variant === 'chalkboard' && !CHALKBOARD_CSS)
+    ) ? 'normal' : variant;
+
     const storedTheme = localStorage.getItem(STORAGE_KEY);
     let currentTheme = THEME_OPTIONS.includes(storedTheme) ? storedTheme : 'system';
     const storedThemeVariant = localStorage.getItem(THEME_VARIANT_STORAGE_KEY);
     let currentThemeVariant = THEME_VARIANT_OPTIONS.includes(storedThemeVariant) ? storedThemeVariant : 'normal';
     const storedDensity = localStorage.getItem(DENSITY_STORAGE_KEY);
     let currentDensity = DENSITY_OPTIONS.includes(storedDensity) ? storedDensity : 'comfortable';
-    let internalNavigation = false;
     let themeMotionTimer = 0;
     const root = document.documentElement;
     root?.setAttribute('data-gfplus-density', currentDensity);
@@ -242,9 +460,12 @@ License: BSD 3-Clause
         root.setAttribute(SAFARI_ATTR, 'true');
     }
 
-    const resolveTheme = (theme = currentTheme) => theme === 'system'
-        ? (systemThemeQuery?.matches ? 'dark' : 'light')
-        : theme;
+    const resolveTheme = (theme = currentTheme) => {
+        const resolved = theme === 'system' ? (systemThemeQuery?.matches ? 'dark' : 'light') : theme;
+        if (resolved === 'dark' && !DARK_CSS) return 'light';
+        if (resolved === 'light' && !LIGHT_CSS && DARK_CSS) return 'dark';
+        return resolved;
+    };
 
     const applyRootTheme = (theme, variant = currentThemeVariant) => {
         if (!root) {
@@ -252,6 +473,7 @@ License: BSD 3-Clause
         }
 
         const resolvedTheme = resolveTheme(theme);
+        variant = resolveThemeVariant(variant);
         const colors = variant === 'chalkboard'
             ? THEME_COLORS[resolvedTheme === 'dark' ? 'chalkboardDark' : 'chalkboardLight']
             : (resolvedTheme === 'dark' && variant === 'full-dark'
@@ -260,6 +482,8 @@ License: BSD 3-Clause
         root.setAttribute('data-theme', resolvedTheme);
         root.setAttribute('data-theme-preference', theme);
         root.setAttribute('data-theme-variant', variant);
+        // Without a base stylesheet, let GreasyFork own its colors and layout.
+        if (!HAS_BASE_THEME) return;
         root.style.colorScheme = resolvedTheme;
         root.style.backgroundColor = colors.background;
         root.style.color = colors.text;
@@ -295,6 +519,7 @@ License: BSD 3-Clause
     };
 
     const appendStyle = (styleEl) => {
+        if (!HAS_BASE_THEME) return;
         const target = document.head || root;
         target.appendChild(styleEl);
     };
@@ -373,6 +598,34 @@ License: BSD 3-Clause
     }
     `;
 
+    let loadingCleared = false;
+    let phoneLoadClearScheduled = false;
+    let loadingWatchdog = 0;
+
+    const clearNoTransition = () => {
+        window.clearTimeout(loadingWatchdog);
+        loadingWatchdog = 0;
+        loadingCleared = true;
+        root?.removeAttribute(LOADING_ATTR);
+        root?.removeAttribute(INTERNAL_LOADING_ATTR);
+        document.getElementById(NO_TRANSITION_STYLE_ID)?.remove();
+    };
+
+    const armLoadingWatchdog = () => {
+        window.clearTimeout(loadingWatchdog);
+        loadingCleared = false;
+        loadingWatchdog = window.setTimeout(() => {
+            console.warn('GreasyFork Premium: loading exceeded 4 seconds. Revealing the page to prevent a blank screen.');
+            clearNoTransition();
+        }, 4000);
+    };
+
+    // Independent of dependency initialization, load events and animation frames.
+    armLoadingWatchdog();
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) clearNoTransition();
+    });
+
     applyRootTheme(currentTheme);
     syncHandheldMode();
 
@@ -382,7 +635,7 @@ License: BSD 3-Clause
 
     const noTransitionStyle = document.createElement('style');
     noTransitionStyle.id = NO_TRANSITION_STYLE_ID;
-    noTransitionStyle.textContent = buildCriticalLoadingCss();
+    noTransitionStyle.textContent = HAS_BASE_THEME ? buildCriticalLoadingCss() : '';
     prependCriticalStyle(noTransitionStyle);
 
     const themeMotionStyle = document.createElement('style');
@@ -391,13 +644,12 @@ License: BSD 3-Clause
     appendStyle(themeMotionStyle);
 
     try {
-        internalNavigation = sessionStorage.getItem(INTERNAL_NAV_FLAG_KEY) === '1';
-        if (internalNavigation) {
+        if (sessionStorage.getItem(INTERNAL_NAV_FLAG_KEY) === '1') {
             sessionStorage.removeItem(INTERNAL_NAV_FLAG_KEY);
             root.setAttribute(INTERNAL_LOADING_ATTR, 'true');
         }
     } catch (error) {
-        internalNavigation = false;
+        // Navigation remains available when session storage is blocked.
     }
 
     const bootstrapThemeScript = document.createElement('script');
@@ -405,16 +657,21 @@ License: BSD 3-Clause
     bootstrapThemeScript.textContent = `
     (() => {
         try {
+            if (${!HAS_BASE_THEME}) return;
             const themeOptions = ['light', 'system', 'dark'];
             const themeVariantOptions = ['normal', 'full-dark', 'chalkboard'];
             const themeColors = ${JSON.stringify(THEME_COLORS)};
             const storedTheme = localStorage.getItem(${JSON.stringify(STORAGE_KEY)});
             const storedThemeVariant = localStorage.getItem(${JSON.stringify(THEME_VARIANT_STORAGE_KEY)});
             const theme = themeOptions.includes(storedTheme) ? storedTheme : 'system';
-            const themeVariant = themeVariantOptions.includes(storedThemeVariant) ? storedThemeVariant : 'normal';
-            const resolvedTheme = theme === 'system'
-                ? (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+            const requestedVariant = themeVariantOptions.includes(storedThemeVariant) ? storedThemeVariant : 'normal';
+            const availableVariants = ${JSON.stringify(THEME_VARIANT_OPTIONS.filter((variant) => resolveThemeVariant(variant) === variant))};
+            const themeVariant = availableVariants.includes(requestedVariant) ? requestedVariant : 'normal';
+            const requestedTheme = theme === 'system'
+                ? (window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light')
                 : theme;
+            const resolvedTheme = requestedTheme === 'dark' && ${!DARK_CSS} ? 'light'
+                : requestedTheme === 'light' && ${!LIGHT_CSS && Boolean(DARK_CSS)} ? 'dark' : requestedTheme;
             const root = document.documentElement;
             if (!root) return;
             const colorKey = themeVariant === 'chalkboard'
@@ -456,7 +713,7 @@ License: BSD 3-Clause
     window.addEventListener('resize', syncHandheldMode, { passive: true });
 
     const markInternalNavigation = () => {
-        internalNavigation = true;
+        armLoadingWatchdog();
         root.setAttribute(LOADING_ATTR, 'true');
         root.setAttribute(INTERNAL_LOADING_ATTR, 'true');
         applyRootTheme(currentTheme);
@@ -513,51 +770,6 @@ License: BSD 3-Clause
             markInternalNavigation();
         }
     }, true);
-    // ============================================================================
-    // Light Theme
-    // ============================================================================
-    const readThemeLibrary = (themeName) => {
-        const css = globalThis.GFPlusThemeLibraries?.[themeName];
-        if (!css || !css.trim()) {
-            throw new Error('GreasyFork Premium: missing theme library "' + themeName + '". Check the corresponding @require URL.');
-        }
-        return css;
-    };
-
-    const LIGHT_CSS = readThemeLibrary('light');
-
-    // ============================================================================
-    // Dark Theme
-    // ============================================================================
-    const DARK_CSS = readThemeLibrary('dark');
-
-    // ============================================================================
-    // Full Dark Theme Variant
-    // ============================================================================
-    const FULL_DARK_CSS = readThemeLibrary('fullDark');
-
-    // ============================================================================
-    // Chalkboard Theme Variant
-    // ============================================================================
-    const CHALKBOARD_CSS = readThemeLibrary('chalkboard');
-
-
-    let loadingCleared = false;
-    let phoneLoadClearScheduled = false;
-
-    const clearNoTransition = () => {
-        if (loadingCleared) {
-            return;
-        }
-
-        loadingCleared = true;
-        root.removeAttribute(LOADING_ATTR);
-        root.removeAttribute(INTERNAL_LOADING_ATTR);
-        if (noTransitionStyle.parentNode) {
-            noTransitionStyle.parentNode.removeChild(noTransitionStyle);
-        }
-    };
-
     const scheduleNoTransitionClear = (frames = 2) => {
         if (loadingCleared) {
             return;
@@ -676,7 +888,7 @@ License: BSD 3-Clause
         min-height: 30px;
         width: 100%;
         box-sizing: border-box;
-        margin: 10px 0 -8px;
+        margin: 10px 0 16px;
         position: relative;
         z-index: 2;
     }
@@ -696,11 +908,94 @@ License: BSD 3-Clause
         gap: .75rem;
         width: 100%;
         box-sizing: border-box;
+        padding: 6px 0 0;
+        margin-bottom: 16px;
+    }
+
+    .gf-script-list-section-header > h3 {
+        margin-block: 0;
+    }
+
+    .gf-script-list-heading + .script-list,
+    .gf-script-list-section-header + .script-list {
+        margin-top: 0;
     }
 
     .gf-script-list-section-header > gf-script-density {
         margin-left: auto;
-        transform: translateY(23px);
+    }
+
+    .gf-script-personal-actions {
+        display: inline-flex;
+        align-items: center;
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        gap: .45rem;
+    }
+
+    .gf-script-install-button[data-gfplus-icon-only="true"] {
+        width: 2.2rem;
+        min-width: 2.2rem;
+        padding-inline: 0;
+        font-size: 0;
+        gap: 0;
+    }
+
+    #install-area > .gf-script-personal-actions {
+        margin-inline-start: 13px;
+    }
+
+    #install-area > .gf-script-personal-actions > .gf-script-star-button {
+        min-width: 2.4rem;
+        min-height: 2.4rem;
+    }
+
+    #install-area > .gf-script-personal-actions > .gf-script-star-button svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    @media screen and (max-width: 600px) {
+        .gf-script-personal-actions {
+            margin-top: 6px;
+        }
+    }
+
+    @media screen and (max-width: 800px) {
+        #gf-mobile-user-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+        #gf-mobile-user-meta {
+            display: contents;
+        }
+        #gf-mobile-user-meta > .user-profile-link {
+            grid-column: 1;
+            grid-row: 1;
+            min-width: 0;
+        }
+        #gf-mobile-user-meta > #gf-mobile-theme-switch {
+            grid-column: 1 / -1;
+            grid-row: 2;
+            justify-self: end;
+        }
+        #gf-mobile-user-actions {
+            grid-column: 2;
+            grid-row: 1;
+            justify-self: end;
+            justify-content: flex-end;
+        }
+        .sidebarred > .sidebar, .sidebarred .open-sidebar {
+            touch-action: pan-y;
+        }
+        .sidebarred > .sidebar[data-gfplus-swipe-active] {
+            transform: translate3d(var(--gfplus-sidebar-swipe-x, 0px), 0, 0);
+            transition: none;
+        }
+        .sidebarred > .sidebar[data-gfplus-sidebar-settling] {
+            transform: translate3d(var(--gfplus-sidebar-swipe-x, 0px), 0, 0);
+            transition: transform .2s cubic-bezier(.22, 1, .36, 1);
+        }
     }
 
     gf-script-density {
@@ -913,11 +1208,27 @@ License: BSD 3-Clause
     @media screen and (max-width: 600px) {
         .gf-script-list-heading {
             width: calc(100% - 1.5rem);
-            margin: 8px .75rem -8px;
+            margin: 8px .75rem 16px;
         }
 
         html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) {
             padding: .65rem .75rem;
+        }
+
+        .gf-script-list-heading {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: .45rem;
+        }
+
+        .gf-script-list-heading > .script-list-description {
+            order: 1;
+        }
+
+        .gf-script-list-heading > gf-script-density {
+            order: 2;
+            align-self: flex-end;
         }
 
         html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article {
@@ -1170,6 +1481,7 @@ License: BSD 3-Clause
     appendStyle(scriptPermissionsStyle);
 
     const syncThemeStyles = (theme, variant = currentThemeVariant) => {
+        variant = resolveThemeVariant(variant);
         const resolvedTheme = resolveTheme(theme);
         lightThemeStyle.media = resolvedTheme === 'dark' ? 'not all' : 'all';
         darkThemeStyle.media = resolvedTheme === 'dark' ? 'all' : 'not all';
@@ -1268,6 +1580,7 @@ License: BSD 3-Clause
     };
 
     const rebuildInstallStatsCharts = () => {
+        if (!HAS_BASE_THEME) return false;
         if (typeof pageWindow.initializeChart !== 'function') {
             return false;
         }
@@ -2041,10 +2354,17 @@ License: BSD 3-Clause
     let mobileSidebarFrame = 0;
     let mobileSidebarInitialized = false;
     let mobileSidebarResizeObserver = null;
+    let mobileSidebarDragState = null;
+    let mobileSidebarPlaceholder = null;
+    let mobileSidebarSuppressClickUntil = 0;
+    let mobileSidebarCommitting = false;
+    const MOBILE_SIDEBAR_DRAG_ACTIVATION_DISTANCE = 8;
+    const MOBILE_SIDEBAR_DRAG_COMMIT_RATIO = 0.35;
 
     const clampSidebarTop = (value, min, max) => Math.max(min, Math.min(max, value));
 
     const updateSmartSidebarPositions = () => {
+        cancelAnimationFrame(smartSidebarFrame);
         smartSidebarFrame = 0;
         const scrollY = window.scrollY;
         const scrollDelta = scrollY - smartSidebarLastScrollY;
@@ -2096,7 +2416,7 @@ License: BSD 3-Clause
         smartSidebarLastScrollY = window.scrollY;
 
         if (!smartSidebarInitialized) {
-            window.addEventListener('scroll', scheduleSmartSidebarUpdate, { passive: true });
+            window.addEventListener('scroll', updateSmartSidebarPositions, { passive: true });
             window.addEventListener('resize', scheduleSmartSidebarUpdate, { passive: true });
             smartSidebarInitialized = true;
         }
@@ -2113,17 +2433,244 @@ License: BSD 3-Clause
     };
 
     const updateMobileSidebarStickiness = () => {
+        cancelAnimationFrame(mobileSidebarFrame);
         mobileSidebarFrame = 0;
         const mobile = window.matchMedia('(max-width: 800px)').matches;
         const anchor = document.querySelector('.sidebarred');
+        const panel = anchor?.querySelector('#listing-options-sidebar, .sidebar');
+        const openButton = anchor?.querySelector('.open-sidebar');
+        // During an opening drag the panel is visible, but the fixed button still
+        // needs its placeholder until the native control commits the new state.
+        const sidebarClosed = openButton?.classList.contains('sidebar-collapsed')
+            ?? panel?.classList.contains('collapsed') ?? true;
 
-        if (!mobile || !anchor) {
+        if (!mobile || !anchor || !panel) {
             root.classList.remove(MOBILE_SIDEBAR_STUCK_CLASS);
+            if (mobileSidebarPlaceholder) {
+                mobileSidebarPlaceholder.style.display = 'none';
+            }
             return;
         }
 
+        const stuck = root.classList.contains(MOBILE_SIDEBAR_STUCK_CLASS);
         const anchorTop = anchor.getBoundingClientRect().top + window.scrollY;
-        root.classList.toggle(MOBILE_SIDEBAR_STUCK_CLASS, window.scrollY > 12 && window.scrollY + 12 >= anchorTop);
+        // Match the CSS .75rem fixed inset in both directions: no delayed release.
+        const stickyTop = (parseFloat(getComputedStyle(root).fontSize) || 16) * .75;
+        const shouldStick = window.scrollY + stickyTop >= anchorTop;
+
+        if (sidebarClosed && openButton && !mobileSidebarPlaceholder) {
+            mobileSidebarPlaceholder = document.createElement('span');
+            mobileSidebarPlaceholder.className = 'gfplus-mobile-sidebar-placeholder';
+            openButton.before(mobileSidebarPlaceholder);
+        }
+
+        if (mobileSidebarPlaceholder && openButton && sidebarClosed) {
+            const buttonStyle = getComputedStyle(openButton);
+            mobileSidebarPlaceholder.style.width = `${openButton.offsetWidth}px`;
+            mobileSidebarPlaceholder.style.height = `${openButton.offsetHeight}px`;
+            mobileSidebarPlaceholder.style.marginLeft = buttonStyle.marginLeft;
+            mobileSidebarPlaceholder.style.marginRight = buttonStyle.marginRight;
+            mobileSidebarPlaceholder.style.marginTop = buttonStyle.marginTop;
+            mobileSidebarPlaceholder.style.marginBottom = buttonStyle.marginBottom;
+            mobileSidebarPlaceholder.style.display = shouldStick ? 'block' : 'none';
+        } else if (mobileSidebarPlaceholder) {
+            mobileSidebarPlaceholder.style.display = 'none';
+        }
+
+        if (shouldStick === stuck) {
+            return;
+        }
+
+        root.classList.toggle(MOBILE_SIDEBAR_STUCK_CLASS, shouldStick);
+    };
+
+    const getMobileSidebarElements = () => {
+        const anchor = document.querySelector('.sidebarred');
+        const panel = anchor?.querySelector('#listing-options-sidebar, .sidebar');
+        const openButton = anchor?.querySelector('.open-sidebar');
+        return { anchor, panel, openButton };
+    };
+
+    const releaseMobileSidebarPointer = (state) => {
+        if (state.captureTarget?.hasPointerCapture?.(state.pointerId)) {
+            state.captureTarget.releasePointerCapture(state.pointerId);
+        }
+    };
+
+    const clearMobileSidebarDragStyles = (panel) => {
+        panel.removeAttribute('data-gfplus-swipe-active');
+        panel.removeAttribute('data-gfplus-sidebar-settling');
+        panel.style.removeProperty('--gfplus-sidebar-swipe-x');
+        panel.style.removeProperty('transform');
+    };
+
+    const clearMobileSidebarControlFocus = (panel) => {
+        const focused = document.activeElement;
+        if (focused === getMobileSidebarElements().openButton || focused === panel.querySelector('.close-sidebar')) {
+            focused?.blur();
+        }
+    };
+
+    const restoreMobileSidebarViewport = (state) => {
+        if (!state.horizontal) return;
+        updateMobileSidebarStickiness();
+        // Flush the final layout before restoring scroll anchoring.
+        state.panel.getBoundingClientRect();
+        window.scrollTo({ left: state.scrollX, top: state.scrollY, behavior: 'instant' });
+        if (state.overflowAnchor) {
+            root.style.setProperty('overflow-anchor', state.overflowAnchor, state.overflowAnchorPriority);
+        } else {
+            root.style.removeProperty('overflow-anchor');
+        }
+        updateMobileSidebarStickiness();
+    };
+
+    const resetMobileSidebarDrag = () => {
+        const state = mobileSidebarDragState;
+        if (!state) return;
+        mobileSidebarDragState = null;
+        if (state.startsClosed) state.panel.classList.add('collapsed');
+        clearMobileSidebarDragStyles(state.panel);
+        releaseMobileSidebarPointer(state);
+        restoreMobileSidebarViewport(state);
+    };
+
+    const settleMobileSidebar = (state, open) => {
+        const { panel } = state;
+        // Commit the current drag position before transitioning to its destination.
+        panel.getBoundingClientRect();
+        panel.removeAttribute('data-gfplus-swipe-active');
+        panel.setAttribute('data-gfplus-sidebar-settling', 'true');
+        panel.style.setProperty('--gfplus-sidebar-swipe-x', open ? '0px' : '100%');
+        let finished = false;
+        let finishTimer = 0;
+        const finish = (event) => {
+            if (event && (event.target !== panel || event.propertyName !== 'transform')) return;
+            if (finished) return;
+            finished = true;
+            window.clearTimeout(finishTimer);
+            panel.removeEventListener('transitionend', finish);
+            // Only a committed change should invoke the native control. A short swipe
+            // returns to its initial state without refocusing or toggling anything.
+            if (open === state.startsClosed) {
+                mobileSidebarCommitting = true;
+                try {
+                    const control = open ? getMobileSidebarElements().openButton : panel.querySelector('.close-sidebar');
+                    control?.click();
+                    clearMobileSidebarControlFocus(panel);
+                } finally {
+                    mobileSidebarCommitting = false;
+                }
+            } else if (state.startsClosed) {
+                panel.classList.add('collapsed');
+            }
+            clearMobileSidebarDragStyles(panel);
+            restoreMobileSidebarViewport(state);
+        };
+        panel.addEventListener('transitionend', finish);
+        finishTimer = window.setTimeout(finish, 240);
+    };
+
+    const handleMobileSidebarPointerDown = (event) => {
+        if (!window.matchMedia('(max-width: 800px)').matches || event.pointerType === 'mouse' || event.isPrimary === false) return;
+        const { panel, openButton } = getMobileSidebarElements();
+        const startsClosed = event.currentTarget === openButton;
+        if (!panel || mobileSidebarDragState || panel.hasAttribute('data-gfplus-sidebar-settling')
+            || (startsClosed ? !panel.classList.contains('collapsed') : panel.classList.contains('collapsed'))) return;
+        // Delay control focus until the native click; a touch may become a swipe.
+        if (event.target.closest('.open-sidebar, .close-sidebar')) event.preventDefault();
+        mobileSidebarDragState = {
+            panel, startX: event.clientX, startY: event.clientY,
+            horizontal: false, startsClosed, pointerId: event.pointerId,
+            captureTarget: event.currentTarget
+        };
+    };
+
+    const handleMobileSidebarPointerMove = (event) => {
+        const state = mobileSidebarDragState;
+        if (!state || event.pointerId !== state.pointerId) return;
+        const deltaX = event.clientX - state.startX;
+        const deltaY = event.clientY - state.startY;
+        if (!state.horizontal) {
+            if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) < MOBILE_SIDEBAR_DRAG_ACTIVATION_DISTANCE) return;
+            // Let the browser own vertical scrolling; lock direction only after slop.
+            if (Math.abs(deltaX) <= Math.abs(deltaY) || (state.startsClosed ? deltaX >= 0 : deltaX <= 0)) {
+                resetMobileSidebarDrag();
+                return;
+            }
+            state.horizontal = true;
+            state.scrollX = window.scrollX;
+            state.scrollY = window.scrollY;
+            state.overflowAnchor = root.style.getPropertyValue('overflow-anchor');
+            state.overflowAnchorPriority = root.style.getPropertyPriority('overflow-anchor');
+            root.style.setProperty('overflow-anchor', 'none', 'important');
+            clearMobileSidebarControlFocus(state.panel);
+            state.captureTarget.setPointerCapture?.(state.pointerId);
+        }
+        event.preventDefault();
+        if (state.startsClosed) state.panel.classList.remove('collapsed');
+        const width = Math.max(1, state.panel.getBoundingClientRect().width);
+        const offset = clampSidebarTop(state.startsClosed ? width + deltaX : deltaX, 0, width);
+        state.panel.setAttribute('data-gfplus-swipe-active', 'true');
+        state.panel.style.setProperty('--gfplus-sidebar-swipe-x', `${offset}px`);
+    };
+
+    const handleMobileSidebarPointerUp = (event) => {
+        const state = mobileSidebarDragState;
+        if (!state || event.pointerId !== state.pointerId) return;
+        if (!state.horizontal) {
+            resetMobileSidebarDrag();
+            return;
+        }
+        const deltaX = event.clientX - state.startX;
+        const commitDistance = Math.max(1, state.panel.getBoundingClientRect().width) * MOBILE_SIDEBAR_DRAG_COMMIT_RATIO;
+        const open = state.startsClosed ? deltaX <= -commitDistance : deltaX < commitDistance;
+        event.preventDefault();
+        mobileSidebarDragState = null;
+        releaseMobileSidebarPointer(state);
+        mobileSidebarSuppressClickUntil = performance.now() + 350;
+        settleMobileSidebar(state, open);
+    };
+
+    const handleMobileSidebarClick = (event) => {
+        if (!mobileSidebarCommitting && performance.now() < mobileSidebarSuppressClickUntil) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return;
+        }
+        if (window.matchMedia('(max-width: 800px)').matches
+            && (event.detail > 0 || event.pointerType === 'touch' || event.pointerType === 'pen')
+            && event.target.closest('.open-sidebar, .close-sidebar')) {
+            // Native click handlers focus the opposite control after toggling it.
+            requestAnimationFrame(() => {
+                const { panel } = getMobileSidebarElements();
+                if (panel) clearMobileSidebarControlFocus(panel);
+            });
+        }
+    };
+
+    const bindMobileSidebarSwipe = () => {
+        const { panel, openButton } = getMobileSidebarElements();
+        [openButton, panel].filter(Boolean).forEach((target) => {
+            if (target.getAttribute('data-gfplus-swipe-bound') === 'true') return;
+            target.setAttribute('data-gfplus-swipe-bound', 'true');
+            target.addEventListener('pointerdown', handleMobileSidebarPointerDown);
+            target.addEventListener('pointermove', handleMobileSidebarPointerMove, { passive: false });
+            target.addEventListener('pointerup', handleMobileSidebarPointerUp);
+            const cancel = (event) => {
+                if (event.pointerId === mobileSidebarDragState?.pointerId) resetMobileSidebarDrag();
+            };
+            target.addEventListener('pointercancel', cancel);
+            target.addEventListener('lostpointercapture', (event) => {
+                // Touch starts with implicit capture on the child under the finger.
+                // Transferring it to the panel must not cancel the panel's drag.
+                if (event.target === mobileSidebarDragState?.captureTarget) cancel(event);
+            });
+            target.addEventListener('click', handleMobileSidebarClick, true);
+            // Native click/keyboard handlers update collapsed and ARIA state first.
+            target.addEventListener('click', scheduleMobileSidebarStickiness);
+            target.addEventListener('keydown', scheduleMobileSidebarStickiness);
+        });
     };
 
     const scheduleMobileSidebarStickiness = () => {
@@ -2139,10 +2686,12 @@ License: BSD 3-Clause
         }
 
         if (!mobileSidebarInitialized) {
-            window.addEventListener('scroll', scheduleMobileSidebarStickiness, { passive: true });
+            window.addEventListener('scroll', updateMobileSidebarStickiness, { passive: true });
             window.addEventListener('resize', scheduleMobileSidebarStickiness, { passive: true });
             mobileSidebarInitialized = true;
         }
+
+        bindMobileSidebarSwipe();
 
         if (typeof ResizeObserver === 'function') {
             if (mobileSidebarResizeObserver) {
@@ -2428,7 +2977,27 @@ License: BSD 3-Clause
     const HIGHLIGHT_ATTR = 'data-gfplus-hljs';
     let wrapLinesBound = false;
 
-    const getHighlightApi = () => typeof hljs === 'undefined' ? null : hljs;
+    let highlightApiChecked = false;
+    let highlightApi = null;
+    const getHighlightApi = () => {
+        if (!highlightApiChecked) {
+            highlightApiChecked = true;
+            try {
+                const api = typeof hljs === 'undefined' ? null : hljs;
+                if (typeof api?.highlightElement === 'function') highlightApi = api;
+            } catch (error) {
+                warnDependency('Highlight.js', 'Code remains readable without syntax highlighting.', error);
+            }
+            if (!highlightApi) warnDependency('Highlight.js', 'Code remains readable without syntax highlighting.');
+        }
+        return highlightApi;
+    };
+
+    const disableHighlightApi = (error) => {
+        highlightApi = null;
+        highlightApiChecked = true;
+        warnDependency('Highlight.js', 'Syntax highlighting failed and has been disabled; code remains readable.', error);
+    };
 
     const getWrapLinesToggle = () => document.querySelector('#wrap-lines');
 
@@ -2599,11 +3168,16 @@ License: BSD 3-Clause
         }
 
         if (hasHljs) {
-            highlightApi.highlightElement(codeEl);
-            pre.setAttribute(HIGHLIGHT_ATTR, 'done');
-        } else {
-            pre.setAttribute(HIGHLIGHT_ATTR, 'pending');
+            const plainText = codeEl.textContent;
+            try {
+                highlightApi.highlightElement(codeEl);
+            } catch (error) {
+                // Restore text safely even if the library failed after altering the DOM.
+                codeEl.textContent = plainText;
+                disableHighlightApi(error);
+            }
         }
+        pre.setAttribute(HIGHLIGHT_ATTR, 'done');
     };
 
     const applyHighlightJs = () => {
@@ -2615,6 +3189,7 @@ License: BSD 3-Clause
     };
 
     const initHighlightJs = () => {
+        getHighlightApi();
         applyHighlightJs();
 
         const root = document.querySelector('#script-content') || document.body;
@@ -2622,9 +3197,7 @@ License: BSD 3-Clause
         observer.observe(root, { childList: true, subtree: true });
     };
 
-    // ============================================================================
     // Script Logos
-    // ============================================================================
     const SCRIPT_LOGO_ATTR = 'data-gfplus-logo';
     const SCRIPT_TITLE_CONTENT_CLASS = 'gf-script-title-content';
     const scriptMetadataCache = new Map();
@@ -3024,9 +3597,7 @@ License: BSD 3-Clause
         scriptLogoObserver.observe(document.body, { childList: true, subtree: true });
     };
 
-    // ============================================================================
     // Script Cards And Detail Actions
-    // ============================================================================
     const SCRIPT_CARD_ACTIONS_ATTR = 'data-gfplus-actions';
     const SCRIPT_DETAIL_ACTIONS_ATTR = 'data-gfplus-detail-actions';
     const SCRIPT_DETAIL_ACTIONS_CONTAINER_ID = 'gfplus-script-detail-actions';
@@ -3034,11 +3605,7 @@ License: BSD 3-Clause
     const MOBILE_PERMISSION_COLLAPSE_THRESHOLD = 10;
     const SCRIPT_EXTRA_INFO_ATTR = 'data-gfplus-extra-info';
     const SCRIPT_EXTRA_INFO_CACHE = new Map();
-    const SCRIPT_LIBRARY_NAME_PATTERN = /\b(?:library|librairie|biblioth[eè]que)\b/i;
-    const SCRIPT_LIBRARY_INFO_PATTERN = /(?:ne doit pas être installé directement|should not be installed directly|not intended to be installed directly|librairie destinée à être incluse|library intended to be included)/i;
-    // ============================================================================
     // Favorites
-    // ============================================================================
     const FAVORITES_IDS_STORAGE_KEY = 'gfplus-favorites-ids-v1';
     const PERSONAL_NOTES_STORAGE_KEY = 'gfplus-personal-notes-v1';
     const FAVORITE_SET_NAME_PATTERN = /\bfavor(?:it(?:e|es|o|os|a|as)?|is?)\b/i;
@@ -3683,6 +4250,65 @@ License: BSD 3-Clause
 
         applyFavoriteIds(favoriteIds);
     };
+    const INSTALL_BUTTON_ICON_ONLY_ATTR = 'data-gfplus-icon-only';
+    const installButtonLayoutObservers = new WeakMap();
+    let installButtonLayoutFrame = 0;
+
+    const rectanglesOverlap = (left, right) => (
+        left.left < right.right &&
+        left.right > right.left &&
+        left.top < right.bottom &&
+        left.bottom > right.top
+    );
+
+    const syncScriptInstallButtonLayout = (button) => {
+        if (!button?.isConnected) {
+            return;
+        }
+
+        button.removeAttribute(INSTALL_BUTTON_ICON_ONLY_ATTR);
+        const buttonRect = button.getBoundingClientRect();
+        const scope = button.closest('article, #install-area, #script-info') || button.parentElement;
+        const conflicts = scope
+            ? scope.querySelectorAll('.script-meta-block, .script-meta-block *, relative-time')
+            : [];
+        const overlaps = Array.from(conflicts).some((element) => (
+            element !== button && rectanglesOverlap(buttonRect, element.getBoundingClientRect())
+        ));
+
+        if (overlaps) {
+            button.setAttribute(INSTALL_BUTTON_ICON_ONLY_ATTR, 'true');
+        }
+    };
+
+    const scheduleScriptInstallButtonLayoutSync = () => {
+        if (installButtonLayoutFrame) {
+            return;
+        }
+
+        installButtonLayoutFrame = requestAnimationFrame(() => {
+            installButtonLayoutFrame = 0;
+            document.querySelectorAll('.gf-script-install-button').forEach(syncScriptInstallButtonLayout);
+        });
+    };
+
+    window.addEventListener('resize', scheduleScriptInstallButtonLayoutSync, { passive: true });
+
+    const observeScriptInstallButtonLayout = (button) => {
+        if (installButtonLayoutObservers.has(button)) {
+            return;
+        }
+
+        const scope = button.closest('article, #install-area, #script-info') || button.parentElement;
+        if (!scope || typeof ResizeObserver !== 'function') {
+            return;
+        }
+
+        const observer = new ResizeObserver(() => syncScriptInstallButtonLayout(button));
+        observer.observe(scope);
+        installButtonLayoutObservers.set(button, observer);
+    };
+
     const createScriptInstallButton = (codeUrl, locale) => {
         const installLabel = getUserNavI18n(locale).install || 'Install';
         const installButton = document.createElement('a');
@@ -3700,6 +4326,10 @@ License: BSD 3-Clause
             <path d="M5 20h14"></path>
         `;
         installButton.prepend(icon);
+        requestAnimationFrame(() => {
+            observeScriptInstallButtonLayout(installButton);
+            syncScriptInstallButtonLayout(installButton);
+        });
 
         return installButton;
     };
@@ -3823,18 +4453,22 @@ License: BSD 3-Clause
         }
     };
     const extractGreasyForkCodeUrl = (value) => {
-        const match = String(value || '').match(/https:\/\/update\.greasyfork\.org\/scripts\/\d+\/[^\s"'<>]+/);
-        return match ? match[0] : null;
+        const scriptId = getCurrentPageScriptId();
+        const matches = String(value || '').matchAll(/https:\/\/update\.greasyfork\.org\/scripts\/(\d+)\/[^\s"'<>]+/g);
+        for (const match of matches) {
+            if (Number(match[1]) === scriptId) return match[0];
+        }
+        return null;
     };
     const getCurrentPageScriptId = () => {
-        const pathnameMatch = window.location.pathname.match(/\/scripts\/(\d+)(?:-|$)/);
+        const pathnameMatch = window.location.pathname.match(/\/scripts\/(\d+)(?:[-/]|$)/);
         const pathnameScriptId = Number.parseInt(pathnameMatch?.[1] || '', 10);
         if (Number.isFinite(pathnameScriptId)) {
             return pathnameScriptId;
         }
 
         const installLink = document.querySelector('a.install-link[href*="/scripts/"], a[href*="/scripts/"][data-install-format]');
-        const linkMatch = installLink?.href.match(/\/scripts\/(\d+)(?:-|$)/);
+        const linkMatch = installLink?.href.match(/\/scripts\/(\d+)(?:[-/]|$)/);
         const linkScriptId = Number.parseInt(linkMatch?.[1] || '', 10);
         return Number.isFinite(linkScriptId) ? linkScriptId : null;
     };
@@ -3877,7 +4511,7 @@ License: BSD 3-Clause
 
         return new URL(pathnameMatch[1], window.location.origin).toString();
     };
-    const isCurrentScriptInfoOrCodePage = () => /^\/[a-z]{2,3}(?:-(?:[A-Z]{2}|[0-9]{3}))?\/scripts\/\d+(?:-[^/?#\/]+)?(?:\/code)?\/?$/.test(window.location.pathname);
+    const isCurrentScriptInfoOrCodePage = () => /^\/[a-z]{2,3}(?:-(?:[A-Z]{2}|[0-9]{3}))?\/scripts\/\d+(?:-[^/?#]+)?(?:\/code)?\/?$/.test(window.location.pathname);
     const isLibraryInfoDocument = (doc) => {
         const nativeInstallLink = doc.querySelector('a.install-link[href][data-install-format]');
         if (nativeInstallLink) {
@@ -3885,19 +4519,9 @@ License: BSD 3-Clause
         }
 
         const scriptContentText = doc.querySelector('#script-content')?.textContent || '';
-        if (SCRIPT_LIBRARY_INFO_PATTERN.test(scriptContentText)) {
-            return true;
-        }
-
         const codeUrl = extractGreasyForkCodeUrl(scriptContentText);
         return Boolean(codeUrl) && !isInstallableScriptCodeUrl(codeUrl);
     };
-    const getCurrentPageScriptTitleText = () => [
-        document.querySelector('meta[property="og:title"]')?.getAttribute('content') || '',
-        document.querySelector('#script-info header h2, #script-info > h2')?.textContent || '',
-        document.title || '',
-        decodeURIComponent(window.location.pathname)
-    ].join(' ');
     const isCurrentPageLibraryDetail = () => {
         if (!window.location.pathname.includes('/scripts/')) {
             return false;
@@ -3921,7 +4545,7 @@ License: BSD 3-Clause
             return !isInstallableScriptCodeUrl(codeUrl);
         }
 
-        return SCRIPT_LIBRARY_NAME_PATTERN.test(getCurrentPageScriptTitleText());
+        return false;
     };
     const removeDetailActionsIfConfirmedLibrary = async () => {
         if (!window.location.pathname.includes('/scripts/')) {
@@ -4185,7 +4809,6 @@ License: BSD 3-Clause
         return panel;
     };
     const createScriptNoteButton = (locale, scriptId, panel) => {
-        const i18n = getUserNavI18n(locale);
         const noteButton = document.createElement('button');
         noteButton.className = 'gf-script-note-button';
         noteButton.type = 'button';
@@ -4486,8 +5109,14 @@ License: BSD 3-Clause
                 if (!hasNativeInstallArea && codeUrl) {
                     detailActionsTarget.appendChild(createScriptInstallButton(codeUrl, locale));
                 }
-                detailActionsTarget.appendChild(createScriptNoteButton(locale, scriptId, notePanel));
-                detailActionsTarget.appendChild(createScriptStarButton(locale, scriptId));
+                // Keep Notes and Favorites on the same line when the install label is wide.
+                const personalActions = document.createElement('span');
+                personalActions.className = 'gf-script-personal-actions';
+                personalActions.append(
+                    createScriptNoteButton(locale, scriptId, notePanel),
+                    createScriptStarButton(locale, scriptId)
+                );
+                detailActionsTarget.appendChild(personalActions);
                 detailActionsTarget.insertAdjacentElement('afterend', notePanel);
             }
 
@@ -4507,12 +5136,41 @@ License: BSD 3-Clause
         scriptCardActionsObserver.observe(document.body, { childList: true, subtree: true });
     };
 
-    // i18n dictionary for user navigation
-    // ============================================================================
     // User Navigation And Translations
-    // ============================================================================
     const USER_NAV_I18N = {
         'en': {
+            editor: {
+                heading: "Heading",
+                bold: "Bold",
+                italic: "Italic",
+                link: "Link",
+                image: "Image",
+                code: "Code",
+                quote: "Quote",
+                list: "List",
+                details: "Details",
+                mark: "Highlight",
+                textColor: "Text color",
+                backgroundColor: "Background color",
+                headingLevel: "Heading level",
+                changeColor: "Choose a color",
+                text: "text",
+                description: "description",
+                item: "item",
+                title: "Title",
+                content: "Content"
+            },
+            controlPanelList: "Show as list",
+            controlPanelGrid: "Show as grid",
+            dependencyNotice: {
+                message: "An external resource could not be loaded correctly. Some enhancements may be unavailable, but you can continue using the site.",
+                close: "Close until the next page reload",
+                dismiss: "Don’t show this message again",
+                report: "Report this issue",
+                copy: "Copy error",
+                copied: "Error details copied.",
+                copyFailed: "Copy failed. Select and copy the details below.",
+            },
             install: 'Install',
             themeToggle: 'Toggle theme',
             themeVariants: {
@@ -4558,6 +5216,38 @@ License: BSD 3-Clause
         },
 
         'fr': {
+            editor: {
+                heading: "Titre",
+                bold: "Gras",
+                italic: "Italique",
+                link: "Lien",
+                image: "Image",
+                code: "Code",
+                quote: "Citation",
+                list: "Liste",
+                details: "Détails",
+                mark: "Surligner",
+                textColor: "Couleur du texte",
+                backgroundColor: "Couleur de fond",
+                headingLevel: "Niveau de titre",
+                changeColor: "Choisir une couleur",
+                text: "texte",
+                description: "description",
+                item: "élément",
+                title: "Titre",
+                content: "Contenu"
+            },
+            controlPanelList: "Afficher en liste",
+            controlPanelGrid: "Afficher en grille",
+            dependencyNotice: {
+                message: "Une ressource externe n’a pas pu être chargée correctement. Certaines améliorations peuvent être indisponibles, mais le site reste utilisable.",
+                close: "Fermer jusqu’au prochain rechargement",
+                dismiss: "Ne plus afficher ce message",
+                report: "Signaler ce problème",
+                copy: "Copier l’erreur",
+                copied: "Détails de l’erreur copiés.",
+                copyFailed: "Échec de la copie. Sélectionnez et copiez les détails ci-dessous.",
+            },
             install: 'Installer',
             themeToggle: 'Changer de thème',
             themeVariants: {
@@ -4603,6 +5293,38 @@ License: BSD 3-Clause
         },
 
         'es': {
+            editor: {
+                heading: "Encabezado",
+                bold: "Negrita",
+                italic: "Cursiva",
+                link: "Enlace",
+                image: "Imagen",
+                code: "Código",
+                quote: "Cita",
+                list: "Lista",
+                details: "Detalles",
+                mark: "Resaltar",
+                textColor: "Color del texto",
+                backgroundColor: "Color de fondo",
+                headingLevel: "Nivel del encabezado",
+                changeColor: "Elegir un color",
+                text: "texto",
+                description: "descripción",
+                item: "elemento",
+                title: "Título",
+                content: "Contenido"
+            },
+            controlPanelList: "Mostrar como lista",
+            controlPanelGrid: "Mostrar como cuadrícula",
+            dependencyNotice: {
+                message: "No se pudo cargar correctamente un recurso externo. Algunas mejoras pueden no estar disponibles, pero puedes seguir usando el sitio.",
+                close: "Cerrar hasta la próxima recarga",
+                dismiss: "No volver a mostrar este mensaje",
+                report: "Informar de este problema",
+                copy: "Copiar error",
+                copied: "Detalles del error copiados.",
+                copyFailed: "No se pudo copiar. Selecciona y copia los detalles siguientes.",
+            },
             install: 'Instalar',
             themeToggle: 'Cambiar tema',
             themeVariants: { menu: 'Estilos de tema', normal: 'Clásico', fullDark: 'Negro profundo', chalkboard: 'Chalkboard' },
@@ -4643,6 +5365,38 @@ License: BSD 3-Clause
         },
 
         'de': {
+            editor: {
+                heading: "Überschrift",
+                bold: "Fett",
+                italic: "Kursiv",
+                link: "Link",
+                image: "Bild",
+                code: "Code",
+                quote: "Zitat",
+                list: "Liste",
+                details: "Details",
+                mark: "Hervorheben",
+                textColor: "Textfarbe",
+                backgroundColor: "Hintergrundfarbe",
+                headingLevel: "Überschriftenebene",
+                changeColor: "Farbe auswählen",
+                text: "Text",
+                description: "Beschreibung",
+                item: "Eintrag",
+                title: "Titel",
+                content: "Inhalt"
+            },
+            controlPanelList: "Als Liste anzeigen",
+            controlPanelGrid: "Als Raster anzeigen",
+            dependencyNotice: {
+                message: "Eine externe Ressource konnte nicht korrekt geladen werden. Einige Erweiterungen sind möglicherweise nicht verfügbar, die Website bleibt nutzbar.",
+                close: "Bis zum nächsten Neuladen schließen",
+                dismiss: "Diese Meldung nicht mehr anzeigen",
+                report: "Dieses Problem melden",
+                copy: "Fehler kopieren",
+                copied: "Fehlerdetails kopiert.",
+                copyFailed: "Kopieren fehlgeschlagen. Die folgenden Details auswählen und kopieren.",
+            },
             install: 'Installieren',
             themeToggle: 'Design wechseln',
             themeVariants: { menu: 'Themenstile', normal: 'Klassisch', fullDark: 'Tiefschwarz', chalkboard: 'Chalkboard' },
@@ -4683,6 +5437,38 @@ License: BSD 3-Clause
         },
 
         'it': {
+            editor: {
+                heading: "Intestazione",
+                bold: "Grassetto",
+                italic: "Corsivo",
+                link: "Collegamento",
+                image: "Immagine",
+                code: "Codice",
+                quote: "Citazione",
+                list: "Elenco",
+                details: "Dettagli",
+                mark: "Evidenzia",
+                textColor: "Colore del testo",
+                backgroundColor: "Colore di sfondo",
+                headingLevel: "Livello del titolo",
+                changeColor: "Scegli un colore",
+                text: "testo",
+                description: "descrizione",
+                item: "elemento",
+                title: "Titolo",
+                content: "Contenuto"
+            },
+            controlPanelList: "Mostra come elenco",
+            controlPanelGrid: "Mostra come griglia",
+            dependencyNotice: {
+                message: "Impossibile caricare correttamente una risorsa esterna. Alcune funzionalità potrebbero non essere disponibili, ma il sito resta utilizzabile.",
+                close: "Chiudi fino al prossimo caricamento",
+                dismiss: "Non mostrare più questo messaggio",
+                report: "Segnala questo problema",
+                copy: "Copia errore",
+                copied: "Dettagli dell’errore copiati.",
+                copyFailed: "Copia non riuscita. Seleziona e copia i dettagli qui sotto.",
+            },
             install: 'Installare',
             themeToggle: 'Cambia tema',
             themeVariants: { menu: 'Stili del tema', normal: 'Classico', fullDark: 'Nero profondo', chalkboard: 'Chalkboard' },
@@ -4723,6 +5509,38 @@ License: BSD 3-Clause
         },
 
         'pt': {
+            editor: {
+                heading: "Cabeçalho",
+                bold: "Negrito",
+                italic: "Itálico",
+                link: "Link",
+                image: "Imagem",
+                code: "Código",
+                quote: "Citação",
+                list: "Lista",
+                details: "Detalhes",
+                mark: "Realçar",
+                textColor: "Cor do texto",
+                backgroundColor: "Cor de fundo",
+                headingLevel: "Nível do cabeçalho",
+                changeColor: "Escolher uma cor",
+                text: "texto",
+                description: "descrição",
+                item: "item",
+                title: "Título",
+                content: "Conteúdo"
+            },
+            controlPanelList: "Mostrar em lista",
+            controlPanelGrid: "Mostrar em grelha",
+            dependencyNotice: {
+                message: "Não foi possível carregar corretamente um recurso externo. Algumas melhorias podem estar indisponíveis, mas o site continua utilizável.",
+                close: "Fechar até ao próximo carregamento",
+                dismiss: "Não voltar a mostrar esta mensagem",
+                report: "Comunicar este problema",
+                copy: "Copiar erro",
+                copied: "Detalhes do erro copiados.",
+                copyFailed: "Falha ao copiar. Selecione e copie os detalhes abaixo.",
+            },
             install: 'Instalar',
             themeToggle: 'Mudar tema',
             themeVariants: { menu: 'Estilos de tema', normal: 'Clássico', fullDark: 'Preto profundo', chalkboard: 'Chalkboard' },
@@ -4763,6 +5581,38 @@ License: BSD 3-Clause
         },
 
         'ru': {
+            editor: {
+                heading: "Заголовок",
+                bold: "Жирный",
+                italic: "Курсив",
+                link: "Ссылка",
+                image: "Изображение",
+                code: "Код",
+                quote: "Цитата",
+                list: "Список",
+                details: "Подробности",
+                mark: "Выделить",
+                textColor: "Цвет текста",
+                backgroundColor: "Цвет фона",
+                headingLevel: "Уровень заголовка",
+                changeColor: "Выбрать цвет",
+                text: "текст",
+                description: "описание",
+                item: "элемент",
+                title: "Заголовок",
+                content: "Содержимое"
+            },
+            controlPanelList: "Показать списком",
+            controlPanelGrid: "Показать сеткой",
+            dependencyNotice: {
+                message: "Не удалось корректно загрузить внешний ресурс. Некоторые улучшения могут быть недоступны, но сайтом можно продолжать пользоваться.",
+                close: "Закрыть до следующей перезагрузки страницы",
+                dismiss: "Больше не показывать это сообщение",
+                report: "Сообщить о проблеме",
+                copy: "Копировать ошибку",
+                copied: "Сведения об ошибке скопированы.",
+                copyFailed: "Не удалось скопировать. Выделите и скопируйте сведения ниже.",
+            },
             install: 'Установить',
             themeToggle: 'Переключить тему',
             themeVariants: { menu: 'Стили темы', normal: 'Классическая', fullDark: 'Глубокий чёрный', chalkboard: 'Chalkboard' },
@@ -4803,6 +5653,38 @@ License: BSD 3-Clause
         },
 
         'ja': {
+            editor: {
+                heading: "見出し",
+                bold: "太字",
+                italic: "斜体",
+                link: "リンク",
+                image: "画像",
+                code: "コード",
+                quote: "引用",
+                list: "リスト",
+                details: "詳細",
+                mark: "ハイライト",
+                textColor: "文字色",
+                backgroundColor: "背景色",
+                headingLevel: "見出しレベル",
+                changeColor: "色を選択",
+                text: "テキスト",
+                description: "説明",
+                item: "項目",
+                title: "タイトル",
+                content: "内容"
+            },
+            controlPanelList: "リスト表示",
+            controlPanelGrid: "グリッド表示",
+            dependencyNotice: {
+                message: "外部リソースを正しく読み込めませんでした。一部の拡張機能が利用できない場合がありますが、サイトは引き続き使用できます。",
+                close: "次の再読み込みまで閉じる",
+                dismiss: "このメッセージを今後表示しない",
+                report: "この問題を報告",
+                copy: "エラーをコピー",
+                copied: "エラーの詳細をコピーしました。",
+                copyFailed: "コピーできませんでした。以下の詳細を選択してコピーしてください。",
+            },
             install: 'インストール',
             themeToggle: 'テーマを切り替え',
             themeVariants: { menu: 'テーマスタイル', normal: 'クラシック', fullDark: 'ディープブラック', chalkboard: 'Chalkboard' },
@@ -4843,6 +5725,38 @@ License: BSD 3-Clause
         },
 
         'zh-CN': {
+            editor: {
+                heading: "标题",
+                bold: "粗体",
+                italic: "斜体",
+                link: "链接",
+                image: "图片",
+                code: "代码",
+                quote: "引用",
+                list: "列表",
+                details: "详情",
+                mark: "高亮",
+                textColor: "文字颜色",
+                backgroundColor: "背景颜色",
+                headingLevel: "标题级别",
+                changeColor: "选择颜色",
+                text: "文本",
+                description: "描述",
+                item: "项目",
+                title: "标题",
+                content: "内容"
+            },
+            controlPanelList: "列表视图",
+            controlPanelGrid: "网格视图",
+            dependencyNotice: {
+                message: "无法正确加载外部资源。部分增强功能可能不可用，但您仍可继续使用网站。",
+                close: "关闭，直到下次刷新页面",
+                dismiss: "不再显示此消息",
+                report: "报告此问题",
+                copy: "复制错误",
+                copied: "已复制错误详情。",
+                copyFailed: "复制失败。请选择并复制下方详情。",
+            },
             install: '安装',
             themeToggle: '切换主题',
             themeVariants: { menu: '主题样式', normal: '经典', fullDark: '深黑', chalkboard: 'Chalkboard' },
@@ -4883,6 +5797,38 @@ License: BSD 3-Clause
         },
 
         'zh-TW': {
+            editor: {
+                heading: "標題",
+                bold: "粗體",
+                italic: "斜體",
+                link: "連結",
+                image: "圖片",
+                code: "程式碼",
+                quote: "引用",
+                list: "清單",
+                details: "詳細資訊",
+                mark: "醒目提示",
+                textColor: "文字顏色",
+                backgroundColor: "背景顏色",
+                headingLevel: "標題層級",
+                changeColor: "選擇顏色",
+                text: "文字",
+                description: "描述",
+                item: "項目",
+                title: "標題",
+                content: "內容"
+            },
+            controlPanelList: "清單檢視",
+            controlPanelGrid: "網格檢視",
+            dependencyNotice: {
+                message: "無法正確載入外部資源。部分增強功能可能無法使用，但您仍可繼續使用網站。",
+                close: "關閉，直到下次重新載入頁面",
+                dismiss: "不再顯示此訊息",
+                report: "回報此問題",
+                copy: "複製錯誤",
+                copied: "已複製錯誤詳情。",
+                copyFailed: "複製失敗。請選取並複製下方詳情。",
+            },
             install: '安裝',
             themeToggle: '切換主題',
             themeVariants: { menu: '主題樣式', normal: '經典', fullDark: '深黑', chalkboard: 'Chalkboard' },
@@ -4923,6 +5869,38 @@ License: BSD 3-Clause
         },
 
         'ar': {
+            editor: {
+                heading: "عنوان",
+                bold: "عريض",
+                italic: "مائل",
+                link: "رابط",
+                image: "صورة",
+                code: "كود",
+                quote: "اقتباس",
+                list: "قائمة",
+                details: "تفاصيل",
+                mark: "تمييز",
+                textColor: "لون النص",
+                backgroundColor: "لون الخلفية",
+                headingLevel: "مستوى العنوان",
+                changeColor: "اختيار لون",
+                text: "نص",
+                description: "وصف",
+                item: "عنصر",
+                title: "عنوان",
+                content: "محتوى"
+            },
+            controlPanelList: "عرض كقائمة",
+            controlPanelGrid: "عرض كشبكة",
+            dependencyNotice: {
+                message: "تعذر تحميل مورد خارجي بشكل صحيح. قد لا تتوفر بعض التحسينات، لكن يمكنك الاستمرار في استخدام الموقع.",
+                close: "إغلاق حتى إعادة تحميل الصفحة",
+                dismiss: "عدم إظهار هذه الرسالة مجددًا",
+                report: "الإبلاغ عن هذه المشكلة",
+                copy: "نسخ الخطأ",
+                copied: "تم نسخ تفاصيل الخطأ.",
+                copyFailed: "تعذر النسخ. حدد التفاصيل أدناه وانسخها.",
+            },
             install: 'تثبيت',
             themeToggle: 'تبديل المظهر',
             themeVariants: { menu: 'أنماط السمة', normal: 'كلاسيكي', fullDark: 'أسود عميق', chalkboard: 'Chalkboard' },
@@ -4963,6 +5941,38 @@ License: BSD 3-Clause
         },
 
         'hi': {
+            editor: {
+                heading: "शीर्षक",
+                bold: "बोल्ड",
+                italic: "इटैलिक",
+                link: "लिंक",
+                image: "चित्र",
+                code: "कोड",
+                quote: "उद्धरण",
+                list: "सूची",
+                details: "विवरण",
+                mark: "हाइलाइट",
+                textColor: "पाठ का रंग",
+                backgroundColor: "पृष्ठभूमि का रंग",
+                headingLevel: "शीर्षक का स्तर",
+                changeColor: "रंग चुनें",
+                text: "पाठ",
+                description: "विवरण",
+                item: "आइटम",
+                title: "शीर्षक",
+                content: "सामग्री"
+            },
+            controlPanelList: "सूची में दिखाएँ",
+            controlPanelGrid: "ग्रिड में दिखाएँ",
+            dependencyNotice: {
+                message: "बाहरी संसाधन ठीक से लोड नहीं हो सका। कुछ सुविधाएँ उपलब्ध नहीं हो सकतीं, लेकिन आप साइट का उपयोग जारी रख सकते हैं।",
+                close: "अगली बार पेज लोड होने तक बंद करें",
+                dismiss: "यह संदेश फिर न दिखाएँ",
+                report: "इस समस्या की रिपोर्ट करें",
+                copy: "त्रुटि कॉपी करें",
+                copied: "त्रुटि का विवरण कॉपी हो गया।",
+                copyFailed: "कॉपी नहीं हो सका। नीचे का विवरण चुनकर कॉपी करें।",
+            },
             install: 'इंस्टॉल करें',
             themeToggle: 'थीम बदलें',
             themeVariants: { menu: 'थीम शैलियाँ', normal: 'क्लासिक', fullDark: 'गहरा काला', chalkboard: 'Chalkboard' },
@@ -5002,6 +6012,38 @@ License: BSD 3-Clause
             deleteAccount: 'खाता हटाएँ'
         },
         'bn': {
+            editor: {
+                heading: "শিরোনাম",
+                bold: "গাঢ়",
+                italic: "তির্যক",
+                link: "লিংক",
+                image: "ছবি",
+                code: "কোড",
+                quote: "উদ্ধৃতি",
+                list: "তালিকা",
+                details: "বিস্তারিত",
+                mark: "হাইলাইট",
+                textColor: "লেখার রং",
+                backgroundColor: "পটভূমির রং",
+                headingLevel: "শিরোনামের স্তর",
+                changeColor: "রং বেছে নিন",
+                text: "লেখা",
+                description: "বিবরণ",
+                item: "আইটেম",
+                title: "শিরোনাম",
+                content: "বিষয়বস্তু"
+            },
+            controlPanelList: "তালিকা হিসেবে দেখান",
+            controlPanelGrid: "গ্রিড হিসেবে দেখান",
+            dependencyNotice: {
+                message: "একটি বাহ্যিক রিসোর্স সঠিকভাবে লোড করা যায়নি। কিছু উন্নত সুবিধা অনুপলব্ধ হতে পারে, তবে সাইট ব্যবহার চালিয়ে যেতে পারবেন।",
+                close: "পরবর্তীবার পৃষ্ঠা লোড হওয়া পর্যন্ত বন্ধ করুন",
+                dismiss: "এই বার্তাটি আর দেখাবেন না",
+                report: "এই সমস্যাটি জানান",
+                copy: "ত্রুটি কপি করুন",
+                copied: "ত্রুটির বিবরণ কপি হয়েছে।",
+                copyFailed: "কপি করা যায়নি। নিচের বিবরণ নির্বাচন করে কপি করুন।",
+            },
             install: 'ইনস্টল করুন',
             themeToggle: 'থিম বদলান',
             themeVariants: { menu: 'থিমের ধরন', normal: 'ক্লাসিক', fullDark: 'গভীর কালো', chalkboard: 'Chalkboard' },
@@ -5042,6 +6084,38 @@ License: BSD 3-Clause
         },
 
         'ur': {
+            editor: {
+                heading: "سرخی",
+                bold: "موٹا",
+                italic: "ترچھا",
+                link: "لنک",
+                image: "تصویر",
+                code: "کوڈ",
+                quote: "اقتباس",
+                list: "فہرست",
+                details: "تفصیلات",
+                mark: "نمایاں کریں",
+                textColor: "متن کا رنگ",
+                backgroundColor: "پس منظر کا رنگ",
+                headingLevel: "سرخی کی سطح",
+                changeColor: "رنگ منتخب کریں",
+                text: "متن",
+                description: "تفصیل",
+                item: "آئٹم",
+                title: "عنوان",
+                content: "مواد"
+            },
+            controlPanelList: "فہرست میں دکھائیں",
+            controlPanelGrid: "گرڈ میں دکھائیں",
+            dependencyNotice: {
+                message: "ایک بیرونی وسیلہ درست طور پر لوڈ نہیں ہو سکا۔ کچھ اضافی سہولیات دستیاب نہیں ہوں گی، لیکن آپ سائٹ استعمال کرتے رہ سکتے ہیں۔",
+                close: "صفحہ دوبارہ لوڈ ہونے تک بند کریں",
+                dismiss: "یہ پیغام دوبارہ نہ دکھائیں",
+                report: "اس مسئلے کی اطلاع دیں",
+                copy: "خرابی کاپی کریں",
+                copied: "خرابی کی تفصیلات کاپی ہو گئیں۔",
+                copyFailed: "کاپی نہیں ہو سکا۔ نیچے دی گئی تفصیلات منتخب کرکے کاپی کریں۔",
+            },
             install: 'انسٹال کریں',
             themeToggle: 'تھیم تبدیل کریں',
             themeVariants: { menu: 'تھیم کے انداز', normal: 'کلاسک', fullDark: 'گہرا سیاہ', chalkboard: 'Chalkboard' },
@@ -5082,6 +6156,38 @@ License: BSD 3-Clause
         },
 
         'ml': {
+            editor: {
+                heading: "തലക്കെട്ട്",
+                bold: "കടുപ്പം",
+                italic: "ചരിഞ്ഞ അക്ഷരം",
+                link: "ലിങ്ക്",
+                image: "ചിത്രം",
+                code: "കോഡ്",
+                quote: "ഉദ്ധരണി",
+                list: "പട്ടിക",
+                details: "വിശദാംശങ്ങൾ",
+                mark: "ഹൈലൈറ്റ്",
+                textColor: "വാചകത്തിന്റെ നിറം",
+                backgroundColor: "പശ്ചാത്തല നിറം",
+                headingLevel: "തലക്കെട്ടിന്റെ നില",
+                changeColor: "നിറം തിരഞ്ഞെടുക്കുക",
+                text: "വാചകം",
+                description: "വിവരണം",
+                item: "ഇനം",
+                title: "തലക്കെട്ട്",
+                content: "ഉള്ളടക്കം"
+            },
+            controlPanelList: "പട്ടികയായി കാണിക്കുക",
+            controlPanelGrid: "ഗ്രിഡായി കാണിക്കുക",
+            dependencyNotice: {
+                message: "ഒരു ബാഹ്യ ഉറവിടം ശരിയായി ലോഡ് ചെയ്യാനായില്ല. ചില അധിക സൗകര്യങ്ങൾ ലഭ്യമല്ലായിരിക്കാം, എങ്കിലും സൈറ്റ് തുടർന്നും ഉപയോഗിക്കാം.",
+                close: "പേജ് വീണ്ടും ലോഡ് ചെയ്യുന്നതുവരെ അടയ്ക്കുക",
+                dismiss: "ഈ സന്ദേശം വീണ്ടും കാണിക്കരുത്",
+                report: "ഈ പ്രശ്നം റിപ്പോർട്ട് ചെയ്യുക",
+                copy: "പിശക് പകർത്തുക",
+                copied: "പിശകിന്റെ വിശദാംശങ്ങൾ പകർത്തി.",
+                copyFailed: "പകർത്താനായില്ല. താഴെയുള്ള വിശദാംശങ്ങൾ തിരഞ്ഞെടുത്ത് പകർത്തുക.",
+            },
             install: 'ഇൻസ്റ്റാൾ ചെയ്യുക',
             themeToggle: 'തീം മാറ്റുക',
             themeVariants: { menu: 'തീം ശൈലികൾ', normal: 'ക്ലാസിക്', fullDark: 'കടും കറുപ്പ്', chalkboard: 'Chalkboard' },
@@ -5122,6 +6228,38 @@ License: BSD 3-Clause
         },
 
         'ko': {
+            editor: {
+                heading: "제목",
+                bold: "굵게",
+                italic: "기울임꼴",
+                link: "링크",
+                image: "이미지",
+                code: "코드",
+                quote: "인용",
+                list: "목록",
+                details: "세부 정보",
+                mark: "강조",
+                textColor: "글자 색",
+                backgroundColor: "배경색",
+                headingLevel: "제목 수준",
+                changeColor: "색 선택",
+                text: "텍스트",
+                description: "설명",
+                item: "항목",
+                title: "제목",
+                content: "내용"
+            },
+            controlPanelList: "목록으로 보기",
+            controlPanelGrid: "격자로 보기",
+            dependencyNotice: {
+                message: "외부 리소스를 올바르게 불러오지 못했습니다. 일부 확장 기능을 사용할 수 없지만 사이트는 계속 사용할 수 있습니다.",
+                close: "다음 새로고침까지 닫기",
+                dismiss: "이 메시지를 다시 표시하지 않기",
+                report: "문제 신고",
+                copy: "오류 복사",
+                copied: "오류 세부 정보를 복사했습니다.",
+                copyFailed: "복사하지 못했습니다. 아래 내용을 선택하여 복사하세요.",
+            },
             install: '설치',
             themeToggle: '테마 전환',
             themeVariants: { menu: '테마 스타일', normal: '클래식', fullDark: '딥 블랙', chalkboard: 'Chalkboard' },
@@ -5162,6 +6300,38 @@ License: BSD 3-Clause
         },
 
         'tr': {
+            editor: {
+                heading: "Başlık",
+                bold: "Kalın",
+                italic: "İtalik",
+                link: "Bağlantı",
+                image: "Görsel",
+                code: "Kod",
+                quote: "Alıntı",
+                list: "Liste",
+                details: "Ayrıntılar",
+                mark: "Vurgula",
+                textColor: "Metin rengi",
+                backgroundColor: "Arka plan rengi",
+                headingLevel: "Başlık düzeyi",
+                changeColor: "Renk seç",
+                text: "metin",
+                description: "açıklama",
+                item: "öğe",
+                title: "Başlık",
+                content: "İçerik"
+            },
+            controlPanelList: "Liste olarak göster",
+            controlPanelGrid: "Izgara olarak göster",
+            dependencyNotice: {
+                message: "Harici bir kaynak doğru yüklenemedi. Bazı ek özellikler kullanılamayabilir, ancak siteyi kullanmaya devam edebilirsiniz.",
+                close: "Sayfa yeniden yüklenene kadar kapat",
+                dismiss: "Bu mesajı bir daha gösterme",
+                report: "Bu sorunu bildir",
+                copy: "Hatayı kopyala",
+                copied: "Hata ayrıntıları kopyalandı.",
+                copyFailed: "Kopyalama başarısız. Aşağıdaki ayrıntıları seçip kopyalayın.",
+            },
             install: 'Yükle',
             themeToggle: 'Tema değiştir',
             themeVariants: { menu: 'Tema stilleri', normal: 'Klasik', fullDark: 'Derin siyah', chalkboard: 'Chalkboard' },
@@ -5202,6 +6372,38 @@ License: BSD 3-Clause
         },
 
         'pl': {
+            editor: {
+                heading: "Nagłówek",
+                bold: "Pogrubienie",
+                italic: "Kursywa",
+                link: "Link",
+                image: "Obraz",
+                code: "Kod",
+                quote: "Cytat",
+                list: "Lista",
+                details: "Szczegóły",
+                mark: "Wyróżnij",
+                textColor: "Kolor tekstu",
+                backgroundColor: "Kolor tła",
+                headingLevel: "Poziom nagłówka",
+                changeColor: "Wybierz kolor",
+                text: "tekst",
+                description: "opis",
+                item: "element",
+                title: "Tytuł",
+                content: "Treść"
+            },
+            controlPanelList: "Pokaż jako listę",
+            controlPanelGrid: "Pokaż jako siatkę",
+            dependencyNotice: {
+                message: "Nie udało się poprawnie wczytać zasobu zewnętrznego. Niektóre ulepszenia mogą być niedostępne, ale nadal można korzystać ze strony.",
+                close: "Zamknij do następnego odświeżenia strony",
+                dismiss: "Nie pokazuj więcej tego komunikatu",
+                report: "Zgłoś ten problem",
+                copy: "Kopiuj błąd",
+                copied: "Skopiowano szczegóły błędu.",
+                copyFailed: "Kopiowanie nie powiodło się. Zaznacz i skopiuj szczegóły poniżej.",
+            },
             install: 'Zainstaluj',
             themeToggle: 'Przełącz motyw',
             themeVariants: { menu: 'Style motywu', normal: 'Klasyczny', fullDark: 'Głęboka czerń', chalkboard: 'Chalkboard' },
@@ -5242,6 +6444,38 @@ License: BSD 3-Clause
         },
 
         'nl': {
+            editor: {
+                heading: "Kop",
+                bold: "Vet",
+                italic: "Cursief",
+                link: "Link",
+                image: "Afbeelding",
+                code: "Code",
+                quote: "Citaat",
+                list: "Lijst",
+                details: "Details",
+                mark: "Markeren",
+                textColor: "Tekstkleur",
+                backgroundColor: "Achtergrondkleur",
+                headingLevel: "Kopniveau",
+                changeColor: "Kies een kleur",
+                text: "tekst",
+                description: "beschrijving",
+                item: "item",
+                title: "Titel",
+                content: "Inhoud"
+            },
+            controlPanelList: "Als lijst weergeven",
+            controlPanelGrid: "Als raster weergeven",
+            dependencyNotice: {
+                message: "Een externe bron kon niet correct worden geladen. Sommige verbeteringen zijn mogelijk niet beschikbaar, maar je kunt de site blijven gebruiken.",
+                close: "Sluiten tot de pagina opnieuw wordt geladen",
+                dismiss: "Dit bericht niet meer tonen",
+                report: "Dit probleem melden",
+                copy: "Fout kopiëren",
+                copied: "Foutdetails gekopieerd.",
+                copyFailed: "Kopiëren mislukt. Selecteer en kopieer de onderstaande details.",
+            },
             install: 'Installeren',
             themeToggle: 'Thema wisselen',
             themeVariants: { menu: 'Themastijlen', normal: 'Klassiek', fullDark: 'Diepzwart', chalkboard: 'Chalkboard' },
@@ -5282,6 +6516,38 @@ License: BSD 3-Clause
         },
 
         'sv': {
+            editor: {
+                heading: "Rubrik",
+                bold: "Fetstil",
+                italic: "Kursiv",
+                link: "Länk",
+                image: "Bild",
+                code: "Kod",
+                quote: "Citat",
+                list: "Lista",
+                details: "Detaljer",
+                mark: "Markera",
+                textColor: "Textfärg",
+                backgroundColor: "Bakgrundsfärg",
+                headingLevel: "Rubriknivå",
+                changeColor: "Välj färg",
+                text: "text",
+                description: "beskrivning",
+                item: "punkt",
+                title: "Rubrik",
+                content: "Innehåll"
+            },
+            controlPanelList: "Visa som lista",
+            controlPanelGrid: "Visa som rutnät",
+            dependencyNotice: {
+                message: "En extern resurs kunde inte läsas in korrekt. Vissa förbättringar kanske inte är tillgängliga, men du kan fortsätta använda webbplatsen.",
+                close: "Stäng tills sidan laddas om",
+                dismiss: "Visa inte det här meddelandet igen",
+                report: "Rapportera problemet",
+                copy: "Kopiera fel",
+                copied: "Felinformationen har kopierats.",
+                copyFailed: "Kopieringen misslyckades. Markera och kopiera informationen nedan.",
+            },
             install: 'Installera',
             themeToggle: 'Växla tema',
             themeVariants: { menu: 'Temastilar', normal: 'Klassisk', fullDark: 'Djupsvart', chalkboard: 'Chalkboard' },
@@ -5322,6 +6588,38 @@ License: BSD 3-Clause
         },
 
         'ro': {
+            editor: {
+                heading: "Titlu",
+                bold: "Aldin",
+                italic: "Cursiv",
+                link: "Link",
+                image: "Imagine",
+                code: "Cod",
+                quote: "Citat",
+                list: "Listă",
+                details: "Detalii",
+                mark: "Evidențiază",
+                textColor: "Culoarea textului",
+                backgroundColor: "Culoarea fundalului",
+                headingLevel: "Nivelul titlului",
+                changeColor: "Alege o culoare",
+                text: "text",
+                description: "descriere",
+                item: "element",
+                title: "Titlu",
+                content: "Conținut"
+            },
+            controlPanelList: "Afișează ca listă",
+            controlPanelGrid: "Afișează ca grilă",
+            dependencyNotice: {
+                message: "O resursă externă nu a putut fi încărcată corect. Unele îmbunătățiri pot fi indisponibile, dar poți continua să folosești site-ul.",
+                close: "Închide până la următoarea reîncărcare",
+                dismiss: "Nu mai afișa acest mesaj",
+                report: "Raportează această problemă",
+                copy: "Copiază eroarea",
+                copied: "Detaliile erorii au fost copiate.",
+                copyFailed: "Copierea a eșuat. Selectează și copiază detaliile de mai jos.",
+            },
             install: 'Instalează',
             themeToggle: 'Comută tema',
             themeVariants: { menu: 'Stiluri de temă', normal: 'Clasic', fullDark: 'Negru profund', chalkboard: 'Chalkboard' },
@@ -5362,6 +6660,38 @@ License: BSD 3-Clause
         },
 
         'vi': {
+            editor: {
+                heading: "Tiêu đề",
+                bold: "In đậm",
+                italic: "In nghiêng",
+                link: "Liên kết",
+                image: "Hình ảnh",
+                code: "Mã",
+                quote: "Trích dẫn",
+                list: "Danh sách",
+                details: "Chi tiết",
+                mark: "Tô sáng",
+                textColor: "Màu chữ",
+                backgroundColor: "Màu nền",
+                headingLevel: "Cấp tiêu đề",
+                changeColor: "Chọn màu",
+                text: "văn bản",
+                description: "mô tả",
+                item: "mục",
+                title: "Tiêu đề",
+                content: "Nội dung"
+            },
+            controlPanelList: "Hiển thị dạng danh sách",
+            controlPanelGrid: "Hiển thị dạng lưới",
+            dependencyNotice: {
+                message: "Không thể tải đúng một tài nguyên bên ngoài. Một số tính năng bổ sung có thể không khả dụng, nhưng bạn vẫn có thể dùng trang web.",
+                close: "Đóng cho đến lần tải lại trang tiếp theo",
+                dismiss: "Không hiển thị thông báo này nữa",
+                report: "Báo cáo vấn đề này",
+                copy: "Sao chép lỗi",
+                copied: "Đã sao chép chi tiết lỗi.",
+                copyFailed: "Không thể sao chép. Hãy chọn và sao chép chi tiết bên dưới.",
+            },
             install: 'Cài đặt',
             themeToggle: 'Chuyển giao diện',
             themeVariants: { menu: 'Kiểu giao diện', normal: 'Cổ điển', fullDark: 'Đen sâu', chalkboard: 'Chalkboard' },
@@ -5402,6 +6732,38 @@ License: BSD 3-Clause
         },
 
         'id': {
+            editor: {
+                heading: "Judul",
+                bold: "Tebal",
+                italic: "Miring",
+                link: "Tautan",
+                image: "Gambar",
+                code: "Kode",
+                quote: "Kutipan",
+                list: "Daftar",
+                details: "Detail",
+                mark: "Sorot",
+                textColor: "Warna teks",
+                backgroundColor: "Warna latar",
+                headingLevel: "Tingkat judul",
+                changeColor: "Pilih warna",
+                text: "teks",
+                description: "deskripsi",
+                item: "item",
+                title: "Judul",
+                content: "Konten"
+            },
+            controlPanelList: "Tampilkan sebagai daftar",
+            controlPanelGrid: "Tampilkan sebagai kisi",
+            dependencyNotice: {
+                message: "Sumber daya eksternal tidak dapat dimuat dengan benar. Beberapa fitur tambahan mungkin tidak tersedia, tetapi situs tetap dapat digunakan.",
+                close: "Tutup hingga halaman dimuat ulang",
+                dismiss: "Jangan tampilkan pesan ini lagi",
+                report: "Laporkan masalah ini",
+                copy: "Salin kesalahan",
+                copied: "Detail kesalahan disalin.",
+                copyFailed: "Gagal menyalin. Pilih dan salin detail di bawah.",
+            },
             install: 'Pasang',
             themeToggle: 'Ganti tema',
             themeVariants: { menu: 'Gaya tema', normal: 'Klasik', fullDark: 'Hitam pekat', chalkboard: 'Chalkboard' },
@@ -5442,6 +6804,38 @@ License: BSD 3-Clause
         },
 
         'ms': {
+            editor: {
+                heading: "Tajuk",
+                bold: "Tebal",
+                italic: "Condong",
+                link: "Pautan",
+                image: "Imej",
+                code: "Kod",
+                quote: "Petikan",
+                list: "Senarai",
+                details: "Butiran",
+                mark: "Serlahkan",
+                textColor: "Warna teks",
+                backgroundColor: "Warna latar",
+                headingLevel: "Aras tajuk",
+                changeColor: "Pilih warna",
+                text: "teks",
+                description: "penerangan",
+                item: "item",
+                title: "Tajuk",
+                content: "Kandungan"
+            },
+            controlPanelList: "Papar sebagai senarai",
+            controlPanelGrid: "Papar sebagai grid",
+            dependencyNotice: {
+                message: "Sumber luaran tidak dapat dimuatkan dengan betul. Sesetengah ciri tambahan mungkin tidak tersedia, tetapi laman masih boleh digunakan.",
+                close: "Tutup sehingga halaman dimuat semula",
+                dismiss: "Jangan tunjukkan mesej ini lagi",
+                report: "Laporkan masalah ini",
+                copy: "Salin ralat",
+                copied: "Butiran ralat disalin.",
+                copyFailed: "Gagal menyalin. Pilih dan salin butiran di bawah.",
+            },
             install: 'Pasang',
             themeToggle: 'Tukar tema',
             themeVariants: { menu: 'Gaya tema', normal: 'Klasik', fullDark: 'Hitam pekat', chalkboard: 'Chalkboard' },
@@ -5482,6 +6876,38 @@ License: BSD 3-Clause
         },
 
         'be': {
+            editor: {
+                heading: "Загаловак",
+                bold: "Тлусты",
+                italic: "Курсіў",
+                link: "Спасылка",
+                image: "Выява",
+                code: "Код",
+                quote: "Цытата",
+                list: "Спіс",
+                details: "Падрабязнасці",
+                mark: "Вылучыць",
+                textColor: "Колер тэксту",
+                backgroundColor: "Колер фону",
+                headingLevel: "Узровень загалоўка",
+                changeColor: "Выбраць колер",
+                text: "тэкст",
+                description: "апісанне",
+                item: "элемент",
+                title: "Загаловак",
+                content: "Змесціва"
+            },
+            controlPanelList: "Паказаць спісам",
+            controlPanelGrid: "Паказаць сеткай",
+            dependencyNotice: {
+                message: "Не ўдалося правільна загрузіць знешні рэсурс. Некаторыя паляпшэнні могуць быць недаступныя, але сайтам можна працягваць карыстацца.",
+                close: "Закрыць да наступнай перазагрузкі старонкі",
+                dismiss: "Больш не паказваць гэта паведамленне",
+                report: "Паведаміць пра праблему",
+                copy: "Скапіяваць памылку",
+                copied: "Звесткі пра памылку скапіяваны.",
+                copyFailed: "Не ўдалося скапіяваць. Вылучыце і скапіруйце звесткі ніжэй.",
+            },
             install: 'Усталяваць',
             themeToggle: 'Пераключыць тэму',
             themeVariants: { menu: 'Стылі тэмы', normal: 'Класічная', fullDark: 'Глыбокі чорны', chalkboard: 'Chalkboard' },
@@ -5522,6 +6948,38 @@ License: BSD 3-Clause
         },
 
         'nb': {
+            editor: {
+                heading: "Overskrift",
+                bold: "Fet",
+                italic: "Kursiv",
+                link: "Lenke",
+                image: "Bilde",
+                code: "Kode",
+                quote: "Sitat",
+                list: "Liste",
+                details: "Detaljer",
+                mark: "Uthev",
+                textColor: "Tekstfarge",
+                backgroundColor: "Bakgrunnsfarge",
+                headingLevel: "Overskriftsnivå",
+                changeColor: "Velg farge",
+                text: "tekst",
+                description: "beskrivelse",
+                item: "element",
+                title: "Tittel",
+                content: "Innhold"
+            },
+            controlPanelList: "Vis som liste",
+            controlPanelGrid: "Vis som rutenett",
+            dependencyNotice: {
+                message: "En ekstern ressurs kunne ikke lastes inn riktig. Noen forbedringer kan være utilgjengelige, men du kan fortsatt bruke nettstedet.",
+                close: "Lukk til neste sideinnlasting",
+                dismiss: "Ikke vis denne meldingen igjen",
+                report: "Rapporter dette problemet",
+                copy: "Kopier feil",
+                copied: "Feildetaljene er kopiert.",
+                copyFailed: "Kopiering mislyktes. Velg og kopier detaljene nedenfor.",
+            },
             install: 'Installer',
             themeToggle: 'Bytt tema',
             themeVariants: { menu: 'Temastiler', normal: 'Klassisk', fullDark: 'Dypsvart', chalkboard: 'Chalkboard' },
@@ -5562,6 +7020,38 @@ License: BSD 3-Clause
         },
 
         'bg': {
+            editor: {
+                heading: "Заглавие",
+                bold: "Удебелен",
+                italic: "Курсив",
+                link: "Връзка",
+                image: "Изображение",
+                code: "Код",
+                quote: "Цитат",
+                list: "Списък",
+                details: "Подробности",
+                mark: "Открояване",
+                textColor: "Цвят на текста",
+                backgroundColor: "Цвят на фона",
+                headingLevel: "Ниво на заглавието",
+                changeColor: "Избор на цвят",
+                text: "текст",
+                description: "описание",
+                item: "елемент",
+                title: "Заглавие",
+                content: "Съдържание"
+            },
+            controlPanelList: "Покажи като списък",
+            controlPanelGrid: "Покажи като мрежа",
+            dependencyNotice: {
+                message: "Външен ресурс не можа да се зареди правилно. Някои подобрения може да не са налични, но сайтът остава използваем.",
+                close: "Затвори до следващото презареждане",
+                dismiss: "Не показвай повече това съобщение",
+                report: "Докладвай този проблем",
+                copy: "Копирай грешката",
+                copied: "Подробностите за грешката са копирани.",
+                copyFailed: "Копирането е неуспешно. Изберете и копирайте подробностите по-долу.",
+            },
             install: 'Инсталиране',
             themeToggle: 'Смяна на темата',
             themeVariants: { menu: 'Стилове на темата', normal: 'Класическа', fullDark: 'Дълбоко черно', chalkboard: 'Chalkboard' },
@@ -5602,6 +7092,38 @@ License: BSD 3-Clause
         },
 
         'hr': {
+            editor: {
+                heading: "Naslov",
+                bold: "Podebljano",
+                italic: "Kurziv",
+                link: "Poveznica",
+                image: "Slika",
+                code: "Kod",
+                quote: "Citat",
+                list: "Popis",
+                details: "Pojedinosti",
+                mark: "Istakni",
+                textColor: "Boja teksta",
+                backgroundColor: "Boja pozadine",
+                headingLevel: "Razina naslova",
+                changeColor: "Odaberi boju",
+                text: "tekst",
+                description: "opis",
+                item: "stavka",
+                title: "Naslov",
+                content: "Sadržaj"
+            },
+            controlPanelList: "Prikaži kao popis",
+            controlPanelGrid: "Prikaži kao mrežu",
+            dependencyNotice: {
+                message: "Vanjski resurs nije se mogao ispravno učitati. Neka poboljšanja možda nisu dostupna, ali stranicu možete nastaviti koristiti.",
+                close: "Zatvori do sljedećeg učitavanja stranice",
+                dismiss: "Ne prikazuj više ovu poruku",
+                report: "Prijavi ovaj problem",
+                copy: "Kopiraj pogrešku",
+                copied: "Pojedinosti pogreške su kopirane.",
+                copyFailed: "Kopiranje nije uspjelo. Označite i kopirajte pojedinosti u nastavku.",
+            },
             install: 'Instaliraj',
             themeToggle: 'Promijeni temu',
             themeVariants: { menu: 'Stilovi teme', normal: 'Klasična', fullDark: 'Duboka crna', chalkboard: 'Chalkboard' },
@@ -5642,6 +7164,38 @@ License: BSD 3-Clause
         },
 
         'cs': {
+            editor: {
+                heading: "Nadpis",
+                bold: "Tučně",
+                italic: "Kurzíva",
+                link: "Odkaz",
+                image: "Obrázek",
+                code: "Kód",
+                quote: "Citace",
+                list: "Seznam",
+                details: "Podrobnosti",
+                mark: "Zvýraznit",
+                textColor: "Barva textu",
+                backgroundColor: "Barva pozadí",
+                headingLevel: "Úroveň nadpisu",
+                changeColor: "Vybrat barvu",
+                text: "text",
+                description: "popis",
+                item: "položka",
+                title: "Nadpis",
+                content: "Obsah"
+            },
+            controlPanelList: "Zobrazit jako seznam",
+            controlPanelGrid: "Zobrazit jako mřížku",
+            dependencyNotice: {
+                message: "Externí zdroj se nepodařilo správně načíst. Některá vylepšení nemusí být dostupná, ale web můžete dál používat.",
+                close: "Zavřít do dalšího načtení stránky",
+                dismiss: "Tuto zprávu již nezobrazovat",
+                report: "Nahlásit tento problém",
+                copy: "Kopírovat chybu",
+                copied: "Podrobnosti chyby zkopírovány.",
+                copyFailed: "Kopírování se nezdařilo. Vyberte a zkopírujte podrobnosti níže.",
+            },
             install: 'Nainstalovat',
             themeToggle: 'Přepnout motiv',
             themeVariants: { menu: 'Styly motivu', normal: 'Klasický', fullDark: 'Hluboká černá', chalkboard: 'Chalkboard' },
@@ -5682,6 +7236,38 @@ License: BSD 3-Clause
         },
 
         'da': {
+            editor: {
+                heading: "Overskrift",
+                bold: "Fed",
+                italic: "Kursiv",
+                link: "Link",
+                image: "Billede",
+                code: "Kode",
+                quote: "Citat",
+                list: "Liste",
+                details: "Detaljer",
+                mark: "Fremhæv",
+                textColor: "Tekstfarve",
+                backgroundColor: "Baggrundsfarve",
+                headingLevel: "Overskriftsniveau",
+                changeColor: "Vælg farve",
+                text: "tekst",
+                description: "beskrivelse",
+                item: "punkt",
+                title: "Titel",
+                content: "Indhold"
+            },
+            controlPanelList: "Vis som liste",
+            controlPanelGrid: "Vis som gitter",
+            dependencyNotice: {
+                message: "En ekstern ressource kunne ikke indlæses korrekt. Nogle forbedringer er muligvis utilgængelige, men du kan fortsat bruge siden.",
+                close: "Luk indtil næste genindlæsning",
+                dismiss: "Vis ikke denne besked igen",
+                report: "Rapportér dette problem",
+                copy: "Kopiér fejl",
+                copied: "Fejloplysninger kopieret.",
+                copyFailed: "Kopiering mislykkedes. Markér og kopiér oplysningerne nedenfor.",
+            },
             install: 'Installer',
             themeToggle: 'Skift tema',
             themeVariants: { menu: 'Temastile', normal: 'Klassisk', fullDark: 'Dyb sort', chalkboard: 'Chalkboard' },
@@ -5722,6 +7308,38 @@ License: BSD 3-Clause
         },
 
         'eo': {
+            editor: {
+                heading: "Titolo",
+                bold: "Grasa",
+                italic: "Kursiva",
+                link: "Ligilo",
+                image: "Bildo",
+                code: "Kodo",
+                quote: "Citaĵo",
+                list: "Listo",
+                details: "Detaloj",
+                mark: "Emfazi",
+                textColor: "Tekstkoloro",
+                backgroundColor: "Fonkoloro",
+                headingLevel: "Titola nivelo",
+                changeColor: "Elekti koloron",
+                text: "teksto",
+                description: "priskribo",
+                item: "ero",
+                title: "Titolo",
+                content: "Enhavo"
+            },
+            controlPanelList: "Montri kiel liston",
+            controlPanelGrid: "Montri kiel kradon",
+            dependencyNotice: {
+                message: "Ekstera rimedo ne povis esti ĝuste ŝargita. Iuj plibonigoj eble ne disponeblas, sed vi povas plu uzi la retejon.",
+                close: "Fermi ĝis la sekva reŝargo de la paĝo",
+                dismiss: "Ne plu montri ĉi tiun mesaĝon",
+                report: "Raporti ĉi tiun problemon",
+                copy: "Kopii eraron",
+                copied: "Erardetaloj kopiitaj.",
+                copyFailed: "Kopiado malsukcesis. Elektu kaj kopiu la subajn detalojn.",
+            },
             install: 'Instali',
             themeToggle: 'Ŝanĝi etoson',
             themeVariants: { menu: 'Etosaj stiloj', normal: 'Klasika', fullDark: 'Profunde nigra', chalkboard: 'Chalkboard' },
@@ -5762,6 +7380,38 @@ License: BSD 3-Clause
         },
 
         'fil': {
+            editor: {
+                heading: "Pamagat",
+                bold: "Bold",
+                italic: "Italic",
+                link: "Link",
+                image: "Larawan",
+                code: "Code",
+                quote: "Sipi",
+                list: "Listahan",
+                details: "Mga detalye",
+                mark: "I-highlight",
+                textColor: "Kulay ng teksto",
+                backgroundColor: "Kulay ng background",
+                headingLevel: "Antas ng pamagat",
+                changeColor: "Pumili ng kulay",
+                text: "teksto",
+                description: "paglalarawan",
+                item: "item",
+                title: "Pamagat",
+                content: "Nilalaman"
+            },
+            controlPanelList: "Ipakita bilang listahan",
+            controlPanelGrid: "Ipakita bilang grid",
+            dependencyNotice: {
+                message: "Hindi ma-load nang tama ang isang panlabas na resource. Maaaring hindi magamit ang ilang dagdag na feature, pero maaari mo pa ring gamitin ang site.",
+                close: "Isara hanggang sa susunod na pag-reload",
+                dismiss: "Huwag nang ipakita ang mensaheng ito",
+                report: "Iulat ang problemang ito",
+                copy: "Kopyahin ang error",
+                copied: "Nakopya ang mga detalye ng error.",
+                copyFailed: "Hindi makopya. Piliin at kopyahin ang mga detalye sa ibaba.",
+            },
             install: 'I-install',
             themeToggle: 'Palitan ang tema',
             themeVariants: { menu: 'Mga estilo ng tema', normal: 'Klasiko', fullDark: 'Napakaitim', chalkboard: 'Chalkboard' },
@@ -5802,6 +7452,38 @@ License: BSD 3-Clause
         },
 
         'fi': {
+            editor: {
+                heading: "Otsikko",
+                bold: "Lihavointi",
+                italic: "Kursivointi",
+                link: "Linkki",
+                image: "Kuva",
+                code: "Koodi",
+                quote: "Lainaus",
+                list: "Luettelo",
+                details: "Lisätiedot",
+                mark: "Korosta",
+                textColor: "Tekstin väri",
+                backgroundColor: "Taustaväri",
+                headingLevel: "Otsikkotaso",
+                changeColor: "Valitse väri",
+                text: "teksti",
+                description: "kuvaus",
+                item: "kohta",
+                title: "Otsikko",
+                content: "Sisältö"
+            },
+            controlPanelList: "Näytä luettelona",
+            controlPanelGrid: "Näytä ruudukkona",
+            dependencyNotice: {
+                message: "Ulkoista resurssia ei voitu ladata oikein. Jotkin lisätoiminnot eivät ehkä ole käytettävissä, mutta voit jatkaa sivuston käyttöä.",
+                close: "Sulje seuraavaan sivun lataukseen asti",
+                dismiss: "Älä näytä tätä viestiä uudelleen",
+                report: "Ilmoita tästä ongelmasta",
+                copy: "Kopioi virhe",
+                copied: "Virheen tiedot kopioitu.",
+                copyFailed: "Kopiointi epäonnistui. Valitse ja kopioi alla olevat tiedot.",
+            },
             install: 'Asenna',
             themeToggle: 'Vaihda teemaa',
             themeVariants: { menu: 'Teematyylit', normal: 'Klassinen', fullDark: 'Syvänmusta', chalkboard: 'Chalkboard' },
@@ -5842,6 +7524,38 @@ License: BSD 3-Clause
         },
 
         'ckb': {
+            editor: {
+                heading: "سەردێڕ",
+                bold: "ئەستوور",
+                italic: "لار",
+                link: "بەستەر",
+                image: "وێنە",
+                code: "کۆد",
+                quote: "وتە",
+                list: "لیست",
+                details: "وردەکاری",
+                mark: "دیارکردن",
+                textColor: "ڕەنگی دەق",
+                backgroundColor: "ڕەنگی پاشبنەما",
+                headingLevel: "ئاستی سەردێڕ",
+                changeColor: "ڕەنگێک هەڵبژێرە",
+                text: "دەق",
+                description: "وەسف",
+                item: "بڕگە",
+                title: "سەردێڕ",
+                content: "ناوەڕۆک"
+            },
+            controlPanelList: "پیشاندان وەک لیست",
+            controlPanelGrid: "پیشاندان وەک تۆڕ",
+            dependencyNotice: {
+                message: "سەرچاوەیەکی دەرەکی بە دروستی بار نەکرا. لەوانەیە هەندێک تایبەتمەندی بەردەست نەبن، بەڵام دەتوانیت بە بەکارهێنانی ماڵپەڕەکە بەردەوام بیت.",
+                close: "داخستن تا بارکردنەوەی داهاتووی پەڕە",
+                dismiss: "ئەم پەیامە چیتر پیشان مەدە",
+                report: "ڕاپۆرتکردنی ئەم کێشەیە",
+                copy: "لەبەرگرتنەوەی هەڵە",
+                copied: "وردەکارییەکانی هەڵە لەبەرگیرانەوە.",
+                copyFailed: "لەبەرگرتنەوە سەرکەوتوو نەبوو. وردەکارییەکانی خوارەوە هەڵبژێرە و لەبەریان بگرەوە.",
+            },
             install: 'دامەزراندن',
             themeToggle: 'گۆڕینی ڕووکار',
             themeVariants: { menu: 'شێوازەکانی ڕووکار', normal: 'کلاسیک', fullDark: 'ڕەشی قووڵ', chalkboard: 'Chalkboard' },
@@ -5882,6 +7596,38 @@ License: BSD 3-Clause
         },
 
         'ka': {
+            editor: {
+                heading: "სათაური",
+                bold: "მუქი",
+                italic: "დახრილი",
+                link: "ბმული",
+                image: "სურათი",
+                code: "კოდი",
+                quote: "ციტატა",
+                list: "სია",
+                details: "დეტალები",
+                mark: "მონიშვნა",
+                textColor: "ტექსტის ფერი",
+                backgroundColor: "ფონის ფერი",
+                headingLevel: "სათაურის დონე",
+                changeColor: "ფერის არჩევა",
+                text: "ტექსტი",
+                description: "აღწერა",
+                item: "ელემენტი",
+                title: "სათაური",
+                content: "შიგთავსი"
+            },
+            controlPanelList: "სიად ჩვენება",
+            controlPanelGrid: "ბადედ ჩვენება",
+            dependencyNotice: {
+                message: "გარე რესურსი სწორად ვერ ჩაიტვირთა. ზოგი დამატებითი ფუნქცია შეიძლება მიუწვდომელი იყოს, თუმცა საიტის გამოყენება შეგიძლიათ.",
+                close: "დახურვა გვერდის შემდეგ ჩატვირთვამდე",
+                dismiss: "ეს შეტყობინება აღარ მაჩვენო",
+                report: "პრობლემის შეტყობინება",
+                copy: "შეცდომის კოპირება",
+                copied: "შეცდომის დეტალები დაკოპირებულია.",
+                copyFailed: "კოპირება ვერ მოხერხდა. მონიშნეთ და დააკოპირეთ ქვემოთ მოცემული დეტალები.",
+            },
             install: 'დაყენება',
             themeToggle: 'თემის შეცვლა',
             themeVariants: { menu: 'თემის სტილები', normal: 'კლასიკური', fullDark: 'ღრმა შავი', chalkboard: 'Chalkboard' },
@@ -5922,6 +7668,38 @@ License: BSD 3-Clause
         },
 
         'el': {
+            editor: {
+                heading: "Επικεφαλίδα",
+                bold: "Έντονα",
+                italic: "Πλάγια",
+                link: "Σύνδεσμος",
+                image: "Εικόνα",
+                code: "Κώδικας",
+                quote: "Παράθεση",
+                list: "Λίστα",
+                details: "Λεπτομέρειες",
+                mark: "Επισήμανση",
+                textColor: "Χρώμα κειμένου",
+                backgroundColor: "Χρώμα φόντου",
+                headingLevel: "Επίπεδο επικεφαλίδας",
+                changeColor: "Επιλογή χρώματος",
+                text: "κείμενο",
+                description: "περιγραφή",
+                item: "στοιχείο",
+                title: "Τίτλος",
+                content: "Περιεχόμενο"
+            },
+            controlPanelList: "Εμφάνιση ως λίστα",
+            controlPanelGrid: "Εμφάνιση ως πλέγμα",
+            dependencyNotice: {
+                message: "Δεν ήταν δυνατή η σωστή φόρτωση ενός εξωτερικού πόρου. Ορισμένες βελτιώσεις ίσως δεν είναι διαθέσιμες, αλλά μπορείτε να συνεχίσετε να χρησιμοποιείτε τον ιστότοπο.",
+                close: "Κλείσιμο μέχρι την επόμενη επαναφόρτωση",
+                dismiss: "Να μην εμφανιστεί ξανά αυτό το μήνυμα",
+                report: "Αναφορά αυτού του προβλήματος",
+                copy: "Αντιγραφή σφάλματος",
+                copied: "Οι λεπτομέρειες του σφάλματος αντιγράφηκαν.",
+                copyFailed: "Η αντιγραφή απέτυχε. Επιλέξτε και αντιγράψτε τις παρακάτω λεπτομέρειες.",
+            },
             install: 'Εγκατάσταση',
             themeToggle: 'Εναλλαγή θέματος',
             themeVariants: { menu: 'Στυλ θέματος', normal: 'Κλασικό', fullDark: 'Βαθύ μαύρο', chalkboard: 'Chalkboard' },
@@ -5962,6 +7740,38 @@ License: BSD 3-Clause
         },
 
         'he': {
+            editor: {
+                heading: "כותרת",
+                bold: "מודגש",
+                italic: "נטוי",
+                link: "קישור",
+                image: "תמונה",
+                code: "קוד",
+                quote: "ציטוט",
+                list: "רשימה",
+                details: "פרטים",
+                mark: "הדגשה",
+                textColor: "צבע טקסט",
+                backgroundColor: "צבע רקע",
+                headingLevel: "רמת כותרת",
+                changeColor: "בחירת צבע",
+                text: "טקסט",
+                description: "תיאור",
+                item: "פריט",
+                title: "כותרת",
+                content: "תוכן"
+            },
+            controlPanelList: "הצגה כרשימה",
+            controlPanelGrid: "הצגה כרשת",
+            dependencyNotice: {
+                message: "לא ניתן היה לטעון משאב חיצוני כראוי. ייתכן שחלק מהשיפורים לא יהיו זמינים, אך אפשר להמשיך להשתמש באתר.",
+                close: "סגירה עד לטעינה הבאה של הדף",
+                dismiss: "לא להציג הודעה זו שוב",
+                report: "דיווח על הבעיה",
+                copy: "העתקת השגיאה",
+                copied: "פרטי השגיאה הועתקו.",
+                copyFailed: "ההעתקה נכשלה. יש לבחור ולהעתיק את הפרטים שלהלן.",
+            },
             install: 'התקנה',
             themeToggle: 'החלפת ערכת נושא',
             themeVariants: { menu: 'סגנונות ערכת נושא', normal: 'קלאסי', fullDark: 'שחור עמוק', chalkboard: 'Chalkboard' },
@@ -6002,6 +7812,38 @@ License: BSD 3-Clause
         },
 
         'hu': {
+            editor: {
+                heading: "Címsor",
+                bold: "Félkövér",
+                italic: "Dőlt",
+                link: "Hivatkozás",
+                image: "Kép",
+                code: "Kód",
+                quote: "Idézet",
+                list: "Lista",
+                details: "Részletek",
+                mark: "Kiemelés",
+                textColor: "Szövegszín",
+                backgroundColor: "Háttérszín",
+                headingLevel: "Címsor szintje",
+                changeColor: "Szín választása",
+                text: "szöveg",
+                description: "leírás",
+                item: "elem",
+                title: "Cím",
+                content: "Tartalom"
+            },
+            controlPanelList: "Megjelenítés listaként",
+            controlPanelGrid: "Megjelenítés rácsként",
+            dependencyNotice: {
+                message: "Egy külső erőforrást nem sikerült megfelelően betölteni. Egyes kiegészítő funkciók nem érhetők el, de az oldal továbbra is használható.",
+                close: "Bezárás az oldal következő betöltéséig",
+                dismiss: "Ne jelenjen meg többé ez az üzenet",
+                report: "Probléma jelentése",
+                copy: "Hiba másolása",
+                copied: "A hiba részletei másolva.",
+                copyFailed: "A másolás nem sikerült. Jelöld ki és másold a lenti részleteket.",
+            },
             install: 'Telepítés',
             themeToggle: 'Téma váltása',
             themeVariants: { menu: 'Témastílusok', normal: 'Klasszikus', fullDark: 'Mélyfekete', chalkboard: 'Chalkboard' },
@@ -6042,6 +7884,38 @@ License: BSD 3-Clause
         },
 
         'mr': {
+            editor: {
+                heading: "शीर्षक",
+                bold: "ठळक",
+                italic: "तिरपे",
+                link: "दुवा",
+                image: "प्रतिमा",
+                code: "कोड",
+                quote: "अवतरण",
+                list: "यादी",
+                details: "तपशील",
+                mark: "ठळक करा",
+                textColor: "मजकुराचा रंग",
+                backgroundColor: "पार्श्वभूमीचा रंग",
+                headingLevel: "शीर्षकाची पातळी",
+                changeColor: "रंग निवडा",
+                text: "मजकूर",
+                description: "वर्णन",
+                item: "घटक",
+                title: "शीर्षक",
+                content: "सामग्री"
+            },
+            controlPanelList: "सूची म्हणून दाखवा",
+            controlPanelGrid: "ग्रिड म्हणून दाखवा",
+            dependencyNotice: {
+                message: "बाह्य संसाधन योग्यरीत्या लोड करता आले नाही. काही अतिरिक्त सुविधा उपलब्ध नसतील, पण तुम्ही साइट वापरणे सुरू ठेवू शकता.",
+                close: "पुढील पेज रीलोड होईपर्यंत बंद करा",
+                dismiss: "हा संदेश पुन्हा दाखवू नका",
+                report: "या समस्येची तक्रार करा",
+                copy: "त्रुटी कॉपी करा",
+                copied: "त्रुटीचे तपशील कॉपी केले.",
+                copyFailed: "कॉपी करता आले नाही. खालील तपशील निवडून कॉपी करा.",
+            },
             install: 'स्थापित करा',
             themeToggle: 'थीम बदला',
             themeVariants: { menu: 'थीम शैली', normal: 'क्लासिक', fullDark: 'गडद काळा', chalkboard: 'Chalkboard' },
@@ -6082,6 +7956,38 @@ License: BSD 3-Clause
         },
 
         'sr': {
+            editor: {
+                heading: "Наслов",
+                bold: "Подебљано",
+                italic: "Курзив",
+                link: "Веза",
+                image: "Слика",
+                code: "Код",
+                quote: "Цитат",
+                list: "Листа",
+                details: "Детаљи",
+                mark: "Истакни",
+                textColor: "Боја текста",
+                backgroundColor: "Боја позадине",
+                headingLevel: "Ниво наслова",
+                changeColor: "Изабери боју",
+                text: "текст",
+                description: "опис",
+                item: "ставка",
+                title: "Наслов",
+                content: "Садржај"
+            },
+            controlPanelList: "Прикажи као листу",
+            controlPanelGrid: "Прикажи као мрежу",
+            dependencyNotice: {
+                message: "Спољни ресурс није могао правилно да се учита. Нека побољшања можда нису доступна, али можете наставити да користите сајт.",
+                close: "Затвори до следећег учитавања странице",
+                dismiss: "Не приказуј више ову поруку",
+                report: "Пријави овај проблем",
+                copy: "Копирај грешку",
+                copied: "Детаљи грешке су копирани.",
+                copyFailed: "Копирање није успело. Изаберите и копирајте детаље испод.",
+            },
             install: 'Instaliraj',
             themeToggle: 'Promeni temu',
             themeVariants: { menu: 'Stilovi teme', normal: 'Klasična', fullDark: 'Duboka crna', chalkboard: 'Chalkboard' },
@@ -6122,6 +8028,38 @@ License: BSD 3-Clause
         },
 
         'sk': {
+            editor: {
+                heading: "Nadpis",
+                bold: "Tučné",
+                italic: "Kurzíva",
+                link: "Odkaz",
+                image: "Obrázok",
+                code: "Kód",
+                quote: "Citácia",
+                list: "Zoznam",
+                details: "Podrobnosti",
+                mark: "Zvýrazniť",
+                textColor: "Farba textu",
+                backgroundColor: "Farba pozadia",
+                headingLevel: "Úroveň nadpisu",
+                changeColor: "Vybrať farbu",
+                text: "text",
+                description: "popis",
+                item: "položka",
+                title: "Nadpis",
+                content: "Obsah"
+            },
+            controlPanelList: "Zobraziť ako zoznam",
+            controlPanelGrid: "Zobraziť ako mriežku",
+            dependencyNotice: {
+                message: "Externý zdroj sa nepodarilo správne načítať. Niektoré vylepšenia nemusia byť dostupné, ale web môžete naďalej používať.",
+                close: "Zavrieť do ďalšieho načítania stránky",
+                dismiss: "Túto správu už nezobrazovať",
+                report: "Nahlásiť tento problém",
+                copy: "Kopírovať chybu",
+                copied: "Podrobnosti chyby boli skopírované.",
+                copyFailed: "Kopírovanie zlyhalo. Vyberte a skopírujte podrobnosti nižšie.",
+            },
             install: 'Nainštalovať',
             themeToggle: 'Prepnúť tému',
             themeVariants: { menu: 'Štýly témy', normal: 'Klasický', fullDark: 'Hlboká čierna', chalkboard: 'Chalkboard' },
@@ -6162,6 +8100,38 @@ License: BSD 3-Clause
         },
 
         'ug': {
+            editor: {
+                heading: "ماۋزۇ",
+                bold: "توم",
+                italic: "يانتۇ",
+                link: "ئۇلانما",
+                image: "رەسىم",
+                code: "كود",
+                quote: "نەقىل",
+                list: "تىزىملىك",
+                details: "تەپسىلات",
+                mark: "يورۇتۇش",
+                textColor: "تېكىست رەڭگى",
+                backgroundColor: "تەگلىك رەڭگى",
+                headingLevel: "ماۋزۇ دەرىجىسى",
+                changeColor: "رەڭ تاللاش",
+                text: "تېكىست",
+                description: "چۈشەندۈرۈش",
+                item: "تۈر",
+                title: "ماۋزۇ",
+                content: "مەزمۇن"
+            },
+            controlPanelList: "تىزىملىك شەكلىدە كۆرسىتىش",
+            controlPanelGrid: "تور شەكلىدە كۆرسىتىش",
+            dependencyNotice: {
+                message: "سىرتقى مەنبە توغرا يۈكلەنمىدى. بەزى قوشۇمچە ئىقتىدارلار ئىشلىمەسلىكى مۇمكىن، ئەمما تور بېكەتنى داۋاملىق ئىشلىتەلەيسىز.",
+                close: "بەت قايتا يۈكلەنگۈچە تاقاش",
+                dismiss: "بۇ ئۇچۇرنى قايتا كۆرسەتمە",
+                report: "بۇ مەسىلىنى مەلۇم قىلىش",
+                copy: "خاتالىقنى كۆچۈرۈش",
+                copied: "خاتالىق تەپسىلاتلىرى كۆچۈرۈلدى.",
+                copyFailed: "كۆچۈرۈش مەغلۇپ بولدى. تۆۋەندىكى تەپسىلاتلارنى تاللاپ كۆچۈرۈڭ.",
+            },
             install: 'قاچىلاش',
             themeToggle: 'تېمىنى ئالماشتۇرۇش',
             themeVariants: { menu: 'تېما ئۇسلۇبلىرى', normal: 'كلاسسىك', fullDark: 'قېنىق قارا', chalkboard: 'Chalkboard' },
@@ -6202,6 +8172,38 @@ License: BSD 3-Clause
         },
 
         'uk': {
+            editor: {
+                heading: "Заголовок",
+                bold: "Жирний",
+                italic: "Курсив",
+                link: "Посилання",
+                image: "Зображення",
+                code: "Код",
+                quote: "Цитата",
+                list: "Список",
+                details: "Подробиці",
+                mark: "Виділити",
+                textColor: "Колір тексту",
+                backgroundColor: "Колір тла",
+                headingLevel: "Рівень заголовка",
+                changeColor: "Вибрати колір",
+                text: "текст",
+                description: "опис",
+                item: "елемент",
+                title: "Заголовок",
+                content: "Вміст"
+            },
+            controlPanelList: "Показати списком",
+            controlPanelGrid: "Показати сіткою",
+            dependencyNotice: {
+                message: "Не вдалося правильно завантажити зовнішній ресурс. Деякі покращення можуть бути недоступні, але сайтом можна користуватися далі.",
+                close: "Закрити до наступного перезавантаження сторінки",
+                dismiss: "Більше не показувати це повідомлення",
+                report: "Повідомити про проблему",
+                copy: "Копіювати помилку",
+                copied: "Відомості про помилку скопійовано.",
+                copyFailed: "Не вдалося скопіювати. Виділіть і скопіюйте відомості нижче.",
+            },
             install: 'Встановити',
             themeToggle: 'Перемкнути тему',
             themeVariants: { menu: 'Стилі теми', normal: 'Класична', fullDark: 'Глибокий чорний', chalkboard: 'Chalkboard' },
@@ -6242,6 +8244,38 @@ License: BSD 3-Clause
         },
 
         'th': {
+            editor: {
+                heading: "หัวข้อ",
+                bold: "ตัวหนา",
+                italic: "ตัวเอียง",
+                link: "ลิงก์",
+                image: "รูปภาพ",
+                code: "โค้ด",
+                quote: "คำอ้างอิง",
+                list: "รายการ",
+                details: "รายละเอียด",
+                mark: "เน้นข้อความ",
+                textColor: "สีข้อความ",
+                backgroundColor: "สีพื้นหลัง",
+                headingLevel: "ระดับหัวข้อ",
+                changeColor: "เลือกสี",
+                text: "ข้อความ",
+                description: "คำอธิบาย",
+                item: "รายการ",
+                title: "หัวข้อ",
+                content: "เนื้อหา"
+            },
+            controlPanelList: "แสดงเป็นรายการ",
+            controlPanelGrid: "แสดงเป็นตาราง",
+            dependencyNotice: {
+                message: "ไม่สามารถโหลดทรัพยากรภายนอกได้อย่างถูกต้อง ฟีเจอร์เสริมบางอย่างอาจไม่พร้อมใช้งาน แต่คุณยังใช้เว็บไซต์ต่อได้",
+                close: "ปิดจนกว่าจะโหลดหน้าใหม่",
+                dismiss: "ไม่ต้องแสดงข้อความนี้อีก",
+                report: "รายงานปัญหานี้",
+                copy: "คัดลอกข้อผิดพลาด",
+                copied: "คัดลอกรายละเอียดข้อผิดพลาดแล้ว",
+                copyFailed: "คัดลอกไม่สำเร็จ โปรดเลือกและคัดลอกรายละเอียดด้านล่าง",
+            },
             install: 'ติดตั้ง',
             themeToggle: 'สลับธีม',
             themeVariants: { menu: 'รูปแบบธีม', normal: 'คลาสสิก', fullDark: 'ดำสนิท', chalkboard: 'Chalkboard' },
@@ -6295,6 +8329,9 @@ License: BSD 3-Clause
             ...exactLocale
         };
     };
+
+    dependencyNoticeReady = true;
+    if (dependencyWarnings.size) showDependencyNotice();
 
     const normalizeFavoriteSetName = (value) => String(value || '').trim().toLocaleLowerCase();
     const isFavoriteSetName = (value) => {
@@ -6364,6 +8401,247 @@ License: BSD 3-Clause
             });
 
         return true;
+    };
+
+    // Profile Control Panel
+    const CONTROL_PANEL_STYLE_ID = 'gfplus-control-panel-style';
+    const CONTROL_PANEL_LAYOUT_KEY = 'gfplus-control-panel-layout';
+    const CONTROL_PANEL_CSS = `
+        #control-panel > header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        #control-panel > header > h3 { margin-block: 0; }
+        #control-panel .gf-control-layout-toggle {
+            display: inline-flex; align-items: center; justify-content: center;
+            flex: 0 0 32px; width: 32px; min-width: 32px; height: 32px;
+            box-sizing: border-box; margin: 0; padding: 6px;
+            border: 1px solid var(--content-border-color); border-radius: 6px;
+            background: var(--content-background-color); color: var(--link-color);
+            box-shadow: none; cursor: pointer;
+        }
+        #control-panel .gf-control-layout-toggle:hover {
+            background: color-mix(in srgb, var(--link-color) 10%, var(--content-background-color));
+        }
+        #control-panel .gf-control-layout-toggle:focus-visible {
+            outline: 2px solid var(--link-color); outline-offset: 3px;
+        }
+        #control-panel .gf-control-layout-toggle svg { width: 18px; height: 18px; }
+        #user-control-panel[data-gfplus-control-panel] {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        #user-control-panel[data-gfplus-control-panel] > li {
+            display: flex;
+            min-width: 0;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        #user-control-panel[data-gfplus-control-panel] > li > a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 58px;
+            padding: 12px;
+            border: 1px solid var(--content-border-color);
+            border-radius: 10px;
+            background: var(--content-background-color);
+            color: var(--overall-text-color);
+            font-size: .9rem;
+            font-weight: 600;
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+            text-decoration: none;
+            transition: background-color .16s ease, border-color .16s ease;
+        }
+        #user-control-panel[data-gfplus-control-panel] > li > a:hover {
+            background: color-mix(in srgb, var(--link-color) 8%, var(--content-background-color));
+            border-color: var(--link-color);
+        }
+        #user-control-panel[data-gfplus-control-panel] > li > a:focus-visible {
+            outline: 2px solid var(--link-color);
+            outline-offset: 3px;
+        }
+        #user-control-panel [data-gfplus-control-icon] {
+            width: 20px;
+            height: 20px;
+            flex: 0 0 20px;
+            color: var(--link-color);
+        }
+        #user-control-panel [data-gfplus-control-danger] {
+            --link-color: #b91c1c;
+        }
+        html[data-theme="dark"] #user-control-panel [data-gfplus-control-danger] {
+            --link-color: #f87171;
+        }
+        #user-control-panel[data-gfplus-control-layout="list"] {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 4px;
+        }
+        #user-control-panel[data-gfplus-control-layout="list"] > li > a {
+            width: fit-content;
+            max-width: 100%;
+            min-height: 30px;
+            padding: 3px 0;
+            border: 0;
+            border-radius: 0;
+            background: none;
+            box-shadow: none;
+            color: var(--link-color);
+            font-weight: 500;
+        }
+        #user-control-panel[data-gfplus-control-layout="list"] > li > a:hover {
+            background: none;
+            text-decoration: underline;
+        }
+        #user-control-panel[data-gfplus-control-layout="list"] > li[data-gfplus-group-start] {
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px solid var(--content-border-color);
+        }
+        @media (max-width: 600px) {
+            #user-control-panel[data-gfplus-control-panel] {
+                grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+                gap: 6px;
+            }
+            #user-control-panel[data-gfplus-control-panel] > li > a {
+                min-height: 44px;
+                padding: 8px;
+                gap: 8px;
+                font-size: .82rem;
+                border-radius: 7px;
+            }
+            #user-control-panel [data-gfplus-control-icon] {
+                width: 18px; height: 18px; flex-basis: 18px;
+            }
+            #user-control-panel[data-gfplus-control-layout="list"] {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 3px;
+            }
+            #user-control-panel[data-gfplus-control-layout="list"] > li > a {
+                min-height: 30px;
+                padding: 3px 0;
+                border-radius: 0;
+            }
+        }
+    `;
+
+    const CONTROL_PANEL_ICON_PATHS = {
+        script: '<path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16"/>',
+        style: '<path d="m14 4 6 6M4 20l4-1L21 6a2.1 2.1 0 0 0-3-3L5 16l-1 4Z"/>',
+        set: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/>',
+        import: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',
+        webhook: '<circle cx="12" cy="5" r="3"/><circle cx="5" cy="18" r="3"/><circle cx="19" cy="18" r="3"/><path d="m10.5 7.5-4 8m7-8 4 8M8 18h8"/>',
+        account: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
+        signIn: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>',
+        bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 13h4"/>',
+        settings: '<path d="M4 7h9m4 0h3M4 17h3m4 0h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+        trash: '<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15m-9 4v7m4-7v7"/>',
+        signOut: '<path d="M9 3H4v18h5m5-14 5 5-5 5m-5-5h10"/>',
+        fallback: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="m10 8 4 4-4 4"/>'
+    };
+
+    const getControlPanelIcon = (link) => {
+        const url = new URL(link.href, window.location.href);
+        const path = url.pathname.replace(/\/$/, '');
+        if (path.endsWith('/script_versions/new')) return url.searchParams.get('language') === 'css' ? 'style' : 'script';
+        if (path.endsWith('/sets/new')) return 'set';
+        if (path.endsWith('/import')) return 'import';
+        if (path.endsWith('/webhook-info')) return 'webhook';
+        if (path.endsWith('/users/edit')) return 'account';
+        if (path.endsWith('/edit_sign_in')) return 'signIn';
+        if (path.endsWith('/notifications')) return 'bell';
+        if (path.endsWith('/notification_settings')) return 'settings';
+        if (/\/(delete_info|delete_account|edit_account_deletion)$/.test(path)) return 'trash';
+        if (path.endsWith('/sign_out')) return 'signOut';
+        return 'fallback';
+    };
+
+    const initControlPanelEnhancements = () => {
+        const panel = document.getElementById('user-control-panel');
+        if (!HAS_BASE_THEME || !panel) return;
+        if (!document.getElementById(CONTROL_PANEL_STYLE_ID)) {
+            const style = document.createElement('style');
+            style.id = CONTROL_PANEL_STYLE_ID;
+            style.textContent = CONTROL_PANEL_CSS;
+            appendStyle(style);
+        }
+        panel.querySelectorAll(':scope > li > a[href]').forEach((link) => {
+            if (link.querySelector('[data-gfplus-control-icon]')) return;
+            const name = getControlPanelIcon(link);
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            icon.setAttribute('viewBox', '0 0 24 24');
+            icon.setAttribute('fill', 'none');
+            icon.setAttribute('stroke', 'currentColor');
+            icon.setAttribute('stroke-width', '1.8');
+            icon.setAttribute('stroke-linecap', 'round');
+            icon.setAttribute('stroke-linejoin', 'round');
+            icon.setAttribute('aria-hidden', 'true');
+            icon.setAttribute('focusable', 'false');
+            icon.setAttribute('data-gfplus-control-icon', name);
+            icon.innerHTML = CONTROL_PANEL_ICON_PATHS[name];
+            // Decorate the existing link: keep its locale, event handlers and data-method.
+            link.prepend(icon);
+            if (name === 'trash' || name === 'signOut') link.setAttribute('data-gfplus-control-danger', 'true');
+        });
+        panel.setAttribute('data-gfplus-control-panel', 'true');
+        const header = panel.closest('#control-panel')?.querySelector(':scope > header');
+        if (!header || header.querySelector('.gf-control-layout-toggle')) return;
+        const originalItems = Array.from(panel.children);
+        const groups = [
+            ['script', 'style', 'set', 'import', 'webhook'],
+            ['account', 'signIn'],
+            ['bell', 'settings'],
+            ['signOut', 'trash']
+        ];
+        const order = groups.flat();
+        const iconFor = (item) => item.querySelector('[data-gfplus-control-icon]')?.getAttribute('data-gfplus-control-icon');
+        const rank = (item) => {
+            const index = order.indexOf(iconFor(item));
+            return index < 0 ? order.length : index;
+        };
+        const listItems = [...originalItems].sort((a, b) => rank(a) - rank(b));
+        let previousGroup = -1;
+        listItems.forEach((item) => {
+            const index = groups.findIndex((group) => group.includes(iconFor(item)));
+            const group = index < 0 ? groups.length : index;
+            item.toggleAttribute('data-gfplus-group-start', previousGroup !== -1 && previousGroup !== group);
+            previousGroup = group;
+        });
+        const i18n = getUserNavI18n(getCurrentLocale());
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'gf-control-layout-toggle';
+        button.setAttribute('aria-controls', panel.id);
+        button.setAttribute('aria-label', i18n.controlPanelList);
+        let layout = 'list';
+        try {
+            if (localStorage.getItem(CONTROL_PANEL_LAYOUT_KEY) === 'grid') layout = 'grid';
+        } catch (error) { /* The view switch also works without storage. */ }
+        const applyLayout = () => {
+            const list = layout === 'list';
+            panel.setAttribute('data-gfplus-control-layout', layout);
+            // Move existing nodes so reading/tab order follows visual order, preserving handlers.
+            panel.append(...(list ? listItems : originalItems));
+            button.setAttribute('aria-pressed', String(list));
+            button.title = list ? i18n.controlPanelGrid : i18n.controlPanelList;
+            button.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">${list
+                ? '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'
+                : '<path d="M9 5h12M9 12h12M9 19h12M3 5h1M3 12h1M3 19h1"/>'}</svg>`;
+        };
+        button.addEventListener('click', () => {
+            layout = layout === 'grid' ? 'list' : 'grid';
+            applyLayout();
+            try {
+                localStorage.setItem(CONTROL_PANEL_LAYOUT_KEY, layout);
+            } catch (error) { /* Keep the selected layout for the current page. */ }
+        });
+        header.appendChild(button);
+        applyLayout();
     };
 
     const USER_NAV_ICONS = {
@@ -6543,6 +8821,37 @@ License: BSD 3-Clause
         return true;
     };
 
+    let mobileUserNameLayoutInitialized = false;
+    const syncMobileUserNameLayout = (userMeta) => {
+        const profileLink = userMeta?.querySelector('.user-profile-link a');
+        if (!profileLink) {
+            return;
+        }
+
+        userMeta.toggleAttribute(
+            'data-gfplus-user-name-truncated',
+            profileLink.scrollWidth > profileLink.clientWidth + 1
+        );
+    };
+
+    const initMobileUserNameLayout = (userMeta) => {
+        syncMobileUserNameLayout(userMeta);
+        if (mobileUserNameLayoutInitialized) {
+            return;
+        }
+
+        mobileUserNameLayoutInitialized = true;
+        window.addEventListener('resize', () => syncMobileUserNameLayout(userMeta), { passive: true });
+        if (typeof ResizeObserver === 'function') {
+            const observer = new ResizeObserver(() => syncMobileUserNameLayout(userMeta));
+            observer.observe(userMeta);
+            const profileLink = userMeta.querySelector('.user-profile-link a');
+            if (profileLink) {
+                observer.observe(profileLink);
+            }
+        }
+    };
+
     const initMobileUserNavigation = () => {
         const mobileUserItem = document.querySelector('#mobile-nav li.multi-link-nav');
         if (!mobileUserItem) {
@@ -6550,6 +8859,7 @@ License: BSD 3-Clause
         }
 
         if (mobileUserItem.querySelector('#gf-mobile-user-actions')) {
+            initMobileUserNameLayout(document.getElementById('gf-mobile-user-meta'));
             return true;
         }
 
@@ -6611,13 +8921,12 @@ License: BSD 3-Clause
         mobileUserItem.prepend(userRow);
         mobileUserItem.append(editControl.panel, settingsControl.panel);
         bindUserPanelControls([editControl, settingsControl]);
+        initMobileUserNameLayout(userMeta);
 
         return true;
     };
 
-    // ============================================================================
     // Lightbox And Image Zoom
-    // ============================================================================
     const STANDALONE_LIGHTBOX_IMAGE_ATTR = 'data-gfplus-standalone-lightbox';
     let lightboxScrollLockObserver = null;
     let lightboxScrollPreventInitialized = false;
@@ -6992,90 +9301,88 @@ License: BSD 3-Clause
         });
     };
 
-    // ============================================================================
     // Editor Toolbar
-    // ============================================================================
     const EDITOR_TOOLBAR_ATTR = 'data-gfplus-editor-toolbar';
-    const EDITOR_TOOLBAR_BUTTONS = [
+    const getEditorToolbarButtons = (i18n) => [
         {
             id: 'heading',
-            label: 'Heading',
+            label: i18n.heading,
             icon: 'H',
             headingLevel: 2
         },
         {
             id: 'bold',
-            label: 'Bold',
+            label: i18n.bold,
             icon: '<path d="M7 5h6a3 3 0 0 1 0 6H7z"></path><path d="M7 11h7a3 3 0 0 1 0 6H7z"></path>',
-            markdown: (text) => `**${text || 'texte'}**`,
-            html: (text) => `<strong>${text || 'texte'}</strong>`
+            markdown: (text) => `**${text || i18n.text}**`,
+            html: (text) => `<strong>${text || i18n.text}</strong>`
         },
         {
             id: 'italic',
-            label: 'Italic',
+            label: i18n.italic,
             icon: '<path d="M10 5h8"></path><path d="M6 19h8"></path><path d="M14 5 10 19"></path>',
-            markdown: (text) => `*${text || 'texte'}*`,
-            html: (text) => `<em>${text || 'texte'}</em>`
+            markdown: (text) => `*${text || i18n.text}*`,
+            html: (text) => `<em>${text || i18n.text}</em>`
         },
         {
             id: 'link',
-            label: 'Link',
+            label: i18n.link,
             icon: '<path d="M10 13a5 5 0 0 0 7.07 0l2-2a5 5 0 0 0-7.07-7.07l-1.15 1.15"></path><path d="M14 11a5 5 0 0 0-7.07 0l-2 2A5 5 0 0 0 12 20.07l1.15-1.15"></path>',
-            markdown: (text) => `[${text || 'texte'}](https://example.com)`,
-            html: (text) => `<a href="https://example.com">${text || 'texte'}</a>`
+            markdown: (text) => `[${text || i18n.text}](https://example.com)`,
+            html: (text) => `<a href="https://example.com">${text || i18n.text}</a>`
         },
         {
             id: 'image',
-            label: 'Image',
+            label: i18n.image,
             icon: '<rect x="4" y="5" width="16" height="14" rx="2"></rect><circle cx="9" cy="10" r="1.5"></circle><path d="m4 16 4-4 3 3 2-2 7 6"></path>',
-            markdown: (text) => `![${text || 'description'}](https://example.com/image.png)`,
-            html: (text) => `<img src="https://example.com/image.png" alt="${text || 'description'}">`
+            markdown: (text) => `![${text || i18n.description}](https://example.com/image.png)`,
+            html: (text) => `<img src="https://example.com/image.png" alt="${text || i18n.description}">`
         },
         {
             id: 'code',
-            label: 'Code',
+            label: i18n.code,
             icon: '<path d="m9 18 6-12"></path><path d="m7 8-4 4 4 4"></path><path d="m17 8 4 4-4 4"></path>',
-            markdown: (text) => text.includes('\n') ? `\`\`\`\n${text || 'code'}\n\`\`\`` : `\`${text || 'code'}\``,
-            html: (text) => text.includes('\n') ? `<pre><code>${text || 'code'}</code></pre>` : `<code>${text || 'code'}</code>`
+            markdown: (text) => text.includes('\n') ? `\`\`\`\n${text || i18n.code}\n\`\`\`` : `\`${text || i18n.code}\``,
+            html: (text) => text.includes('\n') ? `<pre><code>${text || i18n.code}</code></pre>` : `<code>${text || i18n.code}</code>`
         },
         {
             id: 'quote',
-            label: 'Blockquote',
+            label: i18n.quote,
             icon: '<path d="M8 8H5a4 4 0 0 0-4 4v5h7v-7H4"></path><path d="M20 8h-3a4 4 0 0 0-4 4v5h7v-7h-4"></path>',
-            markdown: (text) => `> ${text || 'citation'}`,
-            html: (text) => `<blockquote>${text || 'citation'}</blockquote>`
+            markdown: (text) => `> ${text || i18n.quote}`,
+            html: (text) => `<blockquote>${text || i18n.quote}</blockquote>`
         },
         {
             id: 'list',
-            label: 'List',
+            label: i18n.list,
             icon: '<path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path>',
-            markdown: (text) => (text || 'élément').split('\n').map((line) => `- ${line || 'élément'}`).join('\n'),
-            html: (text) => `<ul>\n${(text || 'élément').split('\n').map((line) => `  <li>${line || 'élément'}</li>`).join('\n')}\n</ul>`
+            markdown: (text) => (text || i18n.item).split('\n').map((line) => `- ${line || i18n.item}`).join('\n'),
+            html: (text) => `<ul>\n${(text || i18n.item).split('\n').map((line) => `  <li>${line || i18n.item}</li>`).join('\n')}\n</ul>`
         },
         {
             id: 'details',
-            label: 'Details',
+            label: i18n.details,
             icon: '<path d="m9 18 6-6-6-6"></path><path d="M4 5h16"></path><path d="M4 19h16"></path>',
-            markdown: (text) => `<details open>\n<summary>Titre</summary>\n\n${text || 'Contenu'}\n</details>`,
-            html: (text) => `<details open>\n<summary>Titre</summary>\n<p>${text || 'Contenu'}</p>\n</details>`
+            markdown: (text) => `<details open>\n<summary>${i18n.title}</summary>\n\n${text || i18n.content}\n</details>`,
+            html: (text) => `<details open>\n<summary>${i18n.title}</summary>\n<p>${text || i18n.content}</p>\n</details>`
         },
         {
             id: 'mark',
-            label: 'Highlight',
+            label: i18n.mark,
             icon: '<path d="m4 20 4-1 10-10a2.8 2.8 0 0 0-4-4L4 15l-1 4z"></path><path d="M13 6l5 5"></path>',
-            markdown: (text) => `<mark>${text || 'texte'}</mark>`,
-            html: (text) => `<mark>${text || 'texte'}</mark>`
+            markdown: (text) => `<mark>${text || i18n.text}</mark>`,
+            html: (text) => `<mark>${text || i18n.text}</mark>`
         },
         {
             id: 'textColor',
-            label: 'Text Color',
+            label: i18n.textColor,
             icon: '<path d="M4 19h16"></path><path d="M8 15 12 5l4 10"></path><path d="M9.5 11h5"></path>',
             colorProperty: 'color',
             defaultColor: '#4f46e5'
         },
         {
             id: 'backgroundColor',
-            label: 'Background Color',
+            label: i18n.backgroundColor,
             icon: '<path d="m4 14 7-7 6 6-7 7z"></path><path d="M14 4 20 10"></path><path d="M4 20h16"></path>',
             colorProperty: 'background-color',
             defaultColor: '#fef3c7'
@@ -7103,7 +9410,7 @@ License: BSD 3-Clause
         textarea.focus();
     };
 
-    const createEditorToolbarButton = (buttonConfig, previewable, textarea) => {
+    const createEditorToolbarButton = (buttonConfig, previewable, textarea, i18n) => {
         const fragment = document.createDocumentFragment();
         const button = document.createElement('button');
         button.className = `gf-editor-toolbar-button${buttonConfig.icon.startsWith('<') ? '' : ' gf-editor-toolbar-button--text'}`;
@@ -7120,8 +9427,8 @@ License: BSD 3-Clause
 
             const headingSelect = document.createElement('select');
             headingSelect.className = 'gf-editor-toolbar-heading-select';
-            headingSelect.title = 'Heading Level';
-            headingSelect.setAttribute('aria-label', 'Heading Level');
+            headingSelect.title = i18n.headingLevel;
+            headingSelect.setAttribute('aria-label', i18n.headingLevel);
             [1, 2, 3, 4, 5, 6].forEach((level) => {
                 const option = document.createElement('option');
                 option.value = String(level);
@@ -7137,8 +9444,8 @@ License: BSD 3-Clause
                 const mode = getPreviewableMarkupMode(previewable);
                 insertEditorSnippet(textarea, (text) => (
                     mode === 'html'
-                        ? `<h${safeLevel}>${text || 'Titre'}</h${safeLevel}>`
-                        : `${'#'.repeat(safeLevel)} ${text || 'Titre'}`
+                        ? `<h${safeLevel}>${text || i18n.title}</h${safeLevel}>`
+                        : `${'#'.repeat(safeLevel)} ${text || i18n.title}`
                 ));
                 button.blur();
             });
@@ -7162,8 +9469,8 @@ License: BSD 3-Clause
             const swatchButton = document.createElement('button');
             swatchButton.className = 'gf-editor-toolbar-color-swatch-button';
             swatchButton.type = 'button';
-            swatchButton.title = `Change ${buttonConfig.label.toLowerCase()}`;
-            swatchButton.setAttribute('aria-label', `Change ${buttonConfig.label.toLowerCase()}`);
+            swatchButton.title = `${i18n.changeColor} — ${buttonConfig.label}`;
+            swatchButton.setAttribute('aria-label', swatchButton.title);
 
             const colorSwatch = document.createElement('span');
             colorSwatch.className = 'gf-editor-toolbar-color-swatch';
@@ -7172,7 +9479,7 @@ License: BSD 3-Clause
 
             button.addEventListener('click', (event) => {
                 event.preventDefault();
-                insertEditorSnippet(textarea, (text) => `<span style="${buttonConfig.colorProperty}:${colorInput.value}">${text || 'texte'}</span>`);
+                insertEditorSnippet(textarea, (text) => `<span style="${buttonConfig.colorProperty}:${colorInput.value}">${text || i18n.text}</span>`);
                 button.blur();
             });
 
@@ -7226,8 +9533,9 @@ License: BSD 3-Clause
         toolbar.className = 'gf-editor-toolbar';
         toolbar.setAttribute('role', 'toolbar');
         toolbar.setAttribute('aria-label', 'Outils de mise en forme');
-        EDITOR_TOOLBAR_BUTTONS.forEach((buttonConfig) => {
-            toolbar.appendChild(createEditorToolbarButton(buttonConfig, previewable, textarea));
+        const i18n = getUserNavI18n(getCurrentLocale()).editor;
+        getEditorToolbarButtons(i18n).forEach((buttonConfig) => {
+            toolbar.appendChild(createEditorToolbarButton(buttonConfig, previewable, textarea, i18n));
         });
 
         const tabs = previewable.querySelector(':scope > .tabs');
@@ -7253,9 +9561,7 @@ License: BSD 3-Clause
         editorToolbarObserver.observe(document.body, { childList: true, subtree: true });
     };
 
-    // ============================================================================
     // Script List Density
-    // ============================================================================
     const setInterfaceDensity = (density) => {
         if (!DENSITY_OPTIONS.includes(density)) {
             return;
@@ -7466,6 +9772,7 @@ License: BSD 3-Clause
 
     const applyFastMenuEnhancements = () => {
         initThemeSwitch();
+        if (!HAS_BASE_THEME) return;
         initMobileNavLayout();
         initMobileThemeSwitch();
         syncActiveScriptSetFilter();
@@ -7508,6 +9815,57 @@ License: BSD 3-Clause
         }, { once: true });
     };
 
+    const initAdaptiveAccountFields = () => {
+        const fields = Array.from(document.querySelectorAll('input#user_name, input#user_email'));
+        if (!fields.length || fields.every((field) => field.hasAttribute('data-gfplus-adaptive-width'))) return;
+        const email = document.querySelector('input#user_email');
+        // Capture the site's original email width before changing either field.
+        const originalEmailWidth = email?.getBoundingClientRect().width || 0;
+        const measure = document.createElement('span');
+        measure.setAttribute('aria-hidden', 'true');
+        measure.style.cssText = 'position:fixed;inset:0 auto auto 0;visibility:hidden;pointer-events:none;white-space:pre;width:max-content;max-width:none;';
+        document.body.appendChild(measure);
+        let frame = 0;
+        const resizeFields = () => {
+            frame = 0;
+            fields.forEach((field) => {
+                const style = getComputedStyle(field);
+                const extra = ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth']
+                    .reduce((sum, key) => sum + (parseFloat(style[key]) || 0), 0);
+                measure.style.font = style.font;
+                measure.style.letterSpacing = style.letterSpacing;
+                measure.style.textTransform = style.textTransform;
+                measure.textContent = '0'.repeat(20);
+                const minimum = originalEmailWidth || measure.getBoundingClientRect().width + extra;
+                measure.textContent = field.value || field.placeholder || '';
+                const desiredWidth = Math.ceil(Math.max(minimum, measure.getBoundingClientRect().width + extra + 2));
+                // max-width wins over the preferred width when the form is narrower.
+                const width = `${desiredWidth}px`;
+                if (field.style.width !== width) field.style.width = width;
+            });
+            measure.textContent = '';
+        };
+        const scheduleResize = () => {
+            if (!frame) frame = requestAnimationFrame(resizeFields);
+        };
+        fields.forEach((field) => {
+            field.setAttribute('data-gfplus-adaptive-width', 'true');
+            field.style.boxSizing = 'border-box';
+            field.style.minWidth = '0';
+            field.style.maxWidth = '100%';
+            field.addEventListener('input', resizeFields);
+            field.addEventListener('change', resizeFields);
+            field.form?.addEventListener('reset', scheduleResize);
+        });
+        window.addEventListener('resize', scheduleResize, { passive: true });
+        if (typeof ResizeObserver === 'function') {
+            const observer = new ResizeObserver(scheduleResize);
+            new Set(fields.map((field) => field.parentElement)).forEach((parent) => observer.observe(parent));
+        }
+        document.fonts?.ready.then(scheduleResize);
+        resizeFields();
+    };
+
     let uiInitialized = false;
     const initUi = () => {
         if (uiInitialized) {
@@ -7515,28 +9873,48 @@ License: BSD 3-Clause
         }
 
         uiInitialized = true;
-        initThemeSwitch();
-        initMobileNavLayout();
-        initMobileThemeSwitch();
-        initSidebarScrollControls();
-        syncActiveScriptSetFilter();
-        initSidebarGroupToggles();
-        initSmartSidebar();
-        initMobileSidebarStickiness();
-        initModeratorActionsLayout();
-        initCompactUserScriptSets();
-        initScriptSetEditor();
-        initHighlightJs();
-        initInstallStatsChartTheme();
-        initLightboxScrollLock();
-        initStandaloneImageLightboxes();
-        initPreviewableEditorToolbars();
-        initScriptDensityControls();
-        initScriptLogos();
-        initScriptCardActions();
-        initUserNavigation();
-        initMobileUserNavigation();
-        initFavoritesNavShortcut();
+        initAdaptiveAccountFields();
+        if (!HAS_BASE_THEME) {
+            // Native navigation, code and forms remain usable. The theme control has
+            // its own Shadow DOM styles; other enhancements need the external layout.
+            try {
+                initThemeSwitch();
+                getHighlightApi();
+            } finally {
+                clearNoTransition();
+            }
+            return;
+        }
+        let initialized = false;
+        try {
+            initThemeSwitch();
+            initMobileNavLayout();
+            initMobileThemeSwitch();
+            initSidebarScrollControls();
+            syncActiveScriptSetFilter();
+            initSidebarGroupToggles();
+            initSmartSidebar();
+            initMobileSidebarStickiness();
+            initModeratorActionsLayout();
+            initCompactUserScriptSets();
+            initScriptSetEditor();
+            initHighlightJs();
+            initInstallStatsChartTheme();
+            initLightboxScrollLock();
+            initStandaloneImageLightboxes();
+            initPreviewableEditorToolbars();
+            initScriptDensityControls();
+            initScriptLogos();
+            initScriptCardActions();
+            initUserNavigation();
+            initMobileUserNavigation();
+            initControlPanelEnhancements();
+            initFavoritesNavShortcut();
+            initialized = true;
+        } finally {
+            // A feature failure must not leave the site's content hidden.
+            if (!initialized) clearNoTransition();
+        }
 
         if (root.hasAttribute(HANDHELD_ATTR)) {
             schedulePhoneLoadClear();
