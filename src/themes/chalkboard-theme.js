@@ -2,7 +2,7 @@
 // @name         GreasyFork Premium - Chalkboard Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
-// @version      1.0.2
+// @version      1.0.3
 // @description  Chalkboard light and dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
@@ -240,11 +240,6 @@ html[data-theme-variant="chalkboard"] #main-header .subtitle {
     text-shadow: -1px -1px 0 rgba(14, 38, 30, .9), 1px -1px 0 rgba(14, 38, 30, .9), -1px 1px 0 rgba(14, 38, 30, .9), 1px 1px 0 rgba(14, 38, 30, .9);
 }
 
-html[data-theme="light"][data-theme-variant="chalkboard"] nav nav,
-html[data-theme="light"][data-theme-variant="chalkboard"] nav[data-gfplus-favorites-shortcut="ready"] {
-    background: #2c554c;
-}
-
 html[data-theme="light"][data-theme-variant="chalkboard"] #site-nav nav nav a {
     color: #ffffff;
 }
@@ -253,11 +248,6 @@ html[data-theme="light"][data-theme-variant="chalkboard"] #site-nav nav nav a:ho
 html[data-theme="light"][data-theme-variant="chalkboard"] #site-nav nav nav a:focus-visible {
     background: rgba(255, 255, 255, .11);
     color: #ffffff;
-}
-
-html[data-theme="dark"][data-theme-variant="chalkboard"] nav nav,
-html[data-theme="dark"][data-theme-variant="chalkboard"] nav[data-gfplus-favorites-shortcut="ready"] {
-    background: #142621;
 }
 
 html[data-theme="light"][data-theme-variant="chalkboard"] #mobile-nav,
@@ -711,6 +701,56 @@ html[data-theme="dark"][data-theme-variant="chalkboard"] .change-script-set.gf-s
 html[data-theme="dark"][data-theme-variant="chalkboard"] .change-script-set.gf-set-editor-enhanced .gf-set-script-list-count {
     background: #27332f;
     color: #82c7b6;
+}
+
+@media screen and (min-width: 921px) {
+    html[data-theme="light"][data-theme-variant="chalkboard"] #site-nav > nav > li.with-submenu > nav[data-gfplus-favorites-shortcut="ready"] {
+        background: #22473e !important;
+        background-color: #22473e !important;
+        background-image: none !important;
+    }
+
+    html[data-theme="dark"][data-theme-variant="chalkboard"] #site-nav > nav > li.with-submenu > nav[data-gfplus-favorites-shortcut="ready"] {
+        background: #13231d !important;
+        background-color: #13231d !important;
+        background-image: none !important;
+    }
+}
+
+#gf-mobile-user-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#gf-mobile-user-meta {
+    display: contents;
+}
+
+#gf-mobile-user-meta > .user-profile-link {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    text-align: start;
+}
+
+#gf-mobile-user-actions {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: flex-end;
+}
+
+#gf-mobile-user-meta > #gf-mobile-theme-switch {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: end;
+    margin: 0;
+    padding: 0;
+}
+
+#gf-mobile-user-meta[data-gfplus-user-name-truncated] > #gf-mobile-theme-switch {
+    margin: 0;
 }
 `;
 })(globalThis);
