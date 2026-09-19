@@ -23,9 +23,9 @@ Support for additional websites is not planned at this time.
 
 No. GreasyFork Premium only improves the website interface and user experience.
 
-### Should I use the Chrome extension or the userscript?
+### Should I use the browser extension or the userscript?
 
-The Chrome extension is recommended for Chromium-based browsers because it integrates more directly with the browser and completely eliminates the original interface flash during page loading.  
+The browser extension is recommended when available because it integrates more directly with the browser and completely eliminates the original interface flash during page loading.  
 The userscript remains available for users who prefer a userscript manager or use browsers where the extension is not available.
 
 See the **[Installation Guide](INSTALLATION.md)** for both installation methods.
@@ -33,7 +33,7 @@ See the **[Installation Guide](INSTALLATION.md)** for both installation methods.
 ### Why do I briefly see the original Greasy Fork theme when a page loads?
 
 This is known as a Flash of Unstyled Content (FOUC).  
-The Chrome extension completely eliminates this issue by applying the required styles earlier in the page loading process.
+The browser extension completely eliminates this issue by applying the required styles earlier in the page loading process.
 
 The userscript version minimizes FOUC as much as possible, but it cannot completely eliminate it because of how userscript managers inject scripts into web pages.
 
@@ -43,13 +43,10 @@ For more information, see the **[Troubleshooting Guide](TROUBLESHOOTING.md#the-o
 
 ### Which browsers are supported?
 
-The **Chrome extension** is designed for Chromium-based browsers, including:
+The **browser extension** is available for:
 
-- Google Chrome
-- Microsoft Edge
-- Brave
-- Opera
-- Other compatible Chromium-based browsers
+- Google Chrome and other Chromium-based browsers through the **Chrome Web Store**
+- Mozilla Firefox through **Firefox Add-ons**
 
 The **userscript version** can be used on modern browsers including Chrome, Firefox, Edge, Brave, Opera, and Safari with a compatible userscript manager.
 
@@ -86,7 +83,7 @@ Yes. The userscript includes a responsive interface and mobile-specific improvem
 
 Compatibility may vary depending on the mobile browser and userscript manager. Safari on iPhone and iPad can use the userscript through compatible managers such as **Userscripts**.
 
-The Chrome extension is primarily intended for desktop Chromium-based browsers.
+The browser extension is primarily intended for supported desktop browsers.
 
 ## Support
 
