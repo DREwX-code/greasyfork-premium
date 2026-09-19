@@ -1,4 +1,3 @@
-```yaml
 name: Bug Report
 description: Report a bug in GreasyFork Premium
 title: "[BUG] "
@@ -102,4 +101,3 @@ body:
           required: true
         - label: I am using the latest version
           required: true
-```
