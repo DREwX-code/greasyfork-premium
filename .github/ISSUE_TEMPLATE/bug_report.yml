@@ -1,3 +1,4 @@
+```yaml
 name: Bug Report
 description: Report a bug in GreasyFork Premium
 title: "[BUG] "
@@ -16,6 +17,7 @@ body:
       description: Which version of GreasyFork Premium are you using?
       options:
         - Chrome Extension
+        - Firefox Extension
         - Userscript
     validations:
       required: true
@@ -25,7 +27,7 @@ body:
     attributes:
       label: Version Number
       description: What version are you using?
-      placeholder: e.g., 1.2.2
+      placeholder: e.g., 1.4.0
     validations:
       required: true
 
@@ -50,7 +52,7 @@ body:
       label: Userscript Manager
       description: If you are using the userscript, which userscript manager are you using?
       options:
-        - Not applicable (Chrome Extension)
+        - Not applicable (Browser Extension)
         - Tampermonkey
         - Violentmonkey
         - Greasemonkey
@@ -100,3 +102,4 @@ body:
           required: true
         - label: I am using the latest version
           required: true
+```
