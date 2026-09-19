@@ -15,6 +15,8 @@
 
 <a href="https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi">
     <img height="32" alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome%20Web%20Store-Get%20extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"></a>
+<a href="https://addons.mozilla.org/firefox/addon/greasyfork-premium/">
+    <img height="32" alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox%20Add--ons-Get%20Extension-FF7139?style=for-the-badge&logo=firefoxbrowser&logoColor=white"></a>
 
 <br>
 
@@ -61,7 +63,8 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 | [Installation Guide](./docs/INSTALLATION.md) | Install GreasyFork Premium on supported browsers |
 | [FAQ](./docs/FAQ.md) | Answers to common questions |
 | [Troubleshooting](./docs/TROUBLESHOOTING.md) | Fix common issues and known limitations |
-| [Extension Privacy Policy](./docs/PRIVACY-EXTENSION.md) | Learn how the Chrome extension handles data and local settings |
+| [Chrome Extension Privacy Policy](./docs/PRIVACY_EXTENSION.md) | Learn how the Chrome extension handles data and local settings |
+| [Firefox Extension Privacy Policy](./docs/PRIVACY_EXTENSION_FIREFOX.md) | Learn how the Firefox extension handles data and local settings |
 | [Userscript Privacy Policy](./docs/PRIVACY-USERSCRIPT.md) | Learn how the userscript handles data and local settings |
 | [Changelog](./CHANGELOG.md) | View version history and release notes |
 | [Roadmap](./ROADMAP.md) | See planned improvements and community suggestions |
@@ -142,11 +145,12 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 
 ## 📥 Installation
 
-### Chrome Extension
+### Browser Extension
 
 [![Get it on Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Get%20Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)
+[![Get it on Firefox Add-ons](https://img.shields.io/badge/Firefox%20Add--ons-Get%20Extension-FF7139?style=for-the-badge&logo=firefoxbrowser&logoColor=white)](https://addons.mozilla.org/firefox/addon/greasyfork-premium/)
 
-1. Install **GreasyFork Premium** from the [Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi).
+1. Install **GreasyFork Premium** from the [Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi) or [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/greasyfork-premium/).
 2. Open **Greasy Fork** or **Sleazy Fork**.
 3. The redesigned interface is applied automatically.
 
