@@ -36,7 +36,7 @@ Fixed in v1.1.2.
 
 ### Status
 
-Reduced in the userscript version and fully resolved in the Chrome extension.
+Reduced in the userscript version and fully resolved in the browser extension.
 
 ### Explanation
 
@@ -46,8 +46,8 @@ Because userscript managers inject scripts after the page has already started lo
 
 ### Solution
 
-The **Chrome extension completely eliminates this issue** by applying the required styles earlier in the page loading process.  
-You can install it from the **[Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)**.
+The browser extension completely eliminates this issue by applying the required styles earlier in the page loading process.  
+You can install it from the **[Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)** or **[Firefox Add-ons](https://addons.mozilla.org/firefox/addon/greasyfork-premium/)**.
 
 ### Note
 
@@ -91,7 +91,7 @@ The userscript version still minimizes FOUC as much as possible, but it cannot c
 1. Refresh the page.
 2. Verify that GreasyFork Premium is enabled.
 3. If you are using the userscript, disable potentially conflicting userscripts.
-4. If you are using the Chrome extension, check for conflicting extensions that modify Greasy Fork or Sleazy Fork.
+4. If you are using the browser extension, check for conflicting extensions that modify Greasy Fork or Sleazy Fork.
 
 ---
 
@@ -107,7 +107,7 @@ See [#3](../../../issues/3) for more details.
 
 1. Try reinstalling or refreshing the userscript.
 2. If the issue persists, use **[Tampermonkey](https://www.tampermonkey.net/)** instead of Violentmonkey.
-3. Alternatively, use the **[Chrome extension](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)**.
+3. Alternatively, use the browser extension from the **[Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)** or **[Firefox Add-ons](https://addons.mozilla.org/firefox/addon/greasyfork-premium/)**.
 
 ---
 
@@ -116,7 +116,7 @@ See [#3](../../../issues/3) for more details.
 If your issue is not listed here, please open a **[GitHub Issue](../../../issues/new?template=bug_report.yml)** and include:
 
 - GreasyFork Premium version
-- Installation type (Chrome extension or userscript)
+- Installation type (browser extension or userscript)
 - Browser and browser version
 - Userscript manager, if applicable
 - Steps to reproduce the issue
