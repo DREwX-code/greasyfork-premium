@@ -78,4 +78,4 @@ Do not include passwords, authentication cookies, private notes, or other sensit
 ---
 
 > [!NOTE]
-> **Chrome extension:** See the [Chrome Extension Privacy Policy](PRIVACY_EXTENSION.md).
+> **Browser extensions:** See the [Chrome Extension Privacy Policy](PRIVACY_EXTENSION.md) and [Firefox Extension Privacy Policy](PRIVACY_EXTENSION_FIREFOX.md).
