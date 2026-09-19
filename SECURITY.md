@@ -25,7 +25,7 @@ If the vulnerability is confirmed, a fix will be prepared before public disclosu
 Please include as much information as possible:
 
 - Description of the vulnerability
-- Affected installation type: **Userscript** or **Chrome Extension**
+- Affected installation type: **Userscript** or **Browser Extension**
 - GreasyFork Premium version
 - Browser and version
 - Userscript manager and version, if applicable
@@ -50,5 +50,6 @@ Security and privacy are closely related, but they are not the same.
 
 For information about data processing, storage, and third-party resources, see:
 
-- **[Userscript Privacy Policy](./docs/PRIVACY.md)**
+- **[Userscript Privacy Policy](./docs/PRIVACY-USERSCRIPT.md)**
 - **[Chrome Extension Privacy Policy](./docs/PRIVACY_EXTENSION.md)**
+- **[Firefox Extension Privacy Policy](./docs/PRIVACY_EXTENSION_FIREFOX.md)**
