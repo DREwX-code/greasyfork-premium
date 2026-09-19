@@ -2,32 +2,38 @@
 
 This guide explains how to install GreasyFork Premium on supported browsers.
 
-## Option 1 - Chrome Extension
+## Option 1 - Browser Extension
 
-[![Chrome Extension](https://img.shields.io/badge/Chrome_Extension-Install-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)
+The easiest way to install GreasyFork Premium is through your browser's official extension store.
 
-For Chromium-based browsers, the easiest way to install GreasyFork Premium is through the Chrome Web Store.
+[![Get it on Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Get%20Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)
+[![Get it on Firefox Add-ons](https://img.shields.io/badge/Firefox%20Add--ons-Get%20Extension-FF7139?style=for-the-badge&logo=firefoxbrowser&logoColor=white)](https://addons.mozilla.org/firefox/addon/greasyfork-premium/)
 
 ### Supported browsers
 
-The extension is designed for Chromium-based browsers, including:
+The browser extension is available for:
 
-- Google Chrome
-- Microsoft Edge
-- Brave
-- Opera
-- Other compatible Chromium-based browsers
+- Google Chrome and other Chromium-based browsers through the **Chrome Web Store**
+- Mozilla Firefox through **Firefox Add-ons**
 
 ### Install the extension
+
+#### Chrome / Chromium
 
 Open the **[GreasyFork Premium page on the Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)**.
 
 Click **Add to Chrome** or the equivalent installation button shown by your browser.
 
+#### Firefox
+
+Open the **[GreasyFork Premium page on Firefox Add-ons](https://addons.mozilla.org/firefox/addon/greasyfork-premium/)**.
+
+Click **Add to Firefox**.
+
 Once installed, open or refresh:
 
-- <https://greasyfork.org>
-- <https://sleazyfork.org>
+- [https://greasyfork.org](https://greasyfork.org)
+- [https://sleazyfork.org](https://sleazyfork.org)
 
 GreasyFork Premium will be applied automatically.
 
@@ -37,7 +43,7 @@ GreasyFork Premium will be applied automatically.
 
 [![Install Userscript](https://img.shields.io/badge/Install-Userscript-2ea44f?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js)
 
-If you prefer the userscript version, or if your browser does not support the Chrome extension, install GreasyFork Premium using a userscript manager.
+If you prefer the userscript version, or if your browser does not support the browser extension, install GreasyFork Premium using a userscript manager.
 
 ### Step 1 - Install a Userscript Manager
 
@@ -57,7 +63,7 @@ To use the userscript version of GreasyFork Premium, install a userscript manage
     <tr>
       <td>
         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/chrome/chrome-original.svg" width="16" alt="Chrome">
-        Chrome
+        Chrome / Chromium-based browsers
       </td>
       <td>
         <a href="https://www.tampermonkey.net/">Tampermonkey</a>
@@ -120,25 +126,13 @@ To use the userscript version of GreasyFork Premium, install a userscript manage
     <tr>
       <td>
         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/safari/safari-original.svg" width="16" alt="Safari">
-        Safari (macOS)
-      </td>
-      <td>
-        <a href="https://www.tampermonkey.net/">Tampermonkey</a>
-      </td>
-      <td>
-        <a href="https://apps.apple.com/app/userscripts/id1463298887">Userscripts</a>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/safari/safari-original.svg" width="16" alt="Safari">
-        Safari (iPhone / iPad)
+        Safari (macOS / iPhone / iPad)
       </td>
       <td>
         <a href="https://apps.apple.com/app/userscripts/id1463298887">Userscripts</a>
       </td>
       <td>
-        <a href="https://www.tampermonkey.net/">Tampermonkey</a>
+        <a href="https://apps.apple.com/app/stay-for-safari/id1591620171">Stay</a>
       </td>
     </tr>
   </tbody>
@@ -166,9 +160,9 @@ GreasyFork Premium will be applied automatically.
 
 ## Updating
 
-### Chrome Extension
+### Browser Extension
 
-The Chrome Web Store automatically delivers extension updates when a new version becomes available.
+The Chrome Web Store and Firefox Add-ons automatically deliver extension updates when a new version becomes available.
 
 ### Userscript
 
