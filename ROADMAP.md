@@ -15,6 +15,11 @@ These ideas have been suggested by the community and may be implemented in futur
 - [ ] Optional interface element hiding
   - Hide selected interface sections such as the “How to install” block.
 
+### Suggested by 暖色浮余生 (Greasy Fork Feedback)
+
+- [ ] Add an optional wide layout mode for desktop
+  - Add a switch to expand the main content area to 97% width
+
 ### Reported by Spok (Greasy Fork Feedback)
 
 - [ ] Investigate compatibility with Android 5.1, particularly with browsers such as Via.
