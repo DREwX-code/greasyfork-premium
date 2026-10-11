@@ -3,7 +3,7 @@
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @version      1.0.3
-// @description  Classic light and dark theme stylesheet library for GreasyFork Premium.
+// @description  Core light and dark stylesheet providing the shared base styles for GreasyFork Premium themes.
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
