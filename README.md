@@ -94,9 +94,9 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 
 - Classic, Full Dark, and Chalkboard theme styles, with Light, System, and Dark modes
 - Automatic light/dark theme switching based on your operating system
-- Modernized interface with improved visual hierarchy
 - Compact, Comfortable, and Detailed interface density modes
-- Cleaner layout with improved visual consistency
+- Optional wide desktop layout that expands script pages or all content pages to 97% width, with optional header inclusion
+- Modernized interface with cleaner layouts and improved visual hierarchy
 - Interface translations across 47 supported languages
 - Support for both Greasy Fork and Sleazy Fork
 
