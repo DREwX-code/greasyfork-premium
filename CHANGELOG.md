@@ -6,6 +6,22 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 ---
 
+## [1.4.1] - 2026-10-11
+
+### Added
+
+- Configurable wide layout up to 97% width
+- Scope menu to apply the wide layout to script pages or all content pages
+- Optional header inclusion for the wide layout
+
+### Fixed
+
+- Navigation submenu background when signed out
+- Delayed submenu background while the Favorites shortcut loads
+- Missing Chalkboard styles across multiple buttons and interface elements
+
+---
+
 ## [1.4.0] - 2026-09-13
 
 ### Added
