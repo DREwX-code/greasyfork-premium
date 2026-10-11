@@ -2,7 +2,7 @@
 
 This roadmap highlights planned improvements and acknowledges ideas contributed by the community.
 
-**Last updated:** September 2026
+**Last updated:** October 2026
 
 ---
 
@@ -14,11 +14,6 @@ These ideas have been suggested by the community and may be implemented in futur
 
 - [ ] Optional interface element hiding
   - Hide selected interface sections such as the “How to install” block.
-
-### Suggested by 暖色浮余生 (Greasy Fork Feedback)
-
-- [ ] Add an optional wide layout mode for desktop
-  - Add a switch to expand the main content area to 97% width
 
 ### Reported by Spok (Greasy Fork Feedback)
 
@@ -63,6 +58,11 @@ The following features and fixes were implemented thanks to community feedback.
 ### Suggested by MUSTAFA HAKAN (Greasy Fork Feedback)
 
 - [x] Added a Chalkboard theme variant
+
+### Suggested by 暖色浮余生 (Greasy Fork Feedback)
+
+- [x] Added an optional wide desktop layout
+  - Expands script pages or all content pages to 97% width, with optional header inclusion.
 
 ### Suggested by huqiu2 (Greasy Fork Feedback)
 
