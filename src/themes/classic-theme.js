@@ -2,7 +2,7 @@
 // @name         GreasyFork Premium - Classic Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
-// @version      1.0.2
+// @version      1.0.3
 // @description  Classic light and dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
@@ -4936,7 +4936,7 @@
     .user-content blockquote {
         margin-left: 10px;
         padding-left: 10px;
-        border-left: 2px solid #CCC
+        border-left: 2px solid var(--content-border-color)
     }
 
     .user-content>ol:first-child,.user-content>ul:first-child {
