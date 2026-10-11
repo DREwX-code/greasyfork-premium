@@ -2,7 +2,7 @@
 // @name         GreasyFork Premium - Chalkboard Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
-// @version      1.0.3
+// @version      1.0.4
 // @description  Chalkboard light and dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
@@ -240,6 +240,12 @@ html[data-theme-variant="chalkboard"] #main-header .subtitle {
     text-shadow: -1px -1px 0 rgba(14, 38, 30, .9), 1px -1px 0 rgba(14, 38, 30, .9), -1px 1px 0 rgba(14, 38, 30, .9), 1px 1px 0 rgba(14, 38, 30, .9);
 }
 
+html[data-theme="light"][data-theme-variant="chalkboard"] #site-nav nav nav {
+    background: #22473e !important;
+    background-color: #22473e !important;
+    background-image: none !important;
+}
+
 html[data-theme="light"][data-theme-variant="chalkboard"] #site-nav nav nav a {
     color: #ffffff;
 }
@@ -292,6 +298,12 @@ html[data-theme-variant="chalkboard"] .pagy.series-nav [aria-current="page"] {
     box-shadow: inset 0 0 0 1px var(--link-color);
 }
 
+html[data-theme="dark"][data-theme-variant="chalkboard"] #site-nav nav nav {
+    background: #13231d !important;
+    background-color: #13231d !important;
+    background-image: none !important;
+}
+
 html[data-theme="dark"][data-theme-variant="chalkboard"] #site-nav nav nav a {
     color: #eef7f2;
 }
@@ -299,6 +311,57 @@ html[data-theme="dark"][data-theme-variant="chalkboard"] #site-nav nav nav a {
 html[data-theme="dark"][data-theme-variant="chalkboard"] #site-nav nav nav a:hover,
 html[data-theme="dark"][data-theme-variant="chalkboard"] #site-nav nav nav a:focus-visible {
     background: rgba(141, 216, 192, .12);
+    color: #ffffff;
+}
+
+html[data-theme-variant="chalkboard"] .external-login {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.45rem;
+    max-width: 100%;
+    margin: .25rem .35rem .25rem 0;
+    padding: .64em 1.05em .64em 2.35em;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background-repeat: no-repeat !important;
+    background-size: 16px 16px !important;
+    background-position: .82em center !important;
+    color: #ffffff;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: .01em;
+    cursor: pointer;
+    box-shadow: none !important;
+    text-decoration: none;
+    white-space: normal;
+    transition: background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
+    transform: none !important;
+}
+
+html[data-theme="light"][data-theme-variant="chalkboard"] .external-login {
+    border-color: rgba(39, 111, 98, .55);
+    background-color: #276f62;
+}
+
+html[data-theme="light"][data-theme-variant="chalkboard"] .external-login:hover,
+html[data-theme="light"][data-theme-variant="chalkboard"] .external-login:focus,
+html[data-theme="light"][data-theme-variant="chalkboard"] .external-login:active {
+    border-color: #1f5b50;
+    background-color: #1f5b50;
+    color: #ffffff;
+}
+
+html[data-theme="dark"][data-theme-variant="chalkboard"] .external-login {
+    border-color: #5b9b89;
+    background-color: #2b7668;
+}
+
+html[data-theme="dark"][data-theme-variant="chalkboard"] .external-login:hover,
+html[data-theme="dark"][data-theme-variant="chalkboard"] .external-login:focus,
+html[data-theme="dark"][data-theme-variant="chalkboard"] .external-login:active {
+    border-color: #82c7b6;
+    background-color: #368b79;
     color: #ffffff;
 }
 
@@ -456,16 +519,23 @@ html[data-theme="dark"][data-theme-variant="chalkboard"] .gf-script-extra-info[d
     color: #e4b0a5;
 }
 
-html[data-theme="dark"][data-theme-variant="chalkboard"] .list-option-group .list-current,
-html[data-theme="dark"][data-theme-variant="chalkboard"] .list-option.list-current {
+html[data-theme-variant="chalkboard"] .list-option-group .list-current,
+html[data-theme-variant="chalkboard"] .list-option.list-current {
     background: linear-gradient(90deg, #27332f, #1c2522);
-    border-left-color: #82c7b6;
-    color: #e8e9e5;
+    border-left-color: var(--link-color);
+    color: var(--overall-text-color);
     box-shadow: inset 0 1px rgba(130, 199, 182, .07), inset 0 -1px rgba(0, 0, 0, .32);
+}
+
+html[data-theme="light"][data-theme-variant="chalkboard"] .list-option-group .list-current,
+html[data-theme="light"][data-theme-variant="chalkboard"] .list-option.list-current {
+    background: linear-gradient(90deg, #e7f0ec, #fffefa);
+    box-shadow: inset 0 1px rgba(39, 111, 98, .09), inset 0 -1px rgba(37, 52, 46, .10);
 }
 
 html[data-theme-variant="chalkboard"] button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),
 html[data-theme-variant="chalkboard"] input[type="submit"]:not(.search-submit),
+html[data-theme-variant="chalkboard"] input[type="submit"].search-submit:not([value="🔎"]),
 html[data-theme-variant="chalkboard"] input[type="button"],
 html[data-theme-variant="chalkboard"] .button {
     background: linear-gradient(180deg, var(--chalk-button-start), var(--chalk-button-end));
@@ -476,6 +546,8 @@ html[data-theme-variant="chalkboard"] .button {
 html[data-theme-variant="chalkboard"] button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,
 html[data-theme-variant="chalkboard"] button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,
 html[data-theme-variant="chalkboard"] input[type="submit"]:not(.search-submit):hover,
+html[data-theme-variant="chalkboard"] input[type="submit"].search-submit:not([value="🔎"]):hover,
+html[data-theme-variant="chalkboard"] input[type="submit"].search-submit:not([value="🔎"]):focus,
 html[data-theme-variant="chalkboard"] input[type="button"]:hover,
 html[data-theme-variant="chalkboard"] .button:hover {
     background: linear-gradient(180deg, var(--chalk-button-hover-start), var(--chalk-button-hover-end));
