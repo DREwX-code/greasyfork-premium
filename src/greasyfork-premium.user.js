@@ -97,7 +97,7 @@
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.4.0
+// @version      1.4.1
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -106,9 +106,9 @@
 // @match        https://sleazyfork.org/*
 // @run-at       document-start
 // @require      https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
-// @require      https://update.greasyfork.org/scripts/593320/1930735/GreasyFork%20Premium%20-%20Classic%20Theme.js
-// @require      https://update.greasyfork.org/scripts/593322/1930808/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
-// @require      https://update.greasyfork.org/scripts/593323/1930809/GreasyFork%20Premium%20-%20Full%20Dark%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593322/1958491/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593320/1958497/GreasyFork%20Premium%20-%20Classic%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593323/1958492/GreasyFork%20Premium%20-%20Full%20Dark%20Theme.js
 // @grant        unsafeWindow
 
 // @downloadURL https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js
@@ -156,6 +156,9 @@ License: BSD 3-Clause
     const STORAGE_KEY = 'gfplus-theme';
     const THEME_VARIANT_STORAGE_KEY = 'gfplus-theme-variant';
     const DENSITY_STORAGE_KEY = 'gfplus-interface-density';
+    const DENSITY_CONTROLS_COLLAPSED_STORAGE_KEY = 'gfplus-density-controls-collapsed';
+    const SCRIPT_PAGE_WIDE_STORAGE_KEY = 'gfplus-script-page-wide';
+    const SCRIPT_PAGE_WIDE_SCOPE_STORAGE_KEY = 'gfplus-script-page-wide-scope';
     const SIDEBAR_GROUP_STATE_KEY = 'gfplus-sidebar-group-states';
     const LOADING_ATTR = 'data-gfplus-loading';
     const INTERNAL_NAV_FLAG_KEY = 'gfplus-internal-nav';
@@ -169,6 +172,8 @@ License: BSD 3-Clause
     const CHALKBOARD_THEME_STYLE_ID = 'gfplus-theme-style-chalkboard';
     const SCROLLBAR_STYLE_ID = 'gfplus-scrollbar-style';
     const DENSITY_STYLE_ID = 'gfplus-density-style';
+    const SCRIPT_PAGE_WIDE_CLASS = 'gfplus-script-page-wide';
+    const SCRIPT_PAGE_WIDE_ATTR = 'data-gfplus-script-page-wide';
     const SCRIPT_PERMISSIONS_STYLE_ID = 'gfplus-script-permissions-style';
     const THEME_MOTION_STYLE_ID = 'gfplus-theme-motion-style';
     const THEME_MOTION_ATTR = 'data-gfplus-theme-motion';
@@ -179,6 +184,7 @@ License: BSD 3-Clause
     const THEME_OPTIONS = ['light', 'system', 'dark'];
     const THEME_VARIANT_OPTIONS = ['normal', 'full-dark', 'chalkboard'];
     const DENSITY_OPTIONS = ['compact', 'comfortable', 'detailed'];
+    const SCRIPT_PAGE_WIDE_SCOPES = ['scripts', 'allPages', 'header'];
     // @require runs before this script. Missing exports must never abort startup.
     const dependencyWarnings = new Map();
     const DEPENDENCY_NOTICE_STORAGE_KEY = 'gfplus-hide-dependency-warning';
@@ -240,7 +246,7 @@ License: BSD 3-Clause
                 :host { all: initial; }
                 section { box-sizing: border-box; padding: 16px; border: 1px solid #b45309;
                     border-radius: 8px; background: #fffbeb; color: #292524;
-                    box-shadow: 0 4px 16px #0003; font: 14px/1.5 system-ui, sans-serif;
+                    font: 14px/1.5 system-ui, sans-serif;
                     text-align: start; overflow-wrap: anywhere; color-scheme: light;
                     max-height: calc(100dvh - 32px); overflow-y: auto; }
                 header, .actions { display: flex; gap: 8px 16px; align-items: center; }
@@ -404,9 +410,24 @@ License: BSD 3-Clause
     let currentThemeVariant = THEME_VARIANT_OPTIONS.includes(storedThemeVariant) ? storedThemeVariant : 'normal';
     const storedDensity = localStorage.getItem(DENSITY_STORAGE_KEY);
     let currentDensity = DENSITY_OPTIONS.includes(storedDensity) ? storedDensity : 'comfortable';
+    let areDensityControlsCollapsed = localStorage.getItem(DENSITY_CONTROLS_COLLAPSED_STORAGE_KEY) === 'true';
+    let isScriptPageWide = localStorage.getItem(SCRIPT_PAGE_WIDE_STORAGE_KEY) === 'true';
+    const getStoredScriptPageWideScopes = () => {
+        try {
+            const storedScopes = JSON.parse(localStorage.getItem(SCRIPT_PAGE_WIDE_SCOPE_STORAGE_KEY));
+            if (storedScopes && typeof storedScopes === 'object') {
+                return Object.fromEntries(SCRIPT_PAGE_WIDE_SCOPES.map((scope) => [scope, Boolean(storedScopes[scope])]));
+            }
+        } catch (error) {
+            // A malformed value should never prevent the interface from loading.
+        }
+        return { scripts: true, allPages: false, header: false };
+    };
+    let scriptPageWideScopes = getStoredScriptPageWideScopes();
     let themeMotionTimer = 0;
     const root = document.documentElement;
     root?.setAttribute('data-gfplus-density', currentDensity);
+    root?.toggleAttribute(SCRIPT_PAGE_WIDE_ATTR, isScriptPageWide);
     const systemThemeQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
     const THEME_COLORS = {
         light: {
@@ -1004,6 +1025,45 @@ License: BSD 3-Clause
         align-items: center;
     }
 
+    .width-constraint.${SCRIPT_PAGE_WIDE_CLASS} {
+        width: 97% !important;
+        max-width: 97% !important;
+        margin: auto !important;
+    }
+
+    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 .gf-script-logo {
+        width: 23px;
+        height: 23px;
+        min-width: 23px;
+        min-height: 23px;
+        max-width: 23px;
+        max-height: 23px;
+        flex: 0 0 23px;
+        border-radius: 5px;
+    }
+
+    html[data-gfplus-density="comfortable"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 .gf-script-logo {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        min-height: 26px;
+        max-width: 26px;
+        max-height: 26px;
+        flex: 0 0 26px;
+        border-radius: 6px;
+    }
+
+    html[data-gfplus-density="detailed"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 .gf-script-logo {
+        width: 30px;
+        height: 30px;
+        min-width: 30px;
+        min-height: 30px;
+        max-width: 30px;
+        max-height: 30px;
+        flex: 0 0 30px;
+        border-radius: 7px;
+    }
+
     html[data-gfplus-density="comfortable"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) {
         padding: clamp(.9rem, 2vw, 1.15rem);
         gap: .4rem;
@@ -1138,17 +1198,12 @@ License: BSD 3-Clause
         grid-column: 4;
     }
 
-    html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 .gf-script-logo {
-        width: 23px;
-        height: 23px;
-        min-width: 23px;
-        min-height: 23px;
-        flex: 0 0 23px;
-        border-radius: 5px;
-    }
-
     html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 .gf-script-title-content {
         max-width: calc(100% - 29px);
+    }
+
+    html[data-gfplus-density="detailed"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article > h2 .gf-script-title-content {
+        max-width: calc(100% - 38px);
     }
 
     html[data-gfplus-density="compact"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) > article .description,
@@ -1206,6 +1261,11 @@ License: BSD 3-Clause
     }
 
     @media screen and (max-width: 600px) {
+        .width-constraint.${SCRIPT_PAGE_WIDE_CLASS} {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
         .gf-script-list-heading {
             width: calc(100% - 1.5rem);
             margin: 8px .75rem 16px;
@@ -1739,7 +1799,7 @@ License: BSD 3-Clause
             --focus-color: #4f46e5;
             --menu-bg: #ffffff;
             --menu-border: #cbd5e1;
-            --menu-shadow: 0 12px 30px rgba(15, 23, 42, .2);
+            --menu-shadow: 0 5px 14px rgba(15, 23, 42, .12);
             --menu-hover: #f1f5f9;
         }
         :host([resolved-theme="dark"]) {
@@ -1751,7 +1811,7 @@ License: BSD 3-Clause
             --focus-color: #78a9ff;
             --menu-bg: #151b23;
             --menu-border: #374151;
-            --menu-shadow: 0 14px 34px rgba(0, 0, 0, .46);
+            --menu-shadow: 0 5px 14px rgba(0, 0, 0, .28);
             --menu-hover: #202a36;
         }
         :host([resolved-theme="dark"][theme-variant="full-dark"]) {
@@ -1763,7 +1823,7 @@ License: BSD 3-Clause
             --focus-color: #8ab4f8;
             --menu-bg: #121212;
             --menu-border: #343434;
-            --menu-shadow: 0 16px 38px rgba(0, 0, 0, .72);
+            --menu-shadow: 0 5px 14px rgba(0, 0, 0, .38);
             --menu-hover: #222222;
         }
         :host([resolved-theme="light"][theme-variant="chalkboard"]) {
@@ -1775,7 +1835,7 @@ License: BSD 3-Clause
             --focus-color: #39796b;
             --menu-bg: #fffefa;
             --menu-border: #c8d1cb;
-            --menu-shadow: 0 14px 32px rgba(37, 52, 46, .18);
+            --menu-shadow: 0 5px 14px rgba(37, 52, 46, .11);
             --menu-hover: #e8eee9;
         }
         :host([resolved-theme="dark"][theme-variant="chalkboard"]) {
@@ -1787,7 +1847,7 @@ License: BSD 3-Clause
             --focus-color: #82c7b6;
             --menu-bg: #181f1d;
             --menu-border: #3b4b44;
-            --menu-shadow: 0 16px 38px rgba(0, 0, 0, .58);
+            --menu-shadow: 0 5px 14px rgba(0, 0, 0, .32);
             --menu-hover: #27332f;
         }
         :host(#gf-mobile-theme-switch) {
@@ -1827,7 +1887,6 @@ License: BSD 3-Clause
             height: 24px;
             border-radius: 999px;
             background: var(--thumb-bg);
-            box-shadow: 0 2px 8px rgba(15, 23, 42, .18);
             transition: transform 0.24s ease, background 0.24s ease;
             box-sizing: border-box;
         }
@@ -5179,7 +5238,7 @@ License: BSD 3-Clause
                 fullDark: 'Full Dark',
                 chalkboard: 'Chalkboard'
             },
-            density: { label: 'Density', compact: 'Compact', comfortable: 'Comfortable', detailed: 'Detailed' },
+            density: { label: 'Density', compact: 'Compact', comfortable: 'Comfortable', detailed: 'Detailed', wide: 'Use wide layout', normal: 'Return to normal width', widthOptions: 'Wide layout', scriptPages: 'Script pages', allPages: 'All pages', includeHeader: 'Include header' },
             permissions: 'Permissions',
             permissionsLoading: 'Loading permissions...',
             permissionsUnavailable: 'Permission metadata unavailable.',
@@ -5256,7 +5315,7 @@ License: BSD 3-Clause
                 fullDark: 'Noir profond',
                 chalkboard: 'Chalkboard'
             },
-            density: { label: 'Densité', compact: 'Compact', comfortable: 'Confortable', detailed: 'Détaillé' },
+            density: { label: 'Densité', compact: 'Compact', comfortable: 'Confortable', detailed: 'Détaillé', wide: 'Activer l’affichage large', normal: 'Revenir à la largeur normale', widthOptions: 'Affichage large', scriptPages: 'Pages de scripts', allPages: 'Toutes les pages', includeHeader: 'Inclure l’en-tête' },
             permissions: 'Autorisations',
             permissionsLoading: 'Chargement des autorisations...',
             permissionsUnavailable: 'Métadonnées des autorisations indisponibles.',
@@ -8320,13 +8379,69 @@ License: BSD 3-Clause
     USER_NAV_I18N['pt-BR'] = { ...USER_NAV_I18N.pt };
     USER_NAV_I18N['es-419'] = { ...USER_NAV_I18N.es };
 
+    const WIDE_LAYOUT_I18N = {
+        en: { wide: 'Use wide layout', normal: 'Return to normal width', widthOptions: 'Wide layout', scriptPages: 'Script pages', allPages: 'All pages', includeHeader: 'Include header' },
+        fr: { wide: 'Activer l’affichage large', normal: 'Revenir à la largeur normale', widthOptions: 'Affichage large', scriptPages: 'Pages de scripts', allPages: 'Toutes les pages', includeHeader: 'Inclure l’en-tête' },
+        es: { wide: 'Usar vista amplia', normal: 'Volver al ancho normal', widthOptions: 'Vista amplia', scriptPages: 'Páginas de scripts', allPages: 'Todas las páginas', includeHeader: 'Incluir encabezado' },
+        de: { wide: 'Breite Ansicht verwenden', normal: 'Zur normalen Breite zurückkehren', widthOptions: 'Breite Ansicht', scriptPages: 'Skriptseiten', allPages: 'Alle Seiten', includeHeader: 'Kopfzeile einbeziehen' },
+        it: { wide: 'Usa visualizzazione ampia', normal: 'Torna alla larghezza normale', widthOptions: 'Visualizzazione ampia', scriptPages: 'Pagine degli script', allPages: 'Tutte le pagine', includeHeader: 'Includi intestazione' },
+        pt: { wide: 'Usar visualização ampla', normal: 'Voltar à largura normal', widthOptions: 'Visualização ampla', scriptPages: 'Páginas de scripts', allPages: 'Todas as páginas', includeHeader: 'Incluir cabeçalho' },
+        ru: { wide: 'Включить широкий вид', normal: 'Вернуть обычную ширину', widthOptions: 'Широкий вид', scriptPages: 'Страницы скриптов', allPages: 'Все страницы', includeHeader: 'Включить заголовок' },
+        ja: { wide: '広い表示を有効にする', normal: '通常の幅に戻す', widthOptions: '広い表示', scriptPages: 'スクリプトページ', allPages: 'すべてのページ', includeHeader: 'ヘッダーを含める' },
+        'zh-CN': { wide: '启用宽视图', normal: '恢复正常宽度', widthOptions: '宽视图', scriptPages: '脚本页面', allPages: '所有页面', includeHeader: '包含页眉' },
+        'zh-TW': { wide: '啟用寬版檢視', normal: '返回一般寬度', widthOptions: '寬版檢視', scriptPages: '腳本頁面', allPages: '所有頁面', includeHeader: '包含頁首' },
+        ar: { wide: 'استخدام العرض الواسع', normal: 'العودة إلى العرض العادي', widthOptions: 'العرض الواسع', scriptPages: 'صفحات السكربتات', allPages: 'جميع الصفحات', includeHeader: 'تضمين الرأس' },
+        hi: { wide: 'चौड़ा दृश्य चालू करें', normal: 'सामान्य चौड़ाई पर लौटें', widthOptions: 'चौड़ा दृश्य', scriptPages: 'स्क्रिप्ट पृष्ठ', allPages: 'सभी पृष्ठ', includeHeader: 'हेडर शामिल करें' },
+        bn: { wide: 'প্রশস্ত দৃশ্য চালু করুন', normal: 'স্বাভাবিক প্রস্থে ফিরুন', widthOptions: 'প্রশস্ত দৃশ্য', scriptPages: 'স্ক্রিপ্ট পৃষ্ঠা', allPages: 'সব পৃষ্ঠা', includeHeader: 'হেডার অন্তর্ভুক্ত করুন' },
+        ur: { wide: 'وسیع منظر استعمال کریں', normal: 'عام چوڑائی پر واپس جائیں', widthOptions: 'وسیع منظر', scriptPages: 'اسکرپٹ صفحات', allPages: 'تمام صفحات', includeHeader: 'ہیڈر شامل کریں' },
+        ml: { wide: 'വൈഡ് കാഴ്ച ഉപയോഗിക്കുക', normal: 'സാധാരണ വീതിയിലേക്ക് മടങ്ങുക', widthOptions: 'വൈഡ് കാഴ്ച', scriptPages: 'സ്ക്രിപ്റ്റ് പേജുകൾ', allPages: 'എല്ലാ പേജുകളും', includeHeader: 'തലക്കെട്ട് ഉൾപ്പെടുത്തുക' },
+        ko: { wide: '넓은 보기 사용', normal: '기본 너비로 돌아가기', widthOptions: '넓은 보기', scriptPages: '스크립트 페이지', allPages: '모든 페이지', includeHeader: '헤더 포함' },
+        tr: { wide: 'Geniş görünümü kullan', normal: 'Normal genişliğe dön', widthOptions: 'Geniş görünüm', scriptPages: 'Betik sayfaları', allPages: 'Tüm sayfalar', includeHeader: 'Üst bilgiyi dahil et' },
+        pl: { wide: 'Użyj szerokiego widoku', normal: 'Wróć do normalnej szerokości', widthOptions: 'Szeroki widok', scriptPages: 'Strony skryptów', allPages: 'Wszystkie strony', includeHeader: 'Uwzględnij nagłówek' },
+        nl: { wide: 'Brede weergave gebruiken', normal: 'Terug naar normale breedte', widthOptions: 'Brede weergave', scriptPages: 'Scriptpagina’s', allPages: 'Alle pagina’s', includeHeader: 'Koptekst opnemen' },
+        sv: { wide: 'Använd bred vy', normal: 'Återgå till normal bredd', widthOptions: 'Bred vy', scriptPages: 'Skriptsidor', allPages: 'Alla sidor', includeHeader: 'Inkludera sidhuvud' },
+        ro: { wide: 'Folosește vizualizarea lată', normal: 'Revino la lățimea normală', widthOptions: 'Vizualizare lată', scriptPages: 'Pagini de scripturi', allPages: 'Toate paginile', includeHeader: 'Include antetul' },
+        vi: { wide: 'Dùng chế độ xem rộng', normal: 'Trở về chiều rộng bình thường', widthOptions: 'Chế độ xem rộng', scriptPages: 'Trang tập lệnh', allPages: 'Tất cả các trang', includeHeader: 'Bao gồm tiêu đề' },
+        id: { wide: 'Gunakan tampilan lebar', normal: 'Kembali ke lebar normal', widthOptions: 'Tampilan lebar', scriptPages: 'Halaman skrip', allPages: 'Semua halaman', includeHeader: 'Sertakan header' },
+        ms: { wide: 'Gunakan paparan lebar', normal: 'Kembali kepada lebar biasa', widthOptions: 'Paparan lebar', scriptPages: 'Halaman skrip', allPages: 'Semua halaman', includeHeader: 'Sertakan pengepala' },
+        be: { wide: 'Выкарыстоўваць шырокі выгляд', normal: 'Вярнуцца да звычайнай шырыні', widthOptions: 'Шырокі выгляд', scriptPages: 'Старонкі скрыптаў', allPages: 'Усе старонкі', includeHeader: 'Уключыць загаловак' },
+        nb: { wide: 'Bruk bred visning', normal: 'Gå tilbake til normal bredde', widthOptions: 'Bred visning', scriptPages: 'Skriptsider', allPages: 'Alle sider', includeHeader: 'Inkluder topptekst' },
+        bg: { wide: 'Използвай широк изглед', normal: 'Върни нормалната ширина', widthOptions: 'Широк изглед', scriptPages: 'Страници със скриптове', allPages: 'Всички страници', includeHeader: 'Включи заглавката' },
+        hr: { wide: 'Upotrijebi široki prikaz', normal: 'Vrati normalnu širinu', widthOptions: 'Široki prikaz', scriptPages: 'Stranice skripti', allPages: 'Sve stranice', includeHeader: 'Uključi zaglavlje' },
+        cs: { wide: 'Použít široké zobrazení', normal: 'Vrátit normální šířku', widthOptions: 'Široké zobrazení', scriptPages: 'Stránky skriptů', allPages: 'Všechny stránky', includeHeader: 'Zahrnout záhlaví' },
+        da: { wide: 'Brug bred visning', normal: 'Gå tilbage til normal bredde', widthOptions: 'Bred visning', scriptPages: 'Scriptsider', allPages: 'Alle sider', includeHeader: 'Medtag sidehoved' },
+        eo: { wide: 'Uzi larĝan vidon', normal: 'Reveni al normala larĝo', widthOptions: 'Larĝa vido', scriptPages: 'Skriptaj paĝoj', allPages: 'Ĉiuj paĝoj', includeHeader: 'Inkluzivi kaplinion' },
+        fil: { wide: 'Gamitin ang malawak na view', normal: 'Bumalik sa normal na lapad', widthOptions: 'Malawak na view', scriptPages: 'Mga pahina ng script', allPages: 'Lahat ng pahina', includeHeader: 'Isama ang header' },
+        fi: { wide: 'Käytä leveää näkymää', normal: 'Palaa normaaliin leveyteen', widthOptions: 'Leveä näkymä', scriptPages: 'Skriptisivut', allPages: 'Kaikki sivut', includeHeader: 'Sisällytä ylätunniste' },
+        ckb: { wide: 'دیمەنی فراوان بەکاربهێنە', normal: 'بگەڕێوە بۆ پانیی ئاسایی', widthOptions: 'دیمەنی فراوان', scriptPages: 'لاپەڕەکانی سکریپت', allPages: 'هەموو لاپەڕەکان', includeHeader: 'سەردێڕ لەخۆبگرە' },
+        ka: { wide: 'ფართო ხედის გამოყენება', normal: 'ნორმალურ სიგანეზე დაბრუნება', widthOptions: 'ფართო ხედი', scriptPages: 'სკრიპტის გვერდები', allPages: 'ყველა გვერდი', includeHeader: 'სათაურის ჩართვა' },
+        el: { wide: 'Χρήση ευρείας προβολής', normal: 'Επιστροφή στο κανονικό πλάτος', widthOptions: 'Ευρεία προβολή', scriptPages: 'Σελίδες σεναρίων', allPages: 'Όλες οι σελίδες', includeHeader: 'Συμπερίληψη κεφαλίδας' },
+        he: { wide: 'השתמש בתצוגה רחבה', normal: 'חזרה לרוחב רגיל', widthOptions: 'תצוגה רחבה', scriptPages: 'דפי סקריפטים', allPages: 'כל הדפים', includeHeader: 'כלול כותרת עליונה' },
+        hu: { wide: 'Széles nézet használata', normal: 'Vissza a normál szélességhez', widthOptions: 'Széles nézet', scriptPages: 'Szkriptoldalak', allPages: 'Minden oldal', includeHeader: 'Fejléc belefoglalása' },
+        mr: { wide: 'रुंद दृश्य वापरा', normal: 'सामान्य रुंदीवर परत जा', widthOptions: 'रुंद दृश्य', scriptPages: 'स्क्रिप्ट पाने', allPages: 'सर्व पृष्ठे', includeHeader: 'हेडर समाविष्ट करा' },
+        sr: { wide: 'Koristi široki prikaz', normal: 'Vrati normalnu širinu', widthOptions: 'Široki prikaz', scriptPages: 'Stranice skripti', allPages: 'Sve stranice', includeHeader: 'Uključi zaglavlje' },
+        sk: { wide: 'Použiť široké zobrazenie', normal: 'Vrátiť normálnu šírku', widthOptions: 'Široké zobrazenie', scriptPages: 'Stránky skriptov', allPages: 'Všetky stránky', includeHeader: 'Zahrnúť hlavičku' },
+        ug: { wide: 'كەڭ كۆرۈنۈشنى ئىشلىتىش', normal: 'نورمال كەڭلىككە قايتىش', widthOptions: 'كەڭ كۆرۈنۈش', scriptPages: 'قوليازما بەتلىرى', allPages: 'بارلىق بەتلەر', includeHeader: 'بەت بېشىنى ئۆز ئىچىگە ئال' },
+        uk: { wide: 'Використовувати широкий вигляд', normal: 'Повернути звичайну ширину', widthOptions: 'Широкий вигляд', scriptPages: 'Сторінки скриптів', allPages: 'Усі сторінки', includeHeader: 'Включити заголовок' },
+        th: { wide: 'ใช้มุมมองแบบกว้าง', normal: 'กลับสู่ความกว้างปกติ', widthOptions: 'มุมมองแบบกว้าง', scriptPages: 'หน้าสคริปต์', allPages: 'ทุกหน้า', includeHeader: 'รวมส่วนหัว' }
+    };
+
     const getUserNavI18n = (locale) => {
         const exactLocale = USER_NAV_I18N[locale] || {};
         const primaryLocale = USER_NAV_I18N[String(locale || '').split('-')[0]] || {};
+        const exactWideLayout = WIDE_LAYOUT_I18N[locale] || {};
+        const primaryWideLayout = WIDE_LAYOUT_I18N[String(locale || '').split('-')[0]] || {};
         return {
             ...USER_NAV_I18N.en,
             ...primaryLocale,
-            ...exactLocale
+            ...exactLocale,
+            density: {
+                ...USER_NAV_I18N.en.density,
+                ...primaryLocale.density,
+                ...exactLocale.density,
+                ...primaryWideLayout,
+                ...exactWideLayout
+            }
         };
     };
 
@@ -9576,8 +9691,82 @@ License: BSD 3-Clause
         });
     };
 
-    const createDensityControl = () => {
+    const setDensityControlsCollapsed = (collapsed) => {
+        areDensityControlsCollapsed = Boolean(collapsed);
+        localStorage.setItem(DENSITY_CONTROLS_COLLAPSED_STORAGE_KEY, String(areDensityControlsCollapsed));
+        document.querySelectorAll('gf-script-density').forEach((host) => {
+            host.syncDensityControlsCollapsed?.();
+        });
+    };
+
+    const getScriptDensityWidthContainers = () => Array.from(document.querySelectorAll('.width-constraint'))
+        .filter((container) => container.querySelector('.script-list > li[data-script-id]'));
+
+    const getAllPageWidthContainers = () => Array.from(document.querySelectorAll('.width-constraint'))
+        .filter((container) => !container.closest('#main-header'));
+
+    const getHeaderWidthContainers = () => Array.from(document.querySelectorAll('#main-header > .width-constraint'));
+
+    const hasScriptPageWideScope = () => SCRIPT_PAGE_WIDE_SCOPES.some((scope) => scriptPageWideScopes[scope]);
+
+    const getScriptPageWideTargets = () => {
+        if (!isScriptPageWide) return [];
+        const targets = new Set();
+        if (scriptPageWideScopes.scripts) {
+            getScriptDensityWidthContainers().forEach((container) => targets.add(container));
+        }
+        if (scriptPageWideScopes.allPages) {
+            getAllPageWidthContainers().forEach((container) => targets.add(container));
+        }
+        if (scriptPageWideScopes.header) {
+            getHeaderWidthContainers().forEach((container) => targets.add(container));
+        }
+        return Array.from(targets);
+    };
+
+    const syncScriptPageWidth = () => {
+        const widthContainers = getScriptPageWideTargets();
+        document.querySelectorAll(`.width-constraint.${SCRIPT_PAGE_WIDE_CLASS}`).forEach((container) => {
+            container.classList.toggle(SCRIPT_PAGE_WIDE_CLASS, widthContainers.includes(container));
+        });
+        widthContainers.forEach((container) => {
+            container.classList.add(SCRIPT_PAGE_WIDE_CLASS);
+        });
+        document.querySelectorAll('gf-script-density').forEach((host) => {
+            host.syncScriptPageWidthButton?.();
+            host.syncScriptPageWidthScopes?.();
+        });
+    };
+
+    const setScriptPageWidth = (wide) => {
+        isScriptPageWide = Boolean(wide) && hasScriptPageWideScope();
+        localStorage.setItem(SCRIPT_PAGE_WIDE_STORAGE_KEY, String(isScriptPageWide));
+        root?.toggleAttribute(SCRIPT_PAGE_WIDE_ATTR, isScriptPageWide);
+        syncScriptPageWidth();
+    };
+
+    const setScriptPageWideScope = (scope, checked) => {
+        if (!SCRIPT_PAGE_WIDE_SCOPES.includes(scope)) return;
+        if (scope === 'scripts' && checked) scriptPageWideScopes.allPages = false;
+        if (scope === 'allPages' && checked) scriptPageWideScopes.scripts = false;
+        scriptPageWideScopes[scope] = Boolean(checked);
+        localStorage.setItem(SCRIPT_PAGE_WIDE_SCOPE_STORAGE_KEY, JSON.stringify(scriptPageWideScopes));
+        if (!hasScriptPageWideScope()) {
+            isScriptPageWide = false;
+            localStorage.setItem(SCRIPT_PAGE_WIDE_STORAGE_KEY, 'false');
+            root?.removeAttribute(SCRIPT_PAGE_WIDE_ATTR);
+        }
+        syncScriptPageWidth();
+    };
+
+    const createDensityControl = ({ includeScriptPageWidth = false } = {}) => {
         const i18n = getUserNavI18n(getCurrentLocale()).density;
+        const wideLabel = i18n.wide || USER_NAV_I18N.en.density.wide;
+        const normalLabel = i18n.normal || USER_NAV_I18N.en.density.normal;
+        const widthOptionsLabel = i18n.widthOptions || USER_NAV_I18N.en.density.widthOptions;
+        const scriptPagesLabel = i18n.scriptPages || USER_NAV_I18N.en.density.scriptPages;
+        const allPagesLabel = i18n.allPages || USER_NAV_I18N.en.density.allPages;
+        const includeHeaderLabel = i18n.includeHeader || USER_NAV_I18N.en.density.includeHeader;
         const host = document.createElement('gf-script-density');
         const shadow = host.attachShadow({ mode: 'open' });
         shadow.innerHTML = `
@@ -9591,6 +9780,7 @@ License: BSD 3-Clause
                     font-family: var(--font-family-base);
                 }
                 .density-control {
+                    position: relative;
                     display: inline-flex;
                     align-items: center;
                     gap: 2px;
@@ -9598,8 +9788,10 @@ License: BSD 3-Clause
                     border: 1px solid var(--density-border);
                     border-radius: 10px;
                     background: linear-gradient(180deg, var(--content-background-color), var(--density-surface));
+                    transition: padding .2s ease, border-color .2s ease, background-color .2s ease;
                 }
-                .label {
+                button.density-collapse {
+                    all: unset;
                     align-self: stretch;
                     display: inline-flex;
                     align-items: center;
@@ -9611,6 +9803,11 @@ License: BSD 3-Clause
                     font-weight: 700;
                     letter-spacing: .025em;
                     user-select: none;
+                    cursor: pointer;
+                }
+                button.density-collapse:hover {
+                    color: var(--density-muted);
+                    background: transparent;
                 }
                 button {
                     all: unset;
@@ -9640,6 +9837,162 @@ License: BSD 3-Clause
                     outline: 2px solid var(--link-color);
                     outline-offset: 1px;
                 }
+                button[data-script-page-options] {
+                    position: relative;
+                    width: 0;
+                    margin-left: 0;
+                    border: 0;
+                    border-radius: 7px;
+                    opacity: 0;
+                    overflow: hidden;
+                    pointer-events: none;
+                    transform: translateX(4px) scale(.82);
+                    transition: width .2s cubic-bezier(.22, 1, .36, 1), margin-left .2s ease, opacity .14s ease, transform .2s cubic-bezier(.22, 1, .36, 1), color .16s ease, background-color .16s ease;
+                }
+                :host([data-width-options-revealed]) button[data-script-page-options] {
+                    width: 29px;
+                    margin-left: 1px;
+                    opacity: 1;
+                    pointer-events: auto;
+                    transform: translateX(0) scale(1);
+                }
+                .width-separator {
+                    width: 1px;
+                    height: 21px;
+                    flex: 0 0 1px;
+                    margin-left: 7px;
+                    margin-right: 5px;
+                    background: var(--density-border);
+                    opacity: .92;
+                }
+                button[data-script-page-options][aria-expanded="true"] {
+                    color: var(--link-color);
+                    background: color-mix(in srgb, var(--content-background-color) 86%, var(--link-color) 14%);
+                }
+                button[data-script-page-width] {
+                    margin-left: 1px;
+                    border: 0;
+                    border-radius: 7px;
+                }
+                button[data-script-page-width][aria-pressed="true"] {
+                    color: var(--density-muted);
+                    background: transparent;
+                    outline: 0;
+                    cursor: pointer;
+                }
+                button[data-script-page-width]:hover,
+                button[data-script-page-width][aria-pressed="true"]:hover {
+                    color: var(--overall-text-color);
+                    background: color-mix(in srgb, var(--link-color) 10%, transparent);
+                }
+                button[data-script-page-width][aria-disabled="true"] {
+                    opacity: .42;
+                    cursor: default;
+                }
+                :host([data-density-controls-collapsed]) .density-control {
+                    padding: 3px;
+                    border-color: transparent;
+                    background: transparent;
+                }
+                :host([data-density-controls-collapsed]) button.density-collapse,
+                :host([data-density-controls-collapsed]) button[data-density]:not([aria-pressed="true"]) {
+                    display: none;
+                }
+                :host([data-density-controls-collapsed]) button[data-density][aria-pressed="true"] {
+                    background: transparent;
+                    outline: 0;
+                    cursor: pointer;
+                }
+                .width-options {
+                    position: absolute;
+                    z-index: 30;
+                    top: calc(100%);
+                    right: -1px;
+                    width: min(218px, calc(100% - 8px));
+                    box-sizing: border-box;
+                    padding: 11px 9px 9px;
+                    border: 1px solid var(--density-border);
+                    border-top: 0;
+                    border-radius: 0 0 11px 11px;
+                    background: var(--density-surface);
+                    opacity: 0;
+                    visibility: hidden;
+                    pointer-events: none;
+                    transform: translateY(-7px) scale(.96);
+                    transform-origin: top right;
+                    transition: opacity .18s ease, transform .24s cubic-bezier(.22, 1, .36, 1), visibility 0s linear .24s;
+                }
+                .width-options[data-open="true"] {
+                    opacity: 1;
+                    visibility: visible;
+                    pointer-events: auto;
+                    transform: translateY(0) scale(1);
+                    transition-delay: 0s;
+                }
+                .density-control:has(.width-options[data-open="true"]) {
+                    border-bottom-right-radius: 0;
+                }
+                :host([data-density-controls-collapsed]) .width-options {
+                    top: calc(100% + 8px);
+                    right: 0;
+                    width: 218px;
+                    border-top: 1px solid var(--density-border);
+                    border-radius: 11px;
+                }
+                :host([data-density-controls-collapsed]) .width-options::before {
+                    display: none;
+                }
+                :host([data-density-controls-collapsed]) .density-control:has(.width-options[data-open="true"]) {
+                    border-bottom-right-radius: 10px;
+                }
+                .width-options-title {
+                    display: block;
+                    padding: 1px 3px 8px;
+                    margin-bottom: 4px;
+                    border-bottom: 1px solid color-mix(in srgb, var(--density-border) 70%, transparent);
+                    color: var(--density-muted);
+                    font-size: 10px;
+                    font-weight: 750;
+                    letter-spacing: .045em;
+                    text-transform: uppercase;
+                }
+                .width-option {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    min-height: 30px;
+                    padding: 3px 5px;
+                    border-radius: 7px;
+                    color: var(--overall-text-color);
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: background-color .16s ease;
+                }
+                .width-option:hover {
+                    background: color-mix(in srgb, var(--link-color) 9%, transparent);
+                }
+                .width-option input {
+                    appearance: none;
+                    width: 14px;
+                    height: 14px;
+                    flex: 0 0 14px;
+                    margin: 0;
+                    border: 1.5px solid var(--density-border);
+                    border-radius: 4px;
+                    background: var(--content-background-color);
+                    cursor: pointer;
+                    transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+                }
+                .width-option input:checked {
+                    border-color: var(--link-color);
+                    background: var(--link-color);
+                    box-shadow: inset 0 0 0 3px var(--content-background-color);
+                }
+                .width-option input:focus-visible {
+                    outline: 2px solid var(--link-color);
+                    outline-offset: 2px;
+                }
                 svg {
                     width: 15.5px;
                     height: 15.5px;
@@ -9649,12 +10002,20 @@ License: BSD 3-Clause
                     stroke-linecap: round;
                     stroke-linejoin: round;
                 }
+                @media (max-width: 800px) {
+                    .width-separator,
+                    button[data-script-page-options],
+                    button[data-script-page-width],
+                    .width-options {
+                        display: none !important;
+                    }
+                }
                 @media (max-width: 430px) {
-                    .label { display: none; }
+                    button.density-collapse { display: none; }
                 }
             </style>
             <div class="density-control" role="group" aria-label="${i18n.label}">
-                <span class="label">${i18n.label}</span>
+                <button type="button" class="density-collapse" aria-label="${i18n.label}" title="${i18n.label}">${i18n.label}</button>
                 <button type="button" data-density="compact" aria-label="${i18n.compact}" title="${i18n.compact}">
                     <svg viewBox="0 0 18 18" aria-hidden="true">
                         <line x1="3" y1="6" x2="15" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
@@ -9677,10 +10038,31 @@ License: BSD 3-Clause
                         <line x1="3" y1="13" x2="15" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></line>
                     </svg>
                 </button>
+                ${includeScriptPageWidth ? `
+                <span class="width-separator" aria-hidden="true"></span>
+                <button type="button" data-script-page-options aria-label="${widthOptionsLabel}" title="${widthOptionsLabel}" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+                </button>
+                <button type="button" data-script-page-width aria-label="${wideLabel}" title="${wideLabel}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"></svg>
+                </button>
+                <div class="width-options" data-open="false" role="group" aria-label="${widthOptionsLabel}">
+                    <span class="width-options-title">${widthOptionsLabel}</span>
+                    <label class="width-option"><input type="checkbox" data-script-page-scope="scripts"><span>${scriptPagesLabel}</span></label>
+                    <label class="width-option"><input type="checkbox" data-script-page-scope="allPages"><span>${allPagesLabel}</span></label>
+                    <label class="width-option"><input type="checkbox" data-script-page-scope="header"><span>${includeHeaderLabel}</span></label>
+                </div>` : ''}
             </div>
         `;
 
         const buttons = Array.from(shadow.querySelectorAll('button[data-density]'));
+        const densityCollapseButton = shadow.querySelector('button.density-collapse');
+        const scriptPageOptionsButton = shadow.querySelector('button[data-script-page-options]');
+        const scriptPageWidthButton = shadow.querySelector('button[data-script-page-width]');
+        const scriptPageWidthIcon = scriptPageWidthButton?.querySelector('svg');
+        const scriptPageWidthOptions = shadow.querySelector('.width-options');
+        const scriptPageWidthScopeInputs = Array.from(shadow.querySelectorAll('input[data-script-page-scope]'));
+        const densityControl = shadow.querySelector('.density-control');
         const syncButtons = () => {
             buttons.forEach((button) => {
                 const isActive = button.dataset.density === currentDensity;
@@ -9689,12 +10071,59 @@ License: BSD 3-Clause
             });
         };
 
+        const syncDensityControlsCollapsed = () => {
+            host.toggleAttribute('data-density-controls-collapsed', areDensityControlsCollapsed);
+            densityCollapseButton?.setAttribute('aria-pressed', String(areDensityControlsCollapsed));
+        };
+
+        const syncScriptPageWidthButton = () => {
+            if (!scriptPageWidthButton) {
+                return;
+            }
+            scriptPageWidthButton.setAttribute('aria-pressed', String(isScriptPageWide));
+            scriptPageWidthButton.setAttribute('aria-disabled', String(!hasScriptPageWideScope()));
+            const label = isScriptPageWide ? normalLabel : wideLabel;
+            scriptPageWidthButton.setAttribute('aria-label', label);
+            scriptPageWidthButton.setAttribute('title', label);
+            scriptPageWidthIcon.innerHTML = isScriptPageWide
+                ? '<path d="M3 12h7M6 8l4 4-4 4"></path><path d="M21 12h-7M18 8l-4 4 4 4"></path>'
+                : '<path d="M10 12H3M7 8l-4 4 4 4"></path><path d="M14 12h7M17 8l4 4-4 4"></path>';
+        };
+
+        const syncScriptPageWidthScopes = () => {
+            scriptPageWidthScopeInputs.forEach((input) => {
+                input.checked = Boolean(scriptPageWideScopes[input.dataset.scriptPageScope]);
+            });
+        };
+
+        const setWidthOptionsOpen = (open) => {
+            if (!scriptPageOptionsButton || !scriptPageWidthOptions) return;
+            if (open) host.setAttribute('data-width-options-revealed', '');
+            scriptPageOptionsButton.setAttribute('aria-expanded', String(open));
+            scriptPageWidthOptions.dataset.open = String(open);
+        };
+
+        const revealWidthOptions = () => host.setAttribute('data-width-options-revealed', '');
+        const hideWidthOptions = () => {
+            if (scriptPageWidthOptions?.dataset.open !== 'true') {
+                host.removeAttribute('data-width-options-revealed');
+            }
+        };
+
         buttons.forEach((button) => {
-            button.addEventListener('click', () => setInterfaceDensity(button.dataset.density));
+            button.addEventListener('click', () => {
+                if (areDensityControlsCollapsed && button.dataset.density === currentDensity) {
+                    setDensityControlsCollapsed(false);
+                    return;
+                }
+                setInterfaceDensity(button.dataset.density);
+            });
             button.addEventListener('keydown', (event) => {
                 if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
                     return;
                 }
+
+                if (areDensityControlsCollapsed) return;
 
                 event.preventDefault();
                 const currentIndex = DENSITY_OPTIONS.indexOf(currentDensity);
@@ -9708,13 +10137,43 @@ License: BSD 3-Clause
                 buttons[nextIndex]?.focus();
             });
         });
+        densityCollapseButton?.addEventListener('click', () => setDensityControlsCollapsed(!areDensityControlsCollapsed));
+        scriptPageWidthButton?.addEventListener('pointerenter', revealWidthOptions);
+        scriptPageOptionsButton?.addEventListener('pointerenter', revealWidthOptions);
+        densityControl?.addEventListener('pointerleave', hideWidthOptions);
+        scriptPageWidthButton?.addEventListener('click', () => setScriptPageWidth(!isScriptPageWide));
+        scriptPageOptionsButton?.addEventListener('click', () => {
+            setWidthOptionsOpen(scriptPageOptionsButton.getAttribute('aria-expanded') !== 'true');
+        });
+        scriptPageWidthScopeInputs.forEach((input) => {
+            input.addEventListener('change', () => setScriptPageWideScope(input.dataset.scriptPageScope, input.checked));
+        });
+        shadow.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setWidthOptionsOpen(false);
+                scriptPageOptionsButton?.focus();
+            }
+        });
+        document.addEventListener('pointerdown', (event) => {
+            if (!event.composedPath().includes(host)) {
+                setWidthOptionsOpen(false);
+                hideWidthOptions();
+            }
+        }, true);
 
         host.syncDensityButtons = syncButtons;
+        host.syncDensityControlsCollapsed = syncDensityControlsCollapsed;
+        host.syncScriptPageWidthButton = syncScriptPageWidthButton;
+        host.syncScriptPageWidthScopes = syncScriptPageWidthScopes;
         syncButtons();
+        syncDensityControlsCollapsed();
+        syncScriptPageWidthButton();
+        syncScriptPageWidthScopes();
         return host;
     };
 
     const applyScriptDensityControls = () => {
+        syncScriptPageWidth();
         document.querySelectorAll('.script-list').forEach((scriptList) => {
             if (
                 scriptList.getAttribute('data-gfplus-density-control') === 'done'
@@ -9727,7 +10186,7 @@ License: BSD 3-Clause
             const precedingDescription = scriptList.previousElementSibling?.matches('p.script-list-description')
                 ? scriptList.previousElementSibling
                 : null;
-            const densityControl = createDensityControl();
+            const densityControl = createDensityControl({ includeScriptPageWidth: true });
             const profileScriptsHeader = scriptList.id === 'user-script-list'
                 ? scriptList.closest('#user-script-list-section')?.querySelector(':scope > header')
                 : null;
