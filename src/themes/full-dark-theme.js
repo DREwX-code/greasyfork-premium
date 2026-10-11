@@ -2,7 +2,7 @@
 // @name         GreasyFork Premium - Full Dark Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
-// @version      1.0.3
+// @version      1.0.4
 // @description  Full dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
@@ -253,6 +253,7 @@ html[data-theme-variant="full-dark"] .list-option.list-current {
 
 html[data-theme-variant="full-dark"] button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button),
 html[data-theme-variant="full-dark"] input[type="submit"]:not(.search-submit),
+html[data-theme-variant="full-dark"] input[type="submit"].search-submit:not([value="🔎"]),
 html[data-theme-variant="full-dark"] input[type="button"],
 html[data-theme-variant="full-dark"] .button {
     background: linear-gradient(180deg, #2d2d2d, #202020);
@@ -263,6 +264,8 @@ html[data-theme-variant="full-dark"] .button {
 html[data-theme-variant="full-dark"] button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):hover,
 html[data-theme-variant="full-dark"] button:not(.external-login):not(.gf-set-script-remove):not(.gf-script-star-button):not(.gf-script-detail-button):not(.gf-script-note-button):not(.gf-script-note-delete):not(.gf-script-note-done):not(.gf-list-option-toggle):not(.gf-sidebar-scroll-button):focus,
 html[data-theme-variant="full-dark"] input[type="submit"]:not(.search-submit):hover,
+html[data-theme-variant="full-dark"] input[type="submit"].search-submit:not([value="🔎"]):hover,
+html[data-theme-variant="full-dark"] input[type="submit"].search-submit:not([value="🔎"]):focus,
 html[data-theme-variant="full-dark"] input[type="button"]:hover,
 html[data-theme-variant="full-dark"] .button:hover {
     background: linear-gradient(180deg, #3a3a3a, #292929);
