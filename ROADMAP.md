@@ -14,6 +14,9 @@ These ideas have been suggested by the community and may be implemented in futur
 
 - [ ] Optional interface element hiding
   - Hide selected interface sections such as the “How to install” block.
+- [ ] Code export utilities
+  - Copy or download script code.
+  - Download all previous versions together as a ZIP archive.
 
 ### Reported by Spok (Greasy Fork Feedback)
 
