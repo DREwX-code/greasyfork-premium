@@ -150,6 +150,25 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 [![Get it on Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Get%20Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)
 [![Get it on Firefox Add-ons](https://img.shields.io/badge/Firefox%20Add--ons-Get%20Extension-FF7139?style=for-the-badge&logo=firefoxbrowser&logoColor=white)](https://addons.mozilla.org/firefox/addon/greasyfork-premium/)
 
+<details>
+  <summary>Scan QR codes</summary>
+
+  <table>
+    <tr>
+      <th align="center">Chrome Web Store</th>
+      <th align="center">Firefox Add-ons</th>
+    </tr>
+    <tr>
+      <td align="center">
+        <img src="./assets/qr/chrome-web-store.svg" width="180" alt="Chrome Web Store QR code">
+      </td>
+      <td align="center">
+        <img src="./assets/qr/firefox-addons.svg" width="180" alt="Firefox Add-ons QR code">
+      </td>
+    </tr>
+  </table>
+</details>
+
 1. Install **GreasyFork Premium** from the [Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi) or [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/greasyfork-premium/).
 2. Open **Greasy Fork** or **Sleazy Fork**.
 3. The redesigned interface is applied automatically.
