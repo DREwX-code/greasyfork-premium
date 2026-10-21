@@ -20,15 +20,43 @@ The browser extension is available for:
 
 #### Chrome / Chromium
 
-Open the **[GreasyFork Premium page on the Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)**.
+1. Open the **[GreasyFork Premium page on the Chrome Web Store](https://chromewebstore.google.com/detail/greasyfork-premium/ignelmkihplolallppbdppolefgkmadi)** or scan the QR code below.
 
-Click **Add to Chrome** or the equivalent installation button shown by your browser.
+   <details>
+     <summary>Scan QR code</summary>
+
+     <p align="center">
+       <img src="../assets/qr/chrome-web-store.svg" width="180" alt="QR code to open GreasyFork Premium on the Chrome Web Store">
+       <br>
+       <sub>Chrome Web Store</sub>
+     </p>
+   </details>
+
+2. Click **Add to Chrome**.
+
+3. Confirm the installation when prompted.
+
+<hr>
 
 #### Firefox
 
-Open the **[GreasyFork Premium page on Firefox Add-ons](https://addons.mozilla.org/firefox/addon/greasyfork-premium/)**.
+1. Open the **[GreasyFork Premium page on Firefox Add-ons](https://addons.mozilla.org/firefox/addon/greasyfork-premium/)** or scan the QR code below.
 
-Click **Add to Firefox**.
+   <details>
+     <summary>Scan QR code</summary>
+
+     <p align="center">
+       <img src="../assets/qr/firefox-addons.svg" width="180" alt="QR code to open GreasyFork Premium on Firefox Add-ons">
+       <br>
+       <sub>Firefox Add-ons</sub>
+     </p>
+   </details>
+
+2. Click **Add to Firefox**.
+
+3. Confirm the installation when prompted.
+
+<hr>
 
 Once installed, open or refresh:
 
