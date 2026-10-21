@@ -17,6 +17,7 @@ These ideas have been suggested by the community and may be implemented in futur
 - [ ] Code export utilities
   - Copy or download script code.
   - Download all previous versions together as a ZIP archive.
+- [ ] Enable full date and time display instead of abbreviated date formats.
 
 ### Reported by Spok (Greasy Fork Feedback)
 
