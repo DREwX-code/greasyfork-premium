@@ -18,7 +18,7 @@ You can help by:
 
 1. Fork the repository
 2. Clone your fork
-3. Make your changes
+3. Make userscript code changes in [`beta/greasyfork-premium-beta.user.js`](beta/greasyfork-premium-beta.user.js); make theme changes in [`beta/themes/`](beta/themes/)
 4. Verify that your changes work as expected
 5. Submit a Pull Request
 
