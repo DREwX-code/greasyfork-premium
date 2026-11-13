@@ -65,7 +65,7 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 | [Troubleshooting](./docs/TROUBLESHOOTING.md) | Fix common issues and known limitations |
 | [Chrome Extension Privacy Policy](./docs/PRIVACY_EXTENSION.md) | Learn how the Chrome extension handles data and local settings |
 | [Firefox Extension Privacy Policy](./docs/PRIVACY_EXTENSION_FIREFOX.md) | Learn how the Firefox extension handles data and local settings |
-| [Userscript Privacy Policy](./docs/PRIVACY-USERSCRIPT.md) | Learn how the userscript handles data and local settings |
+| [Userscript Privacy Policy](./docs/PRIVACY.md) | Learn how the userscript handles data and local settings |
 | [Changelog](./CHANGELOG.md) | View version history and release notes |
 | [Roadmap](./ROADMAP.md) | See planned improvements and community suggestions |
 | [Contributing](./CONTRIBUTING.md) | Learn how to report bugs, suggest ideas, or contribute |
@@ -182,6 +182,8 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 2. Click **Install Userscript** above or install it from [Greasy Fork](https://greasyfork.org/scripts/562938-greasyfork-premium).
 3. Open **Greasy Fork** or **Sleazy Fork**.
 4. The redesigned interface is applied automatically.
+
+Use either the browser extension or the userscript, but not both, to avoid conflicts on the same page. The stable userscript is recommended for everyday use. Contributors can find the beta files and contribution workflow in the **[Contributing Guide](./CONTRIBUTING.md)**.
 
 For detailed installation instructions, see the **[Installation Guide](./docs/INSTALLATION.md)**.
 
