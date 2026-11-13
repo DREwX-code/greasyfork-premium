@@ -1,5 +1,6 @@
-// ==UserScript==
 // GreasyFork Premium Beta : preview builds of GreasyFork Premium for contributors and testers.
+
+// ==UserScript==
 // @name         GreasyFork Premium Beta
 // @name:zh-CN   GreasyFork 高级版 Beta
 // @name:zh-TW   GreasyFork 高級版 Beta
@@ -107,9 +108,9 @@
 // @match        https://sleazyfork.org/*
 // @run-at       document-start
 // @require      https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
-// @require      https://update.greasyfork.org/scripts/593322/1958491/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
-// @require      https://update.greasyfork.org/scripts/593320/1958497/GreasyFork%20Premium%20-%20Classic%20Theme.js
-// @require      https://update.greasyfork.org/scripts/593323/1958492/GreasyFork%20Premium%20-%20Full%20Dark%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593322/1996639/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593320/1996634/GreasyFork%20Premium%20-%20Classic%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593323/1996644/GreasyFork%20Premium%20-%20Full%20Dark%20Theme.js
 // @grant        unsafeWindow
 
 // ==/UserScript==
@@ -953,14 +954,6 @@ License: BSD 3-Clause
         gap: .45rem;
     }
 
-    .gf-script-install-button[data-gfplus-icon-only="true"] {
-        width: 2.2rem;
-        min-width: 2.2rem;
-        padding-inline: 0;
-        font-size: 0;
-        gap: 0;
-    }
-
     #install-area > .gf-script-personal-actions {
         margin-inline-start: 13px;
     }
@@ -1243,15 +1236,11 @@ License: BSD 3-Clause
         height: 1.9rem;
     }
 
+    html[data-gfplus-density="compact"] .script-list .gf-script-install-button,
     html[data-gfplus-density="compact"] .script-list .gf-script-detail-button,
     html[data-gfplus-density="compact"] .script-list .gf-script-note-button {
         width: 1.9rem;
         min-width: 1.9rem;
-    }
-
-    html[data-gfplus-density="compact"] .script-list .gf-script-install-button {
-        padding: 0 .72rem;
-        font-size: .84rem;
     }
 
     html[data-gfplus-density="detailed"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) {
@@ -4308,71 +4297,14 @@ License: BSD 3-Clause
 
         applyFavoriteIds(favoriteIds);
     };
-    const INSTALL_BUTTON_ICON_ONLY_ATTR = 'data-gfplus-icon-only';
-    const installButtonLayoutObservers = new WeakMap();
-    let installButtonLayoutFrame = 0;
-
-    const rectanglesOverlap = (left, right) => (
-        left.left < right.right &&
-        left.right > right.left &&
-        left.top < right.bottom &&
-        left.bottom > right.top
-    );
-
-    const syncScriptInstallButtonLayout = (button) => {
-        if (!button?.isConnected) {
-            return;
-        }
-
-        button.removeAttribute(INSTALL_BUTTON_ICON_ONLY_ATTR);
-        const buttonRect = button.getBoundingClientRect();
-        const scope = button.closest('article, #install-area, #script-info') || button.parentElement;
-        const conflicts = scope
-            ? scope.querySelectorAll('.script-meta-block, .script-meta-block *, relative-time')
-            : [];
-        const overlaps = Array.from(conflicts).some((element) => (
-            element !== button && rectanglesOverlap(buttonRect, element.getBoundingClientRect())
-        ));
-
-        if (overlaps) {
-            button.setAttribute(INSTALL_BUTTON_ICON_ONLY_ATTR, 'true');
-        }
-    };
-
-    const scheduleScriptInstallButtonLayoutSync = () => {
-        if (installButtonLayoutFrame) {
-            return;
-        }
-
-        installButtonLayoutFrame = requestAnimationFrame(() => {
-            installButtonLayoutFrame = 0;
-            document.querySelectorAll('.gf-script-install-button').forEach(syncScriptInstallButtonLayout);
-        });
-    };
-
-    window.addEventListener('resize', scheduleScriptInstallButtonLayoutSync, { passive: true });
-
-    const observeScriptInstallButtonLayout = (button) => {
-        if (installButtonLayoutObservers.has(button)) {
-            return;
-        }
-
-        const scope = button.closest('article, #install-area, #script-info') || button.parentElement;
-        if (!scope || typeof ResizeObserver !== 'function') {
-            return;
-        }
-
-        const observer = new ResizeObserver(() => syncScriptInstallButtonLayout(button));
-        observer.observe(scope);
-        installButtonLayoutObservers.set(button, observer);
-    };
-
     const createScriptInstallButton = (codeUrl, locale) => {
         const installLabel = getUserNavI18n(locale).install || 'Install';
         const installButton = document.createElement('a');
         installButton.className = 'gf-script-install-button';
         installButton.href = codeUrl;
-        installButton.textContent = installLabel;
+        installButton.target = '_blank';
+        installButton.rel = 'noopener noreferrer';
+        installButton.title = installLabel;
         installButton.setAttribute('aria-label', installLabel);
 
         const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -4384,10 +4316,6 @@ License: BSD 3-Clause
             <path d="M5 20h14"></path>
         `;
         installButton.prepend(icon);
-        requestAnimationFrame(() => {
-            observeScriptInstallButtonLayout(installButton);
-            syncScriptInstallButtonLayout(installButton);
-        });
 
         return installButton;
     };
