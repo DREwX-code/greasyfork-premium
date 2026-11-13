@@ -2409,7 +2409,8 @@
     #main-header {
         background-color: #670000;
         background-image: linear-gradient(#670000,#900);
-        box-shadow: 0 0 15px 2px #00000080;
+        border-bottom: 1px solid #670000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .22);
         padding: .25em 0
     }
 
@@ -2958,8 +2959,8 @@
     }
 
     #install-area .install-link:hover,#install-area .install-link:focus,#install-area .install-help-link:hover,#install-area .install-help-link:focus {
-        transition: box-shadow .2s;
-        box-shadow: 0 8px 16px #0003,0 6px 20px #00000030
+        box-shadow: none;
+        transform: none
     }
 
     .install-link,.install-link:visited,.install-link:active,.install-link:hover,.install-help-link {
@@ -3834,6 +3835,32 @@
     }
 
     .gf-script-install-button,
+    .gf-script-detail-button,
+    .gf-script-note-button {
+        border-radius: 7px;
+        border-color: transparent;
+        background: transparent;
+        color: color-mix(in srgb, var(--overall-text-color) 62%, transparent) !important;
+        box-shadow: none;
+        transition: color .16s ease, background-color .16s ease;
+    }
+
+    .gf-script-install-button:hover,
+    .gf-script-detail-button:hover,
+    .gf-script-note-button:hover,
+    .gf-script-detail-button[data-expanded="true"],
+    .gf-script-note-button[data-expanded="true"] {
+        background: color-mix(in srgb, var(--link-color) 10%, transparent);
+    }
+
+    .gf-script-install-button:focus-visible,
+    .gf-script-detail-button:focus-visible,
+    .gf-script-note-button:focus-visible {
+        outline: 2px solid var(--focus-ring-color);
+        outline-offset: 2px;
+    }
+
+    .gf-script-install-button,
     .gf-script-install-button:visited,
     .gf-script-install-button:hover,
     .gf-script-install-button:focus-visible,
@@ -3845,11 +3872,9 @@
     }
 
     .gf-script-install-button {
-        gap: 0.45rem;
-        padding: 0 0.95rem;
-        font-size: 0.92rem;
-        font-weight: 700;
-        letter-spacing: 0.01em;
+        width: 2.2rem;
+        min-width: 2.2rem;
+        padding: 0;
     }
 
     .gf-script-detail-button {
@@ -3914,15 +3939,15 @@
     .gf-script-note-button:focus-visible,
     .gf-script-note-button[data-expanded="true"],
     .gf-script-note-button[data-has-note="true"] {
-        border-color: var(--link-color);
-        color: var(--link-color) !important;
+        border-color: transparent;
+        color: var(--overall-text-color) !important;
         box-shadow: none;
-        outline: none;
     }
 
     .gf-script-note-button[data-has-note="true"] {
-        background: transparent;
-        border-color: color-mix(in srgb, var(--content-border-color) 72%, var(--link-color) 28%);
+        background: color-mix(in srgb, var(--content-background-color) 86%, var(--link-color) 14%);
+        color: var(--link-color) !important;
+        border-color: transparent;
     }
 
     .gf-script-detail-button[data-expanded="true"] svg {
@@ -8309,7 +8334,8 @@
     #main-header {
         background-color: #2d2260;
         background-image: linear-gradient(180deg, #2d2260, #21194a);
-        box-shadow: 0 0 16px 1px rgba(0, 0, 0, 0.6);
+        border-bottom: 1px solid #21194a;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, .22);
         padding: .25em 0;
     }
 
@@ -8860,8 +8886,8 @@
     }
 
     #install-area .install-link:hover,#install-area .install-link:focus,#install-area .install-help-link:hover,#install-area .install-help-link:focus {
-        transition: box-shadow .2s;
-        box-shadow: 0 8px 16px #0003,0 6px 20px #00000030
+        box-shadow: none;
+        transform: none
     }
 
     .install-link,.install-link:visited,.install-link:active,.install-link:hover,.install-help-link {
@@ -9740,6 +9766,32 @@
     }
 
     .gf-script-install-button,
+    .gf-script-detail-button,
+    .gf-script-note-button {
+        border-radius: 7px;
+        border-color: transparent;
+        background: transparent;
+        color: color-mix(in srgb, var(--overall-text-color) 62%, transparent) !important;
+        box-shadow: none;
+        transition: color .16s ease, background-color .16s ease;
+    }
+
+    .gf-script-install-button:hover,
+    .gf-script-detail-button:hover,
+    .gf-script-note-button:hover,
+    .gf-script-detail-button[data-expanded="true"],
+    .gf-script-note-button[data-expanded="true"] {
+        background: color-mix(in srgb, var(--link-color) 10%, transparent);
+    }
+
+    .gf-script-install-button:focus-visible,
+    .gf-script-detail-button:focus-visible,
+    .gf-script-note-button:focus-visible {
+        outline: 2px solid var(--focus-ring-color);
+        outline-offset: 2px;
+    }
+
+    .gf-script-install-button,
     .gf-script-install-button:visited,
     .gf-script-install-button:hover,
     .gf-script-install-button:focus-visible,
@@ -9751,11 +9803,9 @@
     }
 
     .gf-script-install-button {
-        gap: 0.45rem;
-        padding: 0 0.95rem;
-        font-size: 0.92rem;
-        font-weight: 700;
-        letter-spacing: 0.01em;
+        width: 2.2rem;
+        min-width: 2.2rem;
+        padding: 0;
     }
 
     .gf-script-detail-button {
@@ -9820,15 +9870,15 @@
     .gf-script-note-button:focus-visible,
     .gf-script-note-button[data-expanded="true"],
     .gf-script-note-button[data-has-note="true"] {
-        border-color: var(--link-color);
-        color: var(--link-color) !important;
+        border-color: transparent;
+        color: var(--overall-text-color) !important;
         box-shadow: none;
-        outline: none;
     }
 
     .gf-script-note-button[data-has-note="true"] {
-        background: transparent;
-        border-color: color-mix(in srgb, var(--content-border-color) 72%, var(--link-color) 28%);
+        background: color-mix(in srgb, var(--content-background-color) 86%, var(--link-color) 14%);
+        color: var(--link-color) !important;
+        border-color: transparent;
     }
 
     .gf-script-detail-button[data-expanded="true"] svg {
