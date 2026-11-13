@@ -105,7 +105,7 @@ html[data-theme-variant="full-dark"] #main-header {
     background-color: #0b0b0b;
     background-image: linear-gradient(180deg, #151515, #090909);
     border-bottom: 1px solid #262626;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .48);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .24);
 }
 
 html[data-theme-variant="full-dark"] #main-header .subtitle {
@@ -275,7 +275,12 @@ html[data-theme-variant="full-dark"] .button:hover {
 html[data-theme-variant="full-dark"] .gf-script-install-button,
 html[data-theme-variant="full-dark"] .gf-script-install-button:visited,
 html[data-theme-variant="full-dark"] .gf-script-detail-button,
-html[data-theme-variant="full-dark"] .gf-script-note-button,
+html[data-theme-variant="full-dark"] .gf-script-note-button {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+}
+
 html[data-theme-variant="full-dark"] .sidebar button.gf-list-option-toggle,
 html[data-theme-variant="full-dark"] .sidebar button.gf-sidebar-scroll-button {
     background: #1b1b1b;
@@ -291,7 +296,12 @@ html[data-theme-variant="full-dark"] .gf-script-detail-button:focus-visible,
 html[data-theme-variant="full-dark"] .gf-script-detail-button[data-expanded="true"],
 html[data-theme-variant="full-dark"] .gf-script-note-button:hover,
 html[data-theme-variant="full-dark"] .gf-script-note-button:focus-visible,
-html[data-theme-variant="full-dark"] .gf-script-note-button[data-expanded="true"],
+html[data-theme-variant="full-dark"] .gf-script-note-button[data-expanded="true"] {
+    background: color-mix(in srgb, var(--link-color) 10%, transparent);
+    border-color: transparent;
+    color: var(--overall-text-color);
+}
+
 html[data-theme-variant="full-dark"] .sidebar button.gf-list-option-toggle:hover,
 html[data-theme-variant="full-dark"] .sidebar button.gf-sidebar-scroll-button:hover {
     background: #272727;
@@ -495,5 +505,9 @@ html[data-theme-variant="full-dark"] ::selection {
 #gf-mobile-user-meta[data-gfplus-user-name-truncated] > #gf-mobile-theme-switch {
     margin: 0;
 }
+
+html[data-theme-variant="full-dark"] .stats-table th { background: #1b1b1b; color: #eeeeee; }
+html[data-theme-variant="full-dark"] .stats-table td { background: #121212; color: #e2e2e2; }
+html[data-theme-variant="full-dark"] .stats-table tbody tr:hover td { background: #1c1c1c; }
 `;
 })(globalThis);
