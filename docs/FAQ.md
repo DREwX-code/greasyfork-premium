@@ -30,6 +30,15 @@ The userscript remains available for users who prefer a userscript manager or us
 
 See the **[Installation Guide](INSTALLATION.md)** for both installation methods.
 
+### What is the beta version, and how can I access it?
+
+The beta version allows users to test upcoming features and improvements before their official release.
+Beta releases are available as userscripts only and may contain bugs or unfinished features.
+
+You can download and install the latest beta version from [GitHub](https://github.com/DREwX-code/greasyfork-premium/blob/main/beta/greasyfork-premium-beta.user.js) using a compatible userscript manager.
+
+For more information about testing and contributing, see the **[Contributing Guide](../CONTRIBUTING.md)**.
+
 ### Why do I briefly see the original Greasy Fork theme when a page loads?
 
 This is known as a Flash of Unstyled Content (FOUC).  
