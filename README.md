@@ -183,7 +183,8 @@ Designed to improve your daily workflow while keeping Greasy Fork familiar and l
 3. Open **Greasy Fork** or **Sleazy Fork**.
 4. The redesigned interface is applied automatically.
 
-Use either the browser extension or the userscript, but not both, to avoid conflicts on the same page. The stable userscript is recommended for everyday use. Contributors can find the beta files and contribution workflow in the **[Contributing Guide](./CONTRIBUTING.md)**.
+> [!IMPORTANT]
+> Use either the browser extension or the userscript, but not both, to avoid conflicts on the same page.
 
 For detailed installation instructions, see the **[Installation Guide](./docs/INSTALLATION.md)**.
 
@@ -192,6 +193,9 @@ For detailed installation instructions, see the **[Installation Guide](./docs/IN
 ## 💬 Feedback & Contribution
 
 Suggestions, feature requests, bug reports, and contributions are always welcome.
+
+> [!TIP]
+> Want to test upcoming features or contribute to development? Check out the [Contributing Guide](./CONTRIBUTING.md) for beta versions and contribution instructions.
 
 | Channel | Best for |
 |---------|----------|
