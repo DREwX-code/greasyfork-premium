@@ -2,7 +2,7 @@
 // @name         GreasyFork Premium - Classic Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
-// @version      1.0.5-beta.1
+// @version      1.0.5-beta.2
 // @description  Core light and dark stylesheet providing the shared base styles for GreasyFork Premium themes.
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
@@ -3944,9 +3944,8 @@
         box-shadow: none;
     }
 
-    .gf-script-note-button[data-has-note="true"] {
-        background: color-mix(in srgb, var(--content-background-color) 86%, var(--link-color) 14%);
-        color: var(--link-color) !important;
+    .gf-script-note-button[data-has-note="true"]:not(:hover):not(:focus-visible):not([data-expanded="true"]) {
+        background: transparent;
         border-color: transparent;
     }
 
@@ -9875,9 +9874,8 @@
         box-shadow: none;
     }
 
-    .gf-script-note-button[data-has-note="true"] {
-        background: color-mix(in srgb, var(--content-background-color) 86%, var(--link-color) 14%);
-        color: var(--link-color) !important;
+    .gf-script-note-button[data-has-note="true"]:not(:hover):not(:focus-visible):not([data-expanded="true"]) {
+        background: transparent;
         border-color: transparent;
     }
 
