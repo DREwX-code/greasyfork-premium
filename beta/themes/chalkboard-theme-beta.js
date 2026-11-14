@@ -2,7 +2,7 @@
 // @name         GreasyFork Premium - Chalkboard Theme
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
-// @version      1.0.5-beta.1
+// @version      1.0.5-beta.2
 // @description  Chalkboard light and dark theme stylesheet library for GreasyFork Premium.
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
@@ -290,13 +290,13 @@ html[data-theme="dark"][data-theme-variant="chalkboard"] #mobile-nav-menu select
     color: #e8e9e5;
 }
 
-html[data-theme="light"][data-theme-variant="chalkboard"] .pagy.series-nav > a {
+html[data-theme="light"][data-theme-variant="chalkboard"] .pagy.series-nav > a[href] {
     background-color: #dce7df;
     border-color: #c7d7cd;
 }
 
-html[data-theme="light"][data-theme-variant="chalkboard"] .pagy.series-nav > a:hover,
-html[data-theme="light"][data-theme-variant="chalkboard"] .pagy.series-nav > a:focus-visible {
+html[data-theme="light"][data-theme-variant="chalkboard"] .pagy.series-nav > a[href]:hover,
+html[data-theme="light"][data-theme-variant="chalkboard"] .pagy.series-nav > a[href]:focus-visible {
     background-color: #cddfd3;
     border-color: #a9c4b3;
 }
@@ -482,6 +482,14 @@ html[data-theme-variant="chalkboard"] .script-list > li:not(.ad-entry):nth-child
 
 html[data-theme-variant="chalkboard"] .script-list > li:not(.ad-entry):nth-child(even) {
     background-color: var(--chalk-surface-alt);
+}
+
+html[data-theme="light"][data-theme-variant="chalkboard"] .script-list > li:not(.ad-entry):nth-child(even) .gf-script-note-panel[data-has-note="true"][data-open="false"] .gf-script-note-preview {
+    background: #e9f0e9;
+}
+
+html[data-theme="dark"][data-theme-variant="chalkboard"] .script-list > li:not(.ad-entry):nth-child(even) .gf-script-note-panel[data-has-note="true"][data-open="false"] .gf-script-note-preview {
+    background: #2a3831;
 }
 
 html[data-theme="light"][data-theme-variant="chalkboard"] .gf-script-extra-info {
