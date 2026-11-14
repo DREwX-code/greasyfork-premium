@@ -99,7 +99,7 @@
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.4.2-beta.1
+// @version      1.4.2-beta.2
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -108,8 +108,8 @@
 // @match        https://sleazyfork.org/*
 // @run-at       document-start
 // @require      https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
-// @require      https://update.greasyfork.org/scripts/593322/1996639/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
-// @require      https://update.greasyfork.org/scripts/593320/1996634/GreasyFork%20Premium%20-%20Classic%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593322/1997523/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593320/1997522/GreasyFork%20Premium%20-%20Classic%20Theme.js
 // @require      https://update.greasyfork.org/scripts/593323/1996644/GreasyFork%20Premium%20-%20Full%20Dark%20Theme.js
 // @grant        unsafeWindow
 
@@ -852,6 +852,26 @@ License: BSD 3-Clause
     chalkboardThemeStyle.textContent = CHALKBOARD_CSS;
     appendStyle(chalkboardThemeStyle);
 
+    // Cloudflare verification pages use their own markup and may inherit the active theme.
+    const challengeContrastStyle = document.createElement('style');
+    challengeContrastStyle.textContent = `
+        body:has(.main-wrapper[role="main"] .main-content input[name="cf-turnstile-response"]) {
+            background: var(--overall-background-color, #fff) !important;
+            color: var(--overall-text-color, #202124) !important;
+        }
+        body:has(.main-wrapper[role="main"] .main-content input[name="cf-turnstile-response"]) :is(.main-wrapper, .main-content, .footer, .footer-inner, .footer-wrapper) {
+            background-color: transparent;
+            color: var(--overall-text-color, #202124) !important;
+        }
+        body:has(.main-wrapper[role="main"] .main-content input[name="cf-turnstile-response"]) :is(.main-content h1, .main-content h2, .main-content p, .main-content li, .footer-text, .ray-id, .ray-id code) {
+            color: var(--overall-text-color, #202124) !important;
+        }
+        body:has(.main-wrapper[role="main"] .main-content input[name="cf-turnstile-response"]) :is(.main-content a, .footer a) {
+            color: var(--link-color, #165aab) !important;
+        }
+    `;
+    appendStyle(challengeContrastStyle);
+
     const SCROLLBAR_CSS = `
         :root {
             scrollbar-color: var(--gfplus-scrollbar-thumb-start) var(--gfplus-scrollbar-track-start);
@@ -944,6 +964,14 @@ License: BSD 3-Clause
 
     .gf-script-list-section-header > gf-script-density {
         margin-left: auto;
+    }
+
+    .gf-script-extra-wrapper { grid-column: 1 / -1; min-width: 0; }
+    .gf-script-detail-placeholder { display: inline-block; flex: none; }
+    .gf-script-detail-button.gf-script-detail-floating {
+        position: fixed;
+        z-index: 100;
+        margin: 0;
     }
 
     .gf-script-personal-actions {
@@ -1207,6 +1235,41 @@ License: BSD 3-Clause
         display: none;
     }
 
+    @media (min-width: 700px) {
+        html:not([data-gfplus-density="compact"]) .script-list .script-meta-block:has(.gf-script-date-toggle) {
+            max-width: 100%;
+            column-count: 1;
+        }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) {
+            display: grid;
+            grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr);
+            column-gap: .75rem;
+            align-items: center;
+        }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) dt:nth-of-type(-n+3) { grid-column: 1; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) dd:nth-of-type(-n+3) { grid-column: 2; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) dt:nth-of-type(n+4) { grid-column: 3; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) dd:nth-of-type(n+4) { grid-column: 4; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) :is(dt, dd):nth-of-type(3n+1) { grid-row: 1; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) :is(dt, dd):nth-of-type(3n+2) { grid-row: 2; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) :is(dt, dd):nth-of-type(3n) { grid-row: 3; }
+    }
+    .gf-script-date-toggle[role="button"] { cursor: pointer; border-radius: 3px; }
+    .gf-script-date-toggle[role="button"]:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+    .gf-script-date-long, .gf-script-date-full { display: none; }
+    html[data-gfplus-density="detailed"] .gf-script-date-toggle > relative-time,
+    html[data-gfplus-density="comfortable"] .gf-script-date-toggle[data-date-format="1"] > relative-time,
+    html[data-gfplus-density="comfortable"] .gf-script-date-toggle[data-date-format="2"] > relative-time { display: none !important; }
+    html[data-gfplus-density="detailed"] .gf-script-date-full,
+    html[data-gfplus-density="comfortable"] .gf-script-date-toggle[data-date-format="1"] .gf-script-date-long,
+    html[data-gfplus-density="comfortable"] .gf-script-date-toggle[data-date-format="2"] .gf-script-date-full { display: inline; }
+
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle > relative-time { display: none !important; }
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle[data-date-format="0"] > relative-time { display: inline-block !important; }
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle .gf-script-date-long,
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle .gf-script-date-full { display: none; }
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle[data-date-format="1"] .gf-script-date-long,
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle[data-date-format="2"] .gf-script-date-full { display: inline; }
     html[data-gfplus-density="compact"] .script-list .gf-script-card-actions {
         grid-column: 2;
         margin-top: .25rem;
@@ -4871,10 +4934,73 @@ License: BSD 3-Clause
             detailButton.setAttribute('aria-label', shouldOpen ? i18n.hideDetails : i18n.showDetails);
 
             if (shouldOpen) {
+                let placeholder = null;
+                let frame = 0;
+                const restoreToActions = () => {
+                    if (!placeholder) return;
+                    detailButton.classList.remove('gf-script-detail-floating');
+                    ['left', 'top', 'width', 'height'].forEach((property) => detailButton.style.removeProperty(property));
+                    placeholder.replaceWith(detailButton);
+                    placeholder = null;
+                };
+                const cleanup = () => {
+                    window.removeEventListener('scroll', schedulePosition, true);
+                    window.removeEventListener('resize', schedulePosition);
+                    if (frame) cancelAnimationFrame(frame);
+                };
+                const updatePosition = () => {
+                    frame = 0;
+                    const anchor = placeholder || detailButton;
+                    if (!anchor.isConnected || !panel.isConnected) {
+                        cleanup();
+                        if (placeholder) detailButton.remove();
+                        return;
+                    }
+                    const origin = anchor.getBoundingClientRect();
+                    const limit = 12;
+                    if (origin.top >= limit) {
+                        restoreToActions();
+                        return;
+                    }
+                    if (!placeholder) {
+                        placeholder = document.createElement('span');
+                        placeholder.className = 'gf-script-detail-placeholder';
+                        placeholder.setAttribute('aria-hidden', 'true');
+                        placeholder.style.width = `${origin.width}px`;
+                        placeholder.style.height = `${origin.height}px`;
+                        detailButton.replaceWith(placeholder);
+                        detailButton.classList.add('gf-script-detail-floating');
+                        document.body.appendChild(detailButton);
+                    }
+                    const bounds = panel.getBoundingClientRect();
+                    const progress = Math.max(0, Math.min(1, (limit - origin.top) / 120));
+                    const targetX = bounds.right - origin.width;
+                    const top = Math.min(limit, Math.max(bounds.bottom, origin.bottom) - origin.height);
+                    detailButton.style.left = `${origin.left + (targetX - origin.left) * progress}px`;
+                    detailButton.style.top = `${top}px`;
+                    detailButton.style.width = `${origin.width}px`;
+                    detailButton.style.height = `${origin.height}px`;
+                };
+                const schedulePosition = () => {
+                    if (!frame) frame = requestAnimationFrame(updatePosition);
+                };
+                detailButton._gfRestorePosition = () => {
+                    cleanup();
+                    restoreToActions();
+                };
+                window.addEventListener('scroll', schedulePosition, { passive: true, capture: true });
+                window.addEventListener('resize', schedulePosition, { passive: true });
+                updatePosition();
+                detailButton.blur();
                 await loadScriptExtraInfoPanel(panel);
+                if (panel.getAttribute('data-open') === 'true' && detailButton._gfRestorePosition) {
+                    schedulePosition();
+                }
+            } else {
+                detailButton._gfRestorePosition?.();
+                delete detailButton._gfRestorePosition;
+                detailButton.blur();
             }
-
-            detailButton.blur();
         });
 
         return detailButton;
@@ -5066,7 +5192,10 @@ License: BSD 3-Clause
             article.appendChild(actions);
             article.appendChild(notePanel);
             if (extraInfoPanel) {
-                article.appendChild(extraInfoPanel);
+                const extraWrapper = document.createElement('div');
+                extraWrapper.className = 'gf-script-extra-wrapper';
+                extraWrapper.appendChild(extraInfoPanel);
+                article.appendChild(extraWrapper);
             }
             listItem.setAttribute(SCRIPT_CARD_ACTIONS_ATTR, 'done');
         });
@@ -9604,6 +9733,69 @@ License: BSD 3-Clause
     };
 
     // Script List Density
+    const SCRIPT_DATE_FORMAT_KEYS = {
+        created: 'gfplus-created-date-format',
+        updated: 'gfplus-updated-date-format'
+    };
+    const scriptDateFormats = Object.fromEntries(Object.entries(SCRIPT_DATE_FORMAT_KEYS).map(([kind, key]) => {
+        let value = 0;
+        try { value = Number(localStorage.getItem(key)); } catch { /* Use the default format. */ }
+        return [kind, Number.isInteger(value) && value >= 0 && value <= 2 ? value : 0];
+    }));
+    const syncScriptDateControls = () => {
+        document.querySelectorAll('.script-list dd.script-list-created-date relative-time, .script-list dd.script-list-updated-date relative-time, #script-stats dd.script-show-created-date relative-time, #script-stats dd.script-show-updated-date relative-time').forEach((time) => {
+            let control = time.parentElement;
+            const dateCell = time.closest('dd');
+            const onScriptPage = Boolean(time.closest('#script-stats'));
+            const kind = dateCell?.matches('.script-list-created-date, .script-show-created-date') ? 'created' : 'updated';
+            if (!control?.classList.contains('gf-script-date-toggle')) {
+                const date = new Date(time.getAttribute('datetime'));
+                if (Number.isNaN(date.getTime())) return;
+                const formatDate = (options) => {
+                    try { return new Intl.DateTimeFormat(getCurrentLocale(), options).format(date); }
+                    catch { return new Intl.DateTimeFormat(undefined, options).format(date); }
+                };
+                control = document.createElement('span');
+                control.className = 'gf-script-date-toggle';
+                control.dataset.dateKind = kind;
+                const long = document.createElement('span');
+                long.className = 'gf-script-date-long';
+                long.textContent = formatDate({ dateStyle: 'long' });
+                const full = document.createElement('span');
+                full.className = 'gf-script-date-full';
+                full.textContent = formatDate({ dateStyle: 'long', timeStyle: 'short' });
+                time.replaceWith(control);
+                control.append(time, long, full);
+                const cycle = () => {
+                    if (!onScriptPage && currentDensity !== 'comfortable') return;
+                    scriptDateFormats[kind] = (scriptDateFormats[kind] + 1) % 3;
+                    try { localStorage.setItem(SCRIPT_DATE_FORMAT_KEYS[kind], String(scriptDateFormats[kind])); } catch { /* Keep the preference for this session. */ }
+                    document.querySelectorAll(`.gf-script-date-toggle[data-date-kind="${kind}"]`).forEach((item) => {
+                        item.dataset.dateFormat = String(scriptDateFormats[kind]);
+                    });
+                };
+                control.addEventListener('click', cycle);
+                control.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        cycle();
+                    }
+                });
+            }
+            if (control.dataset.dateFormat !== String(scriptDateFormats[kind])) {
+                control.dataset.dateFormat = String(scriptDateFormats[kind]);
+            }
+            if (onScriptPage || currentDensity === 'comfortable') {
+                if (!control.hasAttribute('role')) {
+                    control.setAttribute('role', 'button');
+                    control.setAttribute('tabindex', '0');
+                }
+            } else {
+                control.removeAttribute('role');
+                control.removeAttribute('tabindex');
+            }
+        });
+    };
     const setInterfaceDensity = (density) => {
         if (!DENSITY_OPTIONS.includes(density)) {
             return;
@@ -9611,6 +9803,7 @@ License: BSD 3-Clause
 
         currentDensity = density;
         root.setAttribute('data-gfplus-density', density);
+        syncScriptDateControls();
         localStorage.setItem(DENSITY_STORAGE_KEY, density);
 
         document.querySelectorAll('gf-script-density').forEach((host) => {
@@ -10100,6 +10293,7 @@ License: BSD 3-Clause
     };
 
     const applyScriptDensityControls = () => {
+        syncScriptDateControls();
         syncScriptPageWidth();
         document.querySelectorAll('.script-list').forEach((scriptList) => {
             if (
@@ -10252,6 +10446,319 @@ License: BSD 3-Clause
         resizeFields();
     };
 
+    const USER_PREVIEW_I18N = {
+        "en": { loading: "Loading…", unavailable: "Preview unavailable", statsUnavailable: "Statistics unavailable", joined: "Joined", message: "Send a message", report: "Report this user", scripts: "Scripts", total: "Installs", daily: "Daily" },
+        "fr": { loading: "Chargement…", unavailable: "Aperçu indisponible", statsUnavailable: "Statistiques indisponibles", joined: "Inscrit depuis", message: "Écrire un message", report: "Signaler cet utilisateur", scripts: "Scripts", total: "Installations", daily: "Par jour" },
+        "es": { loading: "Cargando…", unavailable: "Vista previa no disponible", statsUnavailable: "Estadísticas no disponibles", joined: "Se unió el", message: "Enviar un mensaje", report: "Denunciar a este usuario", scripts: "Scripts", total: "Instalaciones", daily: "Por día" },
+        "de": { loading: "Laden…", unavailable: "Vorschau nicht verfügbar", statsUnavailable: "Statistiken nicht verfügbar", joined: "Dabei seit", message: "Nachricht senden", report: "Benutzer melden", scripts: "Skripte", total: "Installationen", daily: "Pro Tag" },
+        "it": { loading: "Caricamento…", unavailable: "Anteprima non disponibile", statsUnavailable: "Statistiche non disponibili", joined: "Iscritto dal", message: "Invia un messaggio", report: "Segnala utente", scripts: "Script", total: "Installazioni", daily: "Al giorno" },
+        "pt": { loading: "Carregando…", unavailable: "Prévia indisponível", statsUnavailable: "Estatísticas indisponíveis", joined: "Inscrito em", message: "Enviar mensagem", report: "Denunciar usuário", scripts: "Scripts", total: "Instalações", daily: "Por dia" },
+        "ru": { loading: "Загрузка…", unavailable: "Предпросмотр недоступен", statsUnavailable: "Статистика недоступна", joined: "Дата регистрации", message: "Написать сообщение", report: "Пожаловаться на пользователя", scripts: "Скрипты", total: "Установки", daily: "В день" },
+        "ja": { loading: "読み込み中…", unavailable: "プレビューを表示できません", statsUnavailable: "統計を表示できません", joined: "登録日", message: "メッセージを送る", report: "ユーザーを報告", scripts: "スクリプト", total: "インストール", daily: "1日あたり" },
+        "zh-CN": { loading: "加载中…", unavailable: "无法显示预览", statsUnavailable: "无法获取统计信息", joined: "加入时间", message: "发送消息", report: "举报此用户", scripts: "脚本", total: "安装量", daily: "每日" },
+        "zh-TW": { loading: "載入中…", unavailable: "無法顯示預覽", statsUnavailable: "無法取得統計資料", joined: "加入時間", message: "傳送訊息", report: "檢舉此使用者", scripts: "腳本", total: "安裝次數", daily: "每日" },
+        "ar": { loading: "جارٍ التحميل…", unavailable: "المعاينة غير متاحة", statsUnavailable: "الإحصاءات غير متاحة", joined: "تاريخ الانضمام", message: "إرسال رسالة", report: "الإبلاغ عن المستخدم", scripts: "السكربتات", total: "التثبيتات", daily: "يوميًا" },
+        "hi": { loading: "लोड हो रहा है…", unavailable: "पूर्वावलोकन उपलब्ध नहीं", statsUnavailable: "आँकड़े उपलब्ध नहीं", joined: "सदस्य बने", message: "संदेश भेजें", report: "उपयोगकर्ता की रिपोर्ट करें", scripts: "स्क्रिप्ट", total: "इंस्टॉल", daily: "प्रतिदिन" },
+        "bn": { loading: "লোড হচ্ছে…", unavailable: "প্রিভিউ উপলব্ধ নয়", statsUnavailable: "পরিসংখ্যান উপলব্ধ নয়", joined: "যোগ দিয়েছেন", message: "বার্তা পাঠান", report: "ব্যবহারকারীকে রিপোর্ট করুন", scripts: "স্ক্রিপ্ট", total: "ইনস্টল", daily: "প্রতিদিন" },
+        "ur": { loading: "لوڈ ہو رہا ہے…", unavailable: "پیش نظارہ دستیاب نہیں", statsUnavailable: "اعداد و شمار دستیاب نہیں", joined: "شمولیت کی تاریخ", message: "پیغام بھیجیں", report: "صارف کی رپورٹ کریں", scripts: "اسکرپٹس", total: "انسٹال", daily: "روزانہ" },
+        "ml": { loading: "ലോഡ് ചെയ്യുന്നു…", unavailable: "പ്രിവ്യൂ ലഭ്യമല്ല", statsUnavailable: "സ്ഥിതിവിവരക്കണക്കുകൾ ലഭ്യമല്ല", joined: "ചേർന്ന തീയതി", message: "സന്ദേശം അയയ്ക്കുക", report: "ഉപയോക്താവിനെ റിപ്പോർട്ട് ചെയ്യുക", scripts: "സ്ക്രിപ്റ്റുകൾ", total: "ഇൻസ്റ്റാളുകൾ", daily: "പ്രതിദിനം" },
+        "ko": { loading: "불러오는 중…", unavailable: "미리보기를 사용할 수 없음", statsUnavailable: "통계를 사용할 수 없음", joined: "가입일", message: "메시지 보내기", report: "사용자 신고", scripts: "스크립트", total: "설치", daily: "일일" },
+        "pl": { loading: "Ładowanie…", unavailable: "Podgląd niedostępny", statsUnavailable: "Statystyki niedostępne", joined: "Dołączenie", message: "Wyślij wiadomość", report: "Zgłoś użytkownika", scripts: "Skrypty", total: "Instalacje", daily: "Dziennie" },
+        "nl": { loading: "Laden…", unavailable: "Voorbeeld niet beschikbaar", statsUnavailable: "Statistieken niet beschikbaar", joined: "Lid sinds", message: "Bericht sturen", report: "Gebruiker melden", scripts: "Scripts", total: "Installaties", daily: "Per dag" },
+        "sv": { loading: "Läser in…", unavailable: "Förhandsvisning saknas", statsUnavailable: "Statistik saknas", joined: "Medlem sedan", message: "Skicka meddelande", report: "Rapportera användare", scripts: "Skript", total: "Installationer", daily: "Per dag" },
+        "ro": { loading: "Se încarcă…", unavailable: "Previzualizare indisponibilă", statsUnavailable: "Statistici indisponibile", joined: "Membru din", message: "Trimite mesaj", report: "Raportează utilizatorul", scripts: "Scripturi", total: "Instalări", daily: "Pe zi" },
+        "vi": { loading: "Đang tải…", unavailable: "Không thể xem trước", statsUnavailable: "Không có thống kê", joined: "Tham gia", message: "Gửi tin nhắn", report: "Báo cáo người dùng", scripts: "Tập lệnh", total: "Lượt cài", daily: "Mỗi ngày" },
+        "id": { loading: "Memuat…", unavailable: "Pratinjau tidak tersedia", statsUnavailable: "Statistik tidak tersedia", joined: "Bergabung", message: "Kirim pesan", report: "Laporkan pengguna", scripts: "Skrip", total: "Pemasangan", daily: "Per hari" },
+        "ms": { loading: "Memuatkan…", unavailable: "Pratonton tidak tersedia", statsUnavailable: "Statistik tidak tersedia", joined: "Menyertai", message: "Hantar mesej", report: "Laporkan pengguna", scripts: "Skrip", total: "Pemasangan", daily: "Sehari" },
+        "be": { loading: "Загрузка…", unavailable: "Папярэдні прагляд недаступны", statsUnavailable: "Статыстыка недаступная", joined: "Дата рэгістрацыі", message: "Адправіць паведамленне", report: "Паскардзіцца на карыстальніка", scripts: "Скрыпты", total: "Усталяванні", daily: "У дзень" },
+        "nb": { loading: "Laster…", unavailable: "Forhåndsvisning utilgjengelig", statsUnavailable: "Statistikk utilgjengelig", joined: "Medlem siden", message: "Send melding", report: "Rapporter bruker", scripts: "Skript", total: "Installasjoner", daily: "Per dag" },
+        "bg": { loading: "Зареждане…", unavailable: "Прегледът не е наличен", statsUnavailable: "Статистиката не е налична", joined: "Регистрация", message: "Изпращане на съобщение", report: "Докладване на потребителя", scripts: "Скриптове", total: "Инсталации", daily: "На ден" },
+        "hr": { loading: "Učitavanje…", unavailable: "Pregled nije dostupan", statsUnavailable: "Statistika nije dostupna", joined: "Član od", message: "Pošalji poruku", report: "Prijavi korisnika", scripts: "Skripte", total: "Instalacije", daily: "Dnevno" },
+        "cs": { loading: "Načítání…", unavailable: "Náhled není dostupný", statsUnavailable: "Statistiky nejsou dostupné", joined: "Členem od", message: "Poslat zprávu", report: "Nahlásit uživatele", scripts: "Skripty", total: "Instalace", daily: "Denně" },
+        "da": { loading: "Indlæser…", unavailable: "Forhåndsvisning er ikke tilgængelig", statsUnavailable: "Statistik er ikke tilgængelig", joined: "Medlem siden", message: "Send besked", report: "Anmeld bruger", scripts: "Scripts", total: "Installationer", daily: "Pr. dag" },
+        "eo": { loading: "Ŝargante…", unavailable: "Antaŭrigardo ne disponeblas", statsUnavailable: "Statistikoj ne disponeblas", joined: "Aliĝis", message: "Sendi mesaĝon", report: "Raporti uzanton", scripts: "Skriptoj", total: "Instaloj", daily: "Tage" },
+        "fil": { loading: "Naglo-load…", unavailable: "Hindi available ang preview", statsUnavailable: "Hindi available ang mga estadistika", joined: "Sumali noong", message: "Magpadala ng mensahe", report: "I-report ang user", scripts: "Mga script", total: "Mga install", daily: "Bawat araw" },
+        "fi": { loading: "Ladataan…", unavailable: "Esikatselu ei ole saatavilla", statsUnavailable: "Tilastot eivät ole saatavilla", joined: "Liittynyt", message: "Lähetä viesti", report: "Ilmoita käyttäjästä", scripts: "Skriptit", total: "Asennukset", daily: "Päivässä" },
+        "ckb": { loading: "بارکردن…", unavailable: "پێشبینین بەردەست نییە", statsUnavailable: "ئامارەکان بەردەست نین", joined: "بەرواری بەشداربوون", message: "نامە بنێرە", report: "بەکارهێنەر ڕاپۆرت بکە", scripts: "سکریپتەکان", total: "دامەزراندنەکان", daily: "ڕۆژانە" },
+        "ka": { loading: "იტვირთება…", unavailable: "გადახედვა მიუწვდომელია", statsUnavailable: "სტატისტიკა მიუწვდომელია", joined: "რეგისტრაციის თარიღი", message: "შეტყობინების გაგზავნა", report: "მომხმარებლის გასაჩივრება", scripts: "სკრიპტები", total: "ინსტალაციები", daily: "დღეში" },
+        "el": { loading: "Φόρτωση…", unavailable: "Η προεπισκόπηση δεν είναι διαθέσιμη", statsUnavailable: "Τα στατιστικά δεν είναι διαθέσιμα", joined: "Μέλος από", message: "Αποστολή μηνύματος", report: "Αναφορά χρήστη", scripts: "Σενάρια", total: "Εγκαταστάσεις", daily: "Ανά ημέρα" },
+        "he": { loading: "טוען…", unavailable: "התצוגה המקדימה אינה זמינה", statsUnavailable: "הסטטיסטיקה אינה זמינה", joined: "הצטרפות", message: "שליחת הודעה", report: "דיווח על משתמש", scripts: "סקריפטים", total: "התקנות", daily: "ליום" },
+        "hu": { loading: "Betöltés…", unavailable: "Az előnézet nem érhető el", statsUnavailable: "A statisztika nem érhető el", joined: "Csatlakozott", message: "Üzenet küldése", report: "Felhasználó jelentése", scripts: "Szkriptek", total: "Telepítések", daily: "Naponta" },
+        "mr": { loading: "लोड होत आहे…", unavailable: "पूर्वावलोकन उपलब्ध नाही", statsUnavailable: "आकडेवारी उपलब्ध नाही", joined: "सामील झाले", message: "संदेश पाठवा", report: "वापरकर्त्याची तक्रार करा", scripts: "स्क्रिप्ट", total: "इंस्टॉल", daily: "दररोज" },
+        "sr": { loading: "Učitavanje…", unavailable: "Pregled nije dostupan", statsUnavailable: "Statistika nije dostupna", joined: "Član od", message: "Pošalji poruku", report: "Prijavi korisnika", scripts: "Skripte", total: "Instalacije", daily: "Dnevno" },
+        "sk": { loading: "Načítava sa…", unavailable: "Náhľad nie je dostupný", statsUnavailable: "Štatistiky nie sú dostupné", joined: "Členom od", message: "Poslať správu", report: "Nahlásiť používateľa", scripts: "Skripty", total: "Inštalácie", daily: "Denne" },
+        "ug": { loading: "يۈكلىنىۋاتىدۇ…", unavailable: "ئالدىن كۆرۈشنى ئىشلەتكىلى بولمايدۇ", statsUnavailable: "ستاتىستىكا يوق", joined: "قوشۇلغان ۋاقتى", message: "ئۇچۇر ئەۋەتىش", report: "ئىشلەتكۈچىنى پاش قىلىش", scripts: "قوليازمىلار", total: "قاچىلاش", daily: "ھەر كۈنى" },
+        "uk": { loading: "Завантаження…", unavailable: "Попередній перегляд недоступний", statsUnavailable: "Статистика недоступна", joined: "Дата реєстрації", message: "Надіслати повідомлення", report: "Поскаржитися на користувача", scripts: "Скрипти", total: "Встановлення", daily: "На день" },
+        "th": { loading: "กำลังโหลด…", unavailable: "ไม่สามารถแสดงตัวอย่าง", statsUnavailable: "ไม่มีข้อมูลสถิติ", joined: "เข้าร่วมเมื่อ", message: "ส่งข้อความ", report: "รายงานผู้ใช้", scripts: "สคริปต์", total: "การติดตั้ง", daily: "ต่อวัน" },
+        "tr": { loading: "Yükleniyor…", unavailable: "Önizleme kullanılamıyor", statsUnavailable: "İstatistikler kullanılamıyor", joined: "Katılım tarihi", message: "Mesaj gönder", report: "Kullanıcıyı bildir", scripts: "Betikler", total: "Yüklemeler", daily: "Günlük" },
+    };
+
+    const initUserProfilePreviews = () => {
+        const style = document.createElement('style');
+        style.textContent = `
+            .gf-user-preview {
+                position: absolute; z-index: 10000; width: min(330px, calc(100vw - 24px));
+                box-sizing: border-box; padding: 14px; border: 1px solid var(--content-border-color);
+                border-radius: 10px; background: var(--content-background-color);
+                color: var(--overall-text-color); box-shadow: 0 8px 24px rgba(0,0,0,.18);
+                font-size: .875rem; line-height: 1.45; overflow-wrap: anywhere;
+                max-height: calc(100vh - 24px); overflow-y: auto;
+                transition: none !important;
+            }
+            .gf-user-preview[hidden] { display: none; }
+            .gf-user-preview-header { display: flex; align-items: flex-start; justify-content: space-between; gap: .6rem; }
+            .gf-user-preview-name { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; min-width: 0; font-size: .96rem; font-weight: 700; }
+            .gf-user-preview-actions { display: flex; flex: none; gap: 2px; }
+            .gf-user-preview-actions a { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 7px; color: var(--overall-text-color); text-decoration: none; }
+            .gf-user-preview-actions a:hover { background: color-mix(in srgb, var(--link-color) 10%, transparent); color: var(--link-color); }
+            .gf-user-preview-actions a.gf-user-preview-report,
+            .gf-user-preview-actions a.gf-user-preview-report:hover { color: #d74747; }
+            html[data-theme="dark"] .gf-user-preview-actions a.gf-user-preview-report { color: #f08080; }
+            .gf-user-preview-actions a:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+            .gf-user-preview-actions svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+            .gf-user-preview-bio { margin: .5rem 0 0; white-space: pre-line; }
+            .gf-user-preview-joined { margin-top: .4rem; font-size: .78rem; opacity: .8; }
+            .gf-user-preview-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .5rem; margin-top: .75rem; }
+            .gf-user-preview-stat { min-width: 0; padding: .45rem; border-radius: 6px; background: color-mix(in srgb, var(--overall-text-color) 6%, var(--content-background-color)); }
+            .gf-user-preview-stat strong, .gf-user-preview-stat span { display: block; }
+            .gf-user-preview-stat span { font-size: .72rem; opacity: .8; }
+            .gf-user-preview-status { margin-top: .5rem; opacity: .8; }
+        `;
+        appendStyle(style);
+        const tooltip = document.createElement('div');
+        tooltip.id = 'gfplus-user-preview';
+        tooltip.className = 'gf-user-preview';
+        tooltip.setAttribute('role', 'dialog');
+        tooltip.hidden = true;
+        document.body.appendChild(tooltip);
+        const cache = new Map();
+        let activeLink = null;
+        let originalDescription = null;
+        let openTimer = 0;
+        let closeTimer = 0;
+        let token = 0;
+        let placement = null;
+        let suppressPreviewFocus = null;
+        const locale = getCurrentLocale();
+        const labels = USER_PREVIEW_I18N[locale] || USER_PREVIEW_I18N[locale.split('-')[0]] || USER_PREVIEW_I18N.en;
+        const getUser = (link) => {
+            if (!link?.matches?.('a[href]') || link.closest('#nav-user-info .user-profile-link, #mobile-nav .user-profile-link, #gf-mobile-user-meta .user-profile-link')) return null;
+            if (!link.matches('.user-link, [rel~="author"]') && !link.closest('dd.script-list-author, dd.script-show-author')) return null;
+            if (!link.textContent.trim()) return null;
+            const href = link.getAttribute('href')?.trim();
+            if (!href || href.startsWith('#') || href.startsWith('?')) return null;
+            try {
+                const url = new URL(link.href, location.href);
+                if (url.origin !== location.origin || url.search || url.hash) return null;
+                const match = url.pathname.match(/^\/(?:[a-z]{2,3}(?:-[a-z0-9]+)?\/)?users\/(\d+)(?:-[^/]*)?\/?$/i);
+                return match ? { id: match[1], url: new URL(`/${getCurrentLocale()}/users/${match[1]}`, location.origin) } : null;
+            } catch { return null; }
+        };
+        const position = () => {
+            if (!activeLink || tooltip.hidden) return;
+            const rect = activeLink.getBoundingClientRect();
+            const width = tooltip.offsetWidth;
+            const height = tooltip.offsetHeight;
+            const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+            const below = rect.bottom + 8;
+            if (!placement) placement = below + height <= window.innerHeight - 12 || rect.top < height + 12 ? 'below' : 'above';
+            const preferredTop = placement === 'below' ? below : rect.top - height - 8;
+            const top = Math.max(12, Math.min(preferredTop, window.innerHeight - height - 12));
+            tooltip.style.left = `${left + window.scrollX}px`;
+            tooltip.style.top = `${top + window.scrollY}px`;
+        };
+        const hide = () => {
+            clearTimeout(openTimer); clearTimeout(closeTimer); token++;
+            if (activeLink) {
+                if (originalDescription === null) activeLink.removeAttribute('aria-describedby');
+                else activeLink.setAttribute('aria-describedby', originalDescription);
+            }
+            activeLink = null; originalDescription = null; placement = null; tooltip.hidden = true;
+        };
+        const deferHide = () => {
+            clearTimeout(closeTimer);
+            closeTimer = window.setTimeout(() => {
+                if (!tooltip.contains(document.activeElement) && document.activeElement !== activeLink) hide();
+            }, 180);
+        };
+        const fetchPreview = (user) => {
+            const existing = cache.get(user.id);
+            if (existing && existing.expires > Date.now()) return existing.promise;
+            const request = async (url, type) => {
+                const controller = new AbortController();
+                const timeout = window.setTimeout(() => controller.abort(), 10000);
+                try {
+                    const response = await fetch(url, { credentials: 'omit', signal: controller.signal });
+                    const responseOrigin = new URL(response.url).origin;
+                    const apiOrigin = `${location.protocol}//api.${location.hostname}`;
+                    if (!response.ok || (responseOrigin !== location.origin && !(type === 'json' && responseOrigin === apiOrigin))) throw new Error('Profile unavailable');
+                    return await (type === 'json' ? response.json() : response.text());
+                } finally {
+                    clearTimeout(timeout);
+                }
+            };
+            const apiUrl = new URL(user.url); apiUrl.pathname += '.json';
+            const promise = Promise.allSettled([request(user.url, 'html'), request(apiUrl, 'json')]).then(([html, json]) => {
+                if (html.status === 'rejected' && json.status === 'rejected') throw new Error('Profile unavailable');
+                let bio = '';
+                let badges = [];
+                if (html.status === 'fulfilled') {
+                    const doc = new DOMParser().parseFromString(html.value, 'text/html');
+                    badges = Array.from(doc.querySelectorAll('#about-user > h2 .badge')).map((badge) => ({
+                        kind: ['author', 'moderator', 'banned'].find((kind) => badge.classList.contains(`badge-${kind}`)),
+                        text: badge.textContent.trim(),
+                        title: badge.getAttribute('title') || ''
+                    })).filter((badge) => badge.kind && badge.text);
+                    const profile = doc.querySelector('#about-user #user-profile');
+                    if (profile) {
+                        profile.querySelectorAll('script,style,template').forEach((node) => node.remove());
+                        bio = (profile.textContent || '').replace(/\s+/g, ' ').trim();
+                        if (bio.length > 220) bio = `${bio.slice(0, 217).trimEnd()}…`;
+                    }
+                }
+                const data = json.status === 'fulfilled' ? json.value : null;
+                const scripts = Array.isArray(data?.scripts) ? data.scripts.filter((item) => item && !item.deleted) : null;
+                const totals = scripts && ['daily_installs', 'total_installs'].every((key) => scripts.every((item) => Number.isFinite(item[key]) && item[key] >= 0))
+                    ? { count: scripts.length, daily: scripts.reduce((sum, item) => sum + item.daily_installs, 0), total: scripts.reduce((sum, item) => sum + item.total_installs, 0) } : null;
+                if (!bio && !totals && !badges.length) throw new Error('Profile unavailable');
+                return { bio, badges, totals, joined: typeof data?.created_at === 'string' ? data.created_at : '', name: typeof data?.name === 'string' ? data.name : '' };
+            }).catch((error) => { cache.delete(user.id); throw error; });
+            if (cache.size >= 100) cache.delete(cache.keys().next().value);
+            cache.set(user.id, { expires: Date.now() + 5 * 60 * 1000, promise });
+            return promise;
+        };
+        const show = async (link, user) => {
+            hide();
+            activeLink = link;
+            originalDescription = link.getAttribute('aria-describedby');
+            link.setAttribute('aria-describedby', [originalDescription, tooltip.id].filter(Boolean).join(' '));
+            const current = ++token;
+            tooltip.replaceChildren();
+            const name = document.createElement('div'); name.className = 'gf-user-preview-name';
+            const nameText = document.createElement('span'); nameText.textContent = link.textContent.trim(); name.appendChild(nameText);
+            const addBadge = (badge) => {
+                if (!badge?.kind || !badge.text || name.querySelector(`.badge-${badge.kind}`)) return;
+                const element = document.createElement('span'); element.className = `badge badge-${badge.kind}`;
+                element.textContent = badge.text;
+                if (badge.title) element.title = badge.title;
+                name.appendChild(element);
+            };
+            const adjacentBadge = link.nextElementSibling;
+            if (adjacentBadge?.classList.contains('badge')) {
+                const kind = ['author', 'moderator', 'banned'].find((item) => adjacentBadge.classList.contains(`badge-${item}`));
+                addBadge({ kind, text: adjacentBadge.textContent.trim(), title: adjacentBadge.getAttribute('title') || '' });
+            }
+            tooltip.setAttribute('aria-label', nameText.textContent);
+            const header = document.createElement('div'); header.className = 'gf-user-preview-header';
+            const actions = document.createElement('div'); actions.className = 'gf-user-preview-actions';
+            const createAction = (label, href, paths) => {
+                const action = document.createElement('a');
+                action.href = href; action.title = label; action.setAttribute('aria-label', label);
+                const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                icon.setAttribute('viewBox', '0 0 24 24'); icon.setAttribute('aria-hidden', 'true');
+                icon.innerHTML = paths; action.appendChild(icon); actions.appendChild(action);
+                return action;
+            };
+            const ownId = extractUserIdFromProfilePath(extractCurrentUserProfilePath());
+            let messageAction = null;
+            const updateMessageLink = (recipient) => {
+                if (!messageAction) return;
+                const url = new URL(`/${getCurrentLocale()}/users/${ownId}/conversations/new`, location.origin);
+                url.searchParams.set('other_user', recipient);
+                messageAction.href = url.href;
+            };
+            if (ownId && ownId !== user.id) {
+                messageAction = createAction(labels.message, '#', '<path d="M4 5h16v11H9l-5 4V5z"></path><path d="M8 9h8M8 12h6"></path>');
+                updateMessageLink(nameText.textContent);
+            }
+            const reportUrl = new URL(`/${getCurrentLocale()}/reports/new`, location.origin);
+            reportUrl.searchParams.set('item_class', 'user'); reportUrl.searchParams.set('item_id', user.id);
+            createAction(labels.report, reportUrl.href, '<path d="M5 21V4"></path><path d="M5 5c5-3 9 3 14 0v10c-5 3-9-3-14 0"></path>').classList.add('gf-user-preview-report');
+            header.append(name, actions);
+            const status = document.createElement('div'); status.className = 'gf-user-preview-status'; status.textContent = labels.loading;
+            tooltip.append(header, status); tooltip.hidden = false; position();
+            const openingScrollY = window.scrollY;
+            try {
+                const result = await fetchPreview(user);
+                if (token !== current || activeLink !== link) return;
+                nameText.textContent = result.name || nameText.textContent;
+                tooltip.setAttribute('aria-label', nameText.textContent);
+                updateMessageLink(nameText.textContent);
+                result.badges.forEach(addBadge);
+                status.remove();
+                if (result.bio) { const bio = document.createElement('p'); bio.className = 'gf-user-preview-bio'; bio.textContent = result.bio; tooltip.appendChild(bio); }
+                const joinedDate = result.joined ? new Date(result.joined) : null;
+                if (joinedDate && Number.isFinite(joinedDate.getTime())) {
+                    const joined = document.createElement('div'); joined.className = 'gf-user-preview-joined';
+                    try { joined.textContent = `${labels.joined} ${new Intl.DateTimeFormat(getCurrentLocale(), { dateStyle: 'long' }).format(joinedDate)}`; }
+                    catch { joined.textContent = `${labels.joined} ${new Intl.DateTimeFormat(undefined, { dateStyle: 'long' }).format(joinedDate)}`; }
+                    tooltip.appendChild(joined);
+                }
+                if (result.totals) {
+                    const stats = document.createElement('div'); stats.className = 'gf-user-preview-stats';
+                    const format = new Intl.NumberFormat(getCurrentLocale());
+                    [['count', labels.scripts], ['total', labels.total], ['daily', labels.daily]].forEach(([key, label]) => {
+                        const cell = document.createElement('div'); cell.className = 'gf-user-preview-stat';
+                        const number = document.createElement('strong'); number.textContent = format.format(result.totals[key]);
+                        const caption = document.createElement('span'); caption.textContent = label;
+                        cell.append(number, caption); stats.appendChild(cell);
+                    });
+                    tooltip.appendChild(stats);
+                } else {
+                    status.textContent = labels.statsUnavailable;
+                    tooltip.appendChild(status);
+                    cache.delete(user.id);
+                }
+            } catch {
+                if (token !== current || activeLink !== link) return;
+                status.textContent = labels.unavailable;
+            }
+            const top = Math.min(parseFloat(tooltip.style.top) || openingScrollY + 12, openingScrollY + Math.max(12, window.innerHeight - tooltip.offsetHeight - 12));
+            tooltip.style.top = `${top}px`;
+        };
+        const schedule = (link, delay) => {
+            const user = getUser(link); if (!user) return;
+            clearTimeout(closeTimer); clearTimeout(openTimer);
+            if (activeLink === link) return;
+            openTimer = window.setTimeout(() => show(link, user), delay);
+        };
+        document.addEventListener('pointerover', (event) => {
+            if (event.pointerType === 'touch') return;
+            if (tooltip.contains(event.target)) { clearTimeout(closeTimer); return; }
+            const link = event.target.closest?.('a[href]');
+            if (link && !link.contains(event.relatedTarget)) schedule(link, 400);
+        });
+        document.addEventListener('pointerout', (event) => {
+            if (tooltip.contains(event.target)) { if (!tooltip.contains(event.relatedTarget) && !activeLink?.contains(event.relatedTarget)) deferHide(); return; }
+            const link = event.target.closest?.('a[href]');
+            if (link && !link.contains(event.relatedTarget)) {
+                clearTimeout(openTimer);
+                if (link === activeLink && !tooltip.contains(event.relatedTarget)) deferHide();
+            }
+        });
+        document.addEventListener('focusin', (event) => {
+            if (event.target === suppressPreviewFocus) { suppressPreviewFocus = null; return; }
+            if (tooltip.contains(event.target)) { clearTimeout(closeTimer); return; }
+            const link = event.target.closest?.('a[href]'); if (link) schedule(link, 0);
+        });
+        document.addEventListener('focusout', (event) => {
+            if (getUser(event.target)) clearTimeout(openTimer);
+            if ((event.target === activeLink || tooltip.contains(event.target)) && !tooltip.contains(event.relatedTarget) && event.relatedTarget !== activeLink) deferHide();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (tooltip.hidden) return;
+            if (event.key === 'Tab' && !event.shiftKey && event.target === activeLink) {
+                const firstAction = tooltip.querySelector('.gf-user-preview-actions a');
+                if (firstAction) { event.preventDefault(); firstAction.focus(); }
+            } else if (event.key === 'Escape') {
+                const returnFocus = tooltip.contains(document.activeElement) ? activeLink : null;
+                hide();
+                if (returnFocus) { suppressPreviewFocus = returnFocus; returnFocus.focus(); }
+            }
+        });
+
+    };
+
     let uiInitialized = false;
     const initUi = () => {
         if (uiInitialized) {
@@ -10292,6 +10799,7 @@ License: BSD 3-Clause
             initScriptDensityControls();
             initScriptLogos();
             initScriptCardActions();
+            initUserProfilePreviews();
             initUserNavigation();
             initMobileUserNavigation();
             initControlPanelEnhancements();
