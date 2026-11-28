@@ -99,7 +99,7 @@
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.4.2-beta.3
+// @version      1.4.2-beta.4
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -1017,6 +1017,10 @@ License: BSD 3-Clause
     }
 
     @media screen and (max-width: 800px) {
+        #install-area > .gf-script-personal-actions {
+            gap: 0;
+        }
+
         #gf-mobile-user-row {
             display: grid;
             grid-template-columns: minmax(0, 1fr) auto;
@@ -3738,7 +3742,7 @@ License: BSD 3-Clause
         };
     };
 
-    const initCodeWorkspace = ({ pre, group, locale, labels: t, onCodeChange, versionBefore }) => {
+    const initCodeWorkspace = ({ pre, group, downloadGroup, displayGroup, locale, labels: t, onCodeChange }) => {
         const root = document.querySelector('#script-content');
         const match = location.pathname.match(/\/scripts\/(\d+)(?:[-/]|$)/);
         if (!root || !match) return;
@@ -3947,7 +3951,7 @@ License: BSD 3-Clause
         close.append(analysisIcon('M6 6l12 12M18 6 6 18'));
         head.append(title, close);
         const results=make('div','gf-code-workspace-results'); results.setAttribute('aria-live','polite');
-        panel.append(head,results); wrapper.append(opener,panel); group.insertBefore(versions,versionBefore); group.append(fontControl,wrapper);
+        panel.append(head,results); wrapper.append(opener,panel); downloadGroup.append(versions); displayGroup.append(fontControl,wrapper);
         const setOpen = (open) => { panel.hidden=!open; group.classList.toggle('gf-code-workspace-open', open); opener.setAttribute('aria-expanded',String(open)); if (!open) opener.focus({preventScroll:true}); };
         opener.addEventListener('click', () => { const open=panel.hidden; setOpen(open); if (open) analyzeCode(); }); close.addEventListener('click', () => setOpen(false));
         panel.addEventListener('keydown', (event) => { if (event.key === 'Escape') { event.preventDefault(); setOpen(false); } });
@@ -4121,6 +4125,7 @@ License: BSD 3-Clause
             .gf-code-tools-actions svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
             .gf-code-tools-actions .gf-code-archive-label { font-weight:400 !important; }
             .gf-code-toolbar-separator { width:1px; height:18px; margin:0 3px; background:var(--content-border-color); opacity:.8; flex:none; }
+            .gf-code-tool-section { display:inline-flex; align-items:center; flex:0 0 auto; gap:2px; min-width:0; max-width:100%; }
             .gf-code-zip-wrap { position:relative; display:inline-flex; }
             .gf-code-zip-menu { width:auto; padding:5px; }
             .gf-code-zip-menu label { white-space:nowrap; display:flex; align-items:center; gap:7px; padding:5px 6px; font-size:.8rem; cursor:pointer; overflow-wrap:anywhere; }
@@ -4131,6 +4136,21 @@ License: BSD 3-Clause
             .gf-code-export-progress::-webkit-progress-bar { background: transparent; }
             .gf-code-export-progress::-webkit-progress-value { background: var(--link-color); }
             .gf-code-export-progress::-moz-progress-bar { background: var(--link-color); }
+            .gf-code-reading-actions:empty { display:none; }
+            @media (max-width: 800px) {
+                #script-content :is(pre.gf-hljs, .code-container) { border-top-left-radius:0; }
+                .gf-code-tools-row { align-items:center; justify-content:center; column-gap:.4rem; }
+                .gf-code-tools-row > #wrap-lines, .gf-code-tools-row > label[for="wrap-lines"] { margin-bottom:0; }
+                .gf-code-tools-row > .gf-code-tools-actions { width:100%; min-width:0; }
+                .gf-code-tools-row > .gf-code-reading-actions { width:auto; order:0; margin-inline-start:0; flex-wrap:nowrap; }
+                .gf-code-tools-row .gf-code-export-group { width:100%; min-width:0; justify-content:center; }
+                .gf-code-export-group .gf-code-desktop-separator { display:none; }
+                .gf-code-export-group .gf-code-workspace-select { max-width:min(7rem, 30vw); }
+                .gf-code-export-group :is(.gf-code-workspace, .gf-code-zip-wrap) { position:static; }
+                .gf-code-export-group .gf-code-workspace-panel { max-width:min(100%, calc(100vw - 24px)); }
+                .gf-code-zip-menu label { white-space:normal; }
+                .gf-code-zip-menu input { flex:none; }
+            }
             @media (max-width: 600px) {
                 .gf-code-export-group .gf-code-tool-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
             }
@@ -4138,8 +4158,6 @@ License: BSD 3-Clause
             .gf-code-search-anchor { position: sticky; top: 0; inset-inline-start: 0; z-index: 2; width: 100%; height: 0; pointer-events: none; }
             .gf-code-search { position: absolute; top: 6px; inset-inline-end: 8px; display: flex; align-items: center; gap: .1rem; box-sizing: border-box; width: min(26rem, calc(100% - 16px)); min-width: 0; padding: 2px 3px 2px .5rem; border: 1px solid var(--code-container-border-color, var(--content-border-color)); border-radius: 6px; background: var(--hljs-bg, var(--content-background-color)); box-shadow: none !important; pointer-events: auto; }
             .gf-code-search[hidden] { display: none; }
-            .gf-code-search-line { flex: 0 0 100%; min-width: 0; padding: 3px 5px 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--hljs-text, var(--overall-text-color)); opacity: .8; font: .75rem/1.4 monospace; }
-            .gf-code-search-line:empty { display: none; }
             .gf-code-search button.gf-code-search-nav[aria-pressed="true"] { background: color-mix(in srgb, var(--link-color) 18%, var(--content-background-color)) !important; }
             .gf-code-search button.gf-code-search-nav:focus { box-shadow: none !important; outline: none; }
             .gf-code-search button.gf-code-search-nav:focus-visible { outline: 2px solid var(--link-color); outline-offset: -2px; }
@@ -4356,7 +4374,14 @@ License: BSD 3-Clause
         searchToggle.setAttribute('aria-expanded', 'false'); searchToggle.setAttribute('aria-controls', 'gf-code-search');
         const formatWrap = document.createElement('span'); formatWrap.className = 'gf-code-format-wrap'; formatWrap.appendChild(format);
         const separator = () => { const el=document.createElement('span'); el.className='gf-code-toolbar-separator'; el.setAttribute('aria-hidden','true'); return el; };
-        const firstSeparator=separator(), versionSeparator=separator(), paletteSeparator=separator();
+        const firstSeparator=separator(), versionSeparator=separator(), displaySeparator=separator();
+        firstSeparator.classList.add('gf-code-desktop-separator');
+        const toolSection = (...items) => {
+            const section = document.createElement('span');
+            section.className = 'gf-code-tool-section';
+            section.append(...items);
+            return section;
+        };
         const zipWrap=document.createElement('span'); zipWrap.className='gf-code-zip-wrap';
         const zipMore=makeButton(labels.zipChoose, '<path d="M12 5v14M5 12h14"></path>'); zipMore.querySelector('span')?.remove(); zipMore.setAttribute('aria-label',zipMore.title); zipMore.setAttribute('aria-expanded','false');
         const zipMenu=document.createElement('div'); zipMenu.className='gf-code-workspace-panel gf-code-zip-menu'; zipMenu.hidden=true; zipMenu.setAttribute('role','group'); zipMenu.setAttribute('aria-label',zipMore.title); zipWrap.append(zipMore,zipMenu);
@@ -4376,7 +4401,21 @@ License: BSD 3-Clause
         });
         document.addEventListener('pointerdown',event=>{ if (!zipWrap.contains(event.target)) { zipMenu.hidden=true; zipMore.setAttribute('aria-expanded','false'); } });
         zipMenu.addEventListener('keydown',event=>{if(event.key==='Escape'){zipMenu.hidden=true;zipMore.setAttribute('aria-expanded','false');zipMore.focus();}});
-        exportGroup.append(copy, searchToggle, firstSeparator, download, formatWrap, versionSeparator, archive, zipWrap, paletteSeparator, cancelArchive, archiveProgress);
+        const downloadGroup = toolSection(firstSeparator, download, formatWrap);
+        const archiveGroup = toolSection(versionSeparator, archive, zipWrap, cancelArchive);
+        const displayGroup = toolSection(displaySeparator);
+        exportGroup.append(copy, searchToggle, downloadGroup, archiveGroup, displayGroup, archiveProgress);
+        const readingActions = document.createElement('span');
+        readingActions.className = 'gf-code-tools-actions gf-code-reading-actions';
+        const wrapLabel = controls.querySelector('label[for="wrap-lines"]');
+        (wrapLabel || toggle).after(readingActions);
+        const mobileCodeTools = window.matchMedia?.('(max-width: 800px)');
+        const placeReadingActions = () => {
+            if (mobileCodeTools?.matches) readingActions.append(copy, searchToggle);
+            else downloadGroup.before(copy, searchToggle);
+        };
+        placeReadingActions();
+        mobileCodeTools?.addEventListener?.('change', placeReadingActions);
         actions.append(exportGroup, status);
         const search = document.createElement('div'); search.id = 'gf-code-search'; search.className = 'gf-code-search'; search.setAttribute('role', 'search'); search.hidden = true;
         const input = document.createElement('input'); input.type = 'search'; input.className = 'gf-code-search-input';
@@ -4509,7 +4548,7 @@ License: BSD 3-Clause
         search.append(input, count, caseToggle, lineToggle, previous, next, closeSearch);
         const searchAnchor = document.createElement('div'); searchAnchor.className = 'gf-code-search-anchor'; searchAnchor.appendChild(search);
         pre.parentElement.insertBefore(searchAnchor, pre);
-        workspace = initCodeWorkspace({ pre, group: exportGroup, locale, labels, versionBefore:versionSeparator, onCodeChange: () => { searchRun++; clearTimeout(searchTimer); clearHighlights(); ranges = []; matchOffsets = []; searchText = ''; searchNodes = []; searchTimer = 0; current = -1; if (!search.hidden && input.value) runSearch(); else showMatch(false); } });
+        workspace = initCodeWorkspace({ pre, group: exportGroup, downloadGroup, displayGroup, locale, labels, onCodeChange: () => { searchRun++; clearTimeout(searchTimer); clearHighlights(); ranges = []; matchOffsets = []; searchText = ''; searchNodes = []; searchTimer = 0; current = -1; if (!search.hidden && input.value) runSearch(); else showMatch(false); } });
         controls.appendChild(actions); controls.setAttribute('data-gfplus-code-tools', 'done');
     };
 
@@ -10547,10 +10586,234 @@ License: BSD 3-Clause
         }
     };
 
+    const LIGHTBOX_ACTION_LABELS = {
+        en: ['Download image', 'Copy image link', 'Copy image', 'Action completed', 'Could not complete this action', "Touch and hold the image, then choose Copy."],
+        fr: ['Télécharger l’image', 'Copier le lien de l’image', 'Copier l’image', 'Action effectuée', 'Impossible d’effectuer cette action', "Appuie longuement sur l’image, puis choisis Copier."],
+        'fr-CA': ['Télécharger l’image', 'Copier le lien de l’image', 'Copier l’image', 'Opération terminée', 'Impossible de terminer l’opération', "Appuie longuement sur l’image, puis choisis Copier."],
+        es: ['Descargar imagen', 'Copiar enlace de la imagen', 'Copiar imagen', 'Acción completada', 'No se pudo completar la acción', "Mantén pulsada la imagen y elige Copiar."],
+        'es-419': ['Descargar imagen', 'Copiar enlace de la imagen', 'Copiar imagen', 'Listo', 'No se pudo completar la acción', "Mantén pulsada la imagen y elige Copiar."],
+        de: ['Bild herunterladen', 'Bildlink kopieren', 'Bild kopieren', 'Aktion abgeschlossen', 'Aktion fehlgeschlagen', "Halte das Bild gedrückt und wähle Kopieren."],
+        it: ['Scarica immagine', 'Copia il link dell’immagine', 'Copia immagine', 'Operazione completata', 'Impossibile completare l’operazione', "Tieni premuta l’immagine, poi scegli Copia."],
+        pt: ['Transferir imagem', 'Copiar ligação da imagem', 'Copiar imagem', 'Ação concluída', 'Não foi possível concluir a ação', "Mantenha a imagem pressionada e escolha Copiar."],
+        'pt-BR': ['Baixar imagem', 'Copiar link da imagem', 'Copiar imagem', 'Ação concluída', 'Não foi possível concluir a ação', "Mantenha a imagem pressionada e escolha Copiar."],
+        ru: ['Скачать изображение', 'Копировать ссылку на изображение', 'Копировать изображение', 'Готово', 'Не удалось выполнить действие', "Нажмите и удерживайте изображение, затем выберите «Копировать»."],
+        ja: ['画像をダウンロード', '画像リンクをコピー', '画像をコピー', '完了しました', '操作を完了できませんでした', "画像を長押しして「コピー」を選択します。"],
+        'zh-CN': ['下载图片', '复制图片链接', '复制图片', '操作完成', '无法完成操作', "长按图片，然后选择「复制」。"],
+        'zh-TW': ['下載圖片', '複製圖片連結', '複製圖片', '操作完成', '無法完成操作', "長按圖片，再選擇「複製」。"],
+        ar: ['تنزيل الصورة', 'نسخ رابط الصورة', 'نسخ الصورة', 'اكتمل الإجراء', 'تعذّر إكمال الإجراء', "اضغط مطولًا على الصورة، ثم اختر نسخ."],
+        hi: ['छवि डाउनलोड करें', 'छवि का लिंक कॉपी करें', 'छवि कॉपी करें', 'कार्रवाई पूरी हुई', 'कार्रवाई पूरी नहीं हो सकी', "छवि को दबाकर रखें, फिर कॉपी चुनें।"],
+        bn: ['ছবি ডাউনলোড করুন', 'ছবির লিংক কপি করুন', 'ছবি কপি করুন', 'কাজ সম্পন্ন', 'কাজটি সম্পন্ন করা যায়নি', "ছবিটি চেপে ধরে রাখুন, তারপর কপি বেছে নিন।"],
+        ur: ['تصویر ڈاؤن لوڈ کریں', 'تصویر کا لنک کاپی کریں', 'تصویر کاپی کریں', 'عمل مکمل ہوا', 'عمل مکمل نہیں ہو سکا', "تصویر کو دبا کر رکھیں، پھر کاپی منتخب کریں۔"],
+        ml: ['ചിത്രം ഡൗൺലോഡ് ചെയ്യുക', 'ചിത്രത്തിന്റെ ലിങ്ക് പകർത്തുക', 'ചിത്രം പകർത്തുക', 'പൂർത്തിയായി', 'പ്രവർത്തനം പൂർത്തിയാക്കാനായില്ല', "ചിത്രത്തിൽ അമർത്തിപ്പിടിച്ച് പകർത്തുക തിരഞ്ഞെടുക്കുക."],
+        ko: ['이미지 다운로드', '이미지 링크 복사', '이미지 복사', '작업 완료', '작업을 완료할 수 없습니다', "이미지를 길게 누른 다음 복사를 선택하세요."],
+        tr: ['Görseli indir', 'Görsel bağlantısını kopyala', 'Görseli kopyala', 'İşlem tamamlandı', 'İşlem tamamlanamadı', "Görsele basılı tutup Kopyala’yı seçin."],
+        pl: ['Pobierz obraz', 'Kopiuj link do obrazu', 'Kopiuj obraz', 'Gotowe', 'Nie udało się wykonać operacji', "Przytrzymaj obraz, a następnie wybierz Kopiuj."],
+        nl: ['Afbeelding downloaden', 'Afbeeldingslink kopiëren', 'Afbeelding kopiëren', 'Voltooid', 'De actie kon niet worden voltooid', "Houd de afbeelding ingedrukt en kies Kopieer."],
+        sv: ['Ladda ned bilden', 'Kopiera bildlänken', 'Kopiera bilden', 'Klart', 'Åtgärden kunde inte slutföras', "Håll fingret på bilden och välj Kopiera."],
+        ro: ['Descarcă imaginea', 'Copiază linkul imaginii', 'Copiază imaginea', 'Acțiune finalizată', 'Acțiunea nu a putut fi finalizată', "Ține apăsat pe imagine, apoi alege Copiază."],
+        vi: ['Tải ảnh xuống', 'Sao chép liên kết ảnh', 'Sao chép ảnh', 'Đã hoàn tất', 'Không thể hoàn tất thao tác', "Nhấn giữ ảnh, rồi chọn Sao chép."],
+        id: ['Unduh gambar', 'Salin tautan gambar', 'Salin gambar', 'Selesai', 'Tindakan tidak dapat diselesaikan', "Tekan lama gambar, lalu pilih Salin."],
+        ms: ['Muat turun imej', 'Salin pautan imej', 'Salin imej', 'Selesai', 'Tindakan tidak dapat diselesaikan', "Tekan lama pada imej, kemudian pilih Salin."],
+        be: ['Спампаваць выяву', 'Скапіяваць спасылку на выяву', 'Скапіяваць выяву', 'Гатова', 'Не ўдалося выканаць дзеянне', "Націсніце і ўтрымлівайце выяву, затым выберыце «Капіяваць»."],
+        nb: ['Last ned bildet', 'Kopier bildelenken', 'Kopier bildet', 'Ferdig', 'Kunne ikke fullføre handlingen', "Trykk og hold på bildet, og velg Kopier."],
+        bg: ['Изтегляне на изображението', 'Копиране на връзката към изображението', 'Копиране на изображението', 'Готово', 'Действието не можа да бъде завършено', "Натиснете и задръжте изображението, след което изберете „Копиране“."],
+        hr: ['Preuzmi sliku', 'Kopiraj poveznicu slike', 'Kopiraj sliku', 'Gotovo', 'Radnju nije bilo moguće dovršiti', "Dodirni i zadrži sliku, zatim odaberi Kopiraj."],
+        cs: ['Stáhnout obrázek', 'Zkopírovat odkaz na obrázek', 'Zkopírovat obrázek', 'Hotovo', 'Akci se nepodařilo dokončit', "Podržte prst na obrázku a vyberte Kopírovat."],
+        da: ['Download billedet', 'Kopiér billedlinket', 'Kopiér billedet', 'Færdig', 'Handlingen kunne ikke fuldføres', "Tryk og hold på billedet, og vælg Kopiér."],
+        eo: ['Elŝuti bildon', 'Kopii bildligilon', 'Kopii bildon', 'Finite', 'Ne eblis plenumi la agon', "Tenu la fingron sur la bildo, poste elektu Kopii."],
+        fil: ['I-download ang larawan', 'Kopyahin ang link ng larawan', 'Kopyahin ang larawan', 'Tapos na', 'Hindi maisagawa ang aksyon', "Pindutin nang matagal ang larawan, tapos piliin ang Kopyahin."],
+        fi: ['Lataa kuva', 'Kopioi kuvan linkki', 'Kopioi kuva', 'Valmis', 'Toimintoa ei voitu suorittaa', "Pidä kuvaa painettuna ja valitse Kopioi."],
+        ckb: ['داگرتنی وێنە', 'لەبەرگرتنەوەی بەستەری وێنە', 'لەبەرگرتنەوەی وێنە', 'تەواو بوو', 'کردارەکە تەواو نەبوو', "پەنجە لەسەر وێنەکە ڕابگرە، پاشان لەبەرگرتنەوە هەڵبژێرە."],
+        ka: ['სურათის ჩამოტვირთვა', 'სურათის ბმულის კოპირება', 'სურათის კოპირება', 'მოქმედება დასრულდა', 'მოქმედება ვერ დასრულდა', "ხანგრძლივად შეეხეთ სურათს და აირჩიეთ კოპირება."],
+        el: ['Λήψη εικόνας', 'Αντιγραφή συνδέσμου εικόνας', 'Αντιγραφή εικόνας', 'Η ενέργεια ολοκληρώθηκε', 'Η ενέργεια δεν ολοκληρώθηκε', "Πατήστε παρατεταμένα την εικόνα και επιλέξτε Αντιγραφή."],
+        he: ['הורדת תמונה', 'העתקת קישור לתמונה', 'העתקת תמונה', 'הפעולה הושלמה', 'לא ניתן להשלים את הפעולה', "לחצו לחיצה ארוכה על התמונה ובחרו העתקה."],
+        hu: ['Kép letöltése', 'Kép hivatkozásának másolása', 'Kép másolása', 'Kész', 'A művelet nem sikerült', "Tartsd lenyomva a képet, majd válaszd a Másolás lehetőséget."],
+        mr: ['प्रतिमा डाउनलोड करा', 'प्रतिमेची लिंक कॉपी करा', 'प्रतिमा कॉपी करा', 'कृती पूर्ण झाली', 'कृती पूर्ण करता आली नाही', "प्रतिमेवर दाबून ठेवा, मग कॉपी निवडा."],
+        sr: ['Preuzmi sliku', 'Kopiraj vezu do slike', 'Kopiraj sliku', 'Gotovo', 'Radnju nije bilo moguće dovršiti', "Dodirni i zadrži sliku, pa izaberi Kopiraj."],
+        sk: ['Stiahnuť obrázok', 'Skopírovať odkaz na obrázok', 'Skopírovať obrázok', 'Hotovo', 'Akciu sa nepodarilo dokončiť', "Podržte prst na obrázku a vyberte Kopírovať."],
+        ug: ['رەسىمنى چۈشۈرۈش', 'رەسىم ئۇلانمىسىنى كۆچۈرۈش', 'رەسىمنى كۆچۈرۈش', 'تاماملاندى', 'مەشغۇلات تاماملانمىدى', "رەسىمنى بېسىپ تۇرۇڭ، ئاندىن «كۆچۈرۈش»نى تاللاڭ."],
+        uk: ['Завантажити зображення', 'Копіювати посилання на зображення', 'Копіювати зображення', 'Готово', 'Не вдалося виконати дію', "Натисніть і утримуйте зображення, а потім виберіть «Копіювати»."],
+        th: ['ดาวน์โหลดรูปภาพ', 'คัดลอกลิงก์รูปภาพ', 'คัดลอกรูปภาพ', 'ดำเนินการแล้ว', 'ไม่สามารถดำเนินการให้เสร็จได้', "แตะรูปภาพค้างไว้ แล้วเลือกคัดลอก"]
+    };
+
+    const fetchLightboxImage = async (source) => {
+        const response = await fetch(source, { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('Image unavailable');
+        return response.blob();
+    };
+
+    const renderLightboxImageAsPng = async (image) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        canvas.getContext('2d').drawImage(image, 0, 0);
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(png => {
+                if (png) resolve(png);
+                else reject(new Error('PNG conversion failed'));
+            }, 'image/png');
+        });
+    };
+
+    const getLightboxClipboardImage = async (source, displayedImage) => {
+        const displayedSource = displayedImage?.currentSrc || displayedImage?.src;
+        if (displayedSource === source && displayedImage.complete && displayedImage.naturalWidth) {
+            const url = new URL(source);
+            if (url.origin === location.origin || url.protocol === 'data:' || displayedImage.crossOrigin != null) {
+                try {
+                    return await renderLightboxImageAsPng(displayedImage);
+                } catch {
+                    // Retry with the original image if the displayed image cannot be read.
+                }
+            }
+        }
+        const blob = await fetchLightboxImage(source);
+        if (blob.type === 'image/png') return blob;
+
+        const objectUrl = URL.createObjectURL(blob);
+        try {
+            const image = new Image();
+            image.src = objectUrl;
+            await image.decode();
+            return await renderLightboxImageAsPng(image);
+        } finally {
+            URL.revokeObjectURL(objectUrl);
+        }
+    };
+
+    const downloadLightboxImage = async (source) => {
+        const blob = await fetchLightboxImage(source);
+        const sourceUrl = new URL(source);
+        const filename = /^https?:$/.test(sourceUrl.protocol) ? sourceUrl.pathname.split('/').pop() : '';
+        const extension = blob.type.match(/^image\/([\w.+-]+)$/)?.[1];
+        const fallbackName = extension ? `image.${extension === 'svg+xml' ? 'svg' : extension}` : 'image';
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        try { link.download = filename ? decodeURIComponent(filename) : fallbackName; }
+        catch { link.download = fallbackName; }
+        document.body.append(link);
+        try {
+            link.click();
+        } finally {
+            link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+        }
+    };
+
+    const lightboxClipboardCache = new WeakMap();
+
+    const prepareLightboxClipboardImage = (source, image) => {
+        const existing = lightboxClipboardCache.get(image);
+        if (existing?.source === source) return existing;
+
+        const entry = { source, blob: null };
+        entry.pending = Promise.resolve().then(() => getLightboxClipboardImage(source, image)).then(blob => {
+            entry.blob = blob;
+            return blob;
+        });
+        lightboxClipboardCache.set(image, entry);
+        void entry.pending.catch(() => {
+            if (lightboxClipboardCache.get(image) === entry) lightboxClipboardCache.delete(image);
+        });
+        return entry;
+    };
+
+    const copyLightboxImage = (source, displayedImage) => {
+        const clipboardWindow = typeof pageWindow.ClipboardItem === 'function' && pageWindow.navigator.clipboard?.write
+            ? pageWindow
+            : window;
+        const clipboard = clipboardWindow.navigator.clipboard;
+        if (!clipboard?.write || typeof clipboardWindow.ClipboardItem !== 'function') {
+            throw new Error('Image clipboard unavailable');
+        }
+        const { blob, pending } = prepareLightboxClipboardImage(source, displayedImage);
+        const png = blob || clipboardWindow.Promise.resolve(pending);
+        if (!blob) void png.catch(() => {});
+        return clipboard.write([new clipboardWindow.ClipboardItem({ 'image/png': png })]);
+    };
+
+    const bindLightboxActions = (lightbox) => {
+        if (lightbox.querySelector('.gfplus-lightbox-actions')) return;
+        const close = lightbox.querySelector('.lum-close-button');
+        if (!close?.parentElement) return;
+
+        const locale = getCurrentLocale();
+        const [download, copyLink, copyImage, done, failed, holdToCopy] =
+            LIGHTBOX_ACTION_LABELS[locale] || LIGHTBOX_ACTION_LABELS[locale.split('-')[0]] || LIGHTBOX_ACTION_LABELS.en;
+        const toolbar = document.createElement('div');
+        toolbar.className = 'gfplus-lightbox-actions';
+        const feedback = document.createElement('span');
+        feedback.className = 'gfplus-lightbox-action-status';
+        feedback.setAttribute('role', 'status');
+        let feedbackTimer = 0;
+        const notify = (message, success, persistent = false) => {
+            feedback.textContent = message;
+            feedback.classList.toggle('gfplus-lightbox-action-success', success);
+            clearTimeout(feedbackTimer);
+            if (!persistent) feedbackTimer = window.setTimeout(() => { feedback.textContent = ''; }, 2200);
+        };
+
+        const actions = [
+            [download, 'M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4', downloadLightboxImage],
+            [copyLink, 'M10 13a4 4 0 0 0 6 0l4-4a4 4 0 0 0-6-6l-2 2m2 6a4 4 0 0 0-6 0l-4 4a4 4 0 0 0 6 6l2-2', source => navigator.clipboard.writeText(source)],
+            [copyImage, 'M10 8h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zM16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2', copyLightboxImage]
+        ];
+
+        for (const [label, path, run] of actions) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.title = label;
+            button.setAttribute('aria-label', label);
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            icon.setAttribute('viewBox', '0 0 24 24');
+            icon.setAttribute('aria-hidden', 'true');
+            const shape = document.createElementNS(icon.namespaceURI, 'path');
+            shape.setAttribute('d', path);
+            icon.append(shape);
+            button.append(icon);
+            let iconTimer = 0;
+            const isImageCopy = run === copyLightboxImage;
+            if (isImageCopy) {
+                button.addEventListener('pointerdown', (event) => {
+                    if (event.pointerType !== 'touch' || !navigator.clipboard?.write) return;
+                    const image = lightbox.querySelector('.lum-img, .lum-lightbox-inner img, img');
+                    const source = image?.currentSrc || image?.src;
+                    if (source) prepareLightboxClipboardImage(source, image);
+                }, { passive: true });
+            }
+            button.addEventListener('click', async (event) => {
+                event.stopPropagation();
+                const image = lightbox.querySelector('.lum-img, .lum-lightbox-inner img, img');
+                const source = image?.currentSrc || image?.src;
+                if (!source || button.getAttribute('aria-busy') === 'true') return;
+                clearTimeout(iconTimer);
+                shape.setAttribute('d', path);
+                try {
+                    const pending = run(source, image);
+                    button.setAttribute('aria-busy', 'true');
+                    await pending;
+                    shape.setAttribute('d', 'm5 12 4 4L19 6');
+                    iconTimer = window.setTimeout(() => shape.setAttribute('d', path), 1600);
+                    notify(done, true);
+                } catch {
+                    const nativeCopy = isImageCopy && (event.pointerType === 'touch' || window.matchMedia?.('(any-pointer: coarse)').matches);
+                    notify(nativeCopy ? holdToCopy : failed, false, nativeCopy);
+                } finally {
+                    button.removeAttribute('aria-busy');
+                }
+            });
+            toolbar.append(button);
+        }
+        toolbar.append(feedback);
+        close.before(toolbar);
+    };
+
     const updateLightboxScrollLock = () => {
-        const lightboxOpen = Boolean(document.querySelector('.lum-lightbox.lum-open'));
-        root.classList.toggle(LIGHTBOX_SCROLL_LOCK_CLASS, lightboxOpen);
-        if (lightboxOpen) {
+        const lightbox = document.querySelector('.lum-lightbox.lum-open');
+        root.classList.toggle(LIGHTBOX_SCROLL_LOCK_CLASS, Boolean(lightbox));
+        if (lightbox) {
+            bindLightboxActions(lightbox);
             bindLightboxImageZoom();
         } else {
             resetLightboxImageZoom();
@@ -10566,6 +10829,24 @@ License: BSD 3-Clause
     };
 
     const initLightboxScrollLock = () => {
+        const style = document.createElement('style');
+        style.textContent = `
+            .lum-lightbox .gfplus-lightbox-actions { position:absolute; z-index:4; top:12px; left:50%; transform:translateX(-50%); display:flex; gap:5px; }
+            .lum-lightbox .gfplus-lightbox-actions button { display:grid; place-items:center; box-sizing:border-box; flex:none; width:40px; height:40px; min-width:0; min-height:0; padding:0 !important; border:1px solid #fff3; border-radius:50%; background:#17171799 !important; color:#fff !important; cursor:pointer; box-shadow:none !important; transform:none !important; transition:background-color .16s ease, border-color .16s ease; }
+            .lum-lightbox .gfplus-lightbox-actions button:hover { background:#171717d9 !important; border-color:#fff6; }
+            .lum-lightbox .gfplus-lightbox-actions button:focus-visible { outline:2px solid #fff; outline-offset:2px; }
+            .lum-lightbox .gfplus-lightbox-actions button[aria-busy="true"] { opacity:.65; cursor:wait; }
+            .gfplus-lightbox-actions svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+            .gfplus-lightbox-action-status { position:absolute; top:calc(100% + 6px); left:50%; transform:translateX(-50%); width:max-content; max-width:min(220px, calc(100vw - 48px)); box-sizing:border-box; padding:4px 8px; border-radius:5px; background:#171717e0; color:#fff; font-size:.75rem; line-height:1.35; overflow-wrap:anywhere; }
+            .gfplus-lightbox-action-status.gfplus-lightbox-action-success { width:1px; height:1px; padding:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+            .gfplus-lightbox-action-status:empty { visibility:hidden; }
+            .lum-lightbox img.gfplus-lightbox-zoomable { -webkit-touch-callout:default !important; }
+            @media (max-width:600px) {
+                .lum-lightbox .gfplus-lightbox-actions { left:12px; transform:none; gap:4px; }
+                .gfplus-lightbox-action-status { left:0; transform:none; }
+            }
+        `;
+        appendStyle(style);
         updateLightboxScrollLock();
 
         if (!lightboxScrollPreventInitialized) {
