@@ -97,7 +97,7 @@
 
 // @icon         https://raw.githubusercontent.com/DREwX-code/greasyfork-premium/refs/heads/main/assets/icon/logo-greasyfork-premium.png
 // @namespace    https://github.com/DREwX-code/greasyfork-premium
-// @version      1.4.1
+// @version      1.4.2
 // @author       Dℝ∃wX
 // @copyright    2026 DℝᴇwX
 // @license      Apache-2.0
@@ -106,10 +106,13 @@
 // @match        https://sleazyfork.org/*
 // @run-at       document-start
 // @require      https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
-// @require      https://update.greasyfork.org/scripts/593322/1958491/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
-// @require      https://update.greasyfork.org/scripts/593320/1958497/GreasyFork%20Premium%20-%20Classic%20Theme.js
-// @require      https://update.greasyfork.org/scripts/593323/1958492/GreasyFork%20Premium%20-%20Full%20Dark%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593322/2014220/GreasyFork%20Premium%20-%20Chalkboard%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593320/2014179/GreasyFork%20Premium%20-%20Classic%20Theme.js
+// @require      https://update.greasyfork.org/scripts/593323/2014222/GreasyFork%20Premium%20-%20Full%20Dark%20Theme.js
 // @grant        unsafeWindow
+// @grant        GM_xmlhttpRequest
+// @connect      update.greasyfork.org
+// @connect      update.sleazyfork.org
 
 // @downloadURL https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.user.js
 // @updateURL https://update.greasyfork.org/scripts/562938/GreasyFork%20Premium.meta.js
@@ -852,6 +855,26 @@ License: BSD 3-Clause
     chalkboardThemeStyle.textContent = CHALKBOARD_CSS;
     appendStyle(chalkboardThemeStyle);
 
+    // Cloudflare verification pages use their own markup and may inherit the active theme.
+    const challengeContrastStyle = document.createElement('style');
+    challengeContrastStyle.textContent = `
+        body:has(.main-wrapper[role="main"] .main-content input[name="cf-turnstile-response"]) {
+            background: var(--overall-background-color, #fff) !important;
+            color: var(--overall-text-color, #202124) !important;
+        }
+        body:has(.main-wrapper[role="main"] .main-content input[name="cf-turnstile-response"]) :is(.main-wrapper, .main-content, .footer, .footer-inner, .footer-wrapper) {
+            background-color: transparent;
+            color: var(--overall-text-color, #202124) !important;
+        }
+        body:has(.main-wrapper[role="main"] .main-content input[name="cf-turnstile-response"]) :is(.main-content h1, .main-content h2, .main-content p, .main-content li, .footer-text, .ray-id, .ray-id code) {
+            color: var(--overall-text-color, #202124) !important;
+        }
+        body:has(.main-wrapper[role="main"] .main-content input[name="cf-turnstile-response"]) :is(.main-content a, .footer a) {
+            color: var(--link-color, #165aab) !important;
+        }
+    `;
+    appendStyle(challengeContrastStyle);
+
     const SCROLLBAR_CSS = `
         :root {
             scrollbar-color: var(--gfplus-scrollbar-thumb-start) var(--gfplus-scrollbar-track-start);
@@ -946,20 +969,31 @@ License: BSD 3-Clause
         margin-left: auto;
     }
 
+    .gf-script-extra-wrapper { grid-column: 1 / -1; min-width: 0; }
+    .gf-script-detail-placeholder { display: inline-block; flex: none; }
+    .gf-script-detail-button.gf-script-detail-floating {
+        position: fixed;
+        z-index: 100;
+        margin: 0;
+    }
+
+    #nav-user-info .notification-widget {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: content-box;
+        width: auto;
+        min-width: 1em;
+        line-height: 1;
+        vertical-align: middle;
+    }
+
     .gf-script-personal-actions {
         display: inline-flex;
         align-items: center;
         flex: 0 0 auto;
         flex-wrap: nowrap;
         gap: .45rem;
-    }
-
-    .gf-script-install-button[data-gfplus-icon-only="true"] {
-        width: 2.2rem;
-        min-width: 2.2rem;
-        padding-inline: 0;
-        font-size: 0;
-        gap: 0;
     }
 
     #install-area > .gf-script-personal-actions {
@@ -983,6 +1017,10 @@ License: BSD 3-Clause
     }
 
     @media screen and (max-width: 800px) {
+        #install-area > .gf-script-personal-actions {
+            gap: 0;
+        }
+
         #gf-mobile-user-row {
             display: grid;
             grid-template-columns: minmax(0, 1fr) auto;
@@ -1008,6 +1046,10 @@ License: BSD 3-Clause
         }
         .sidebarred > .sidebar, .sidebarred .open-sidebar {
             touch-action: pan-y;
+        }
+        .sidebarred .open-sidebar.sidebar-collapsed {
+            right: 0;
+            margin-right: 0;
         }
         .sidebarred > .sidebar[data-gfplus-swipe-active] {
             transform: translate3d(var(--gfplus-sidebar-swipe-x, 0px), 0, 0);
@@ -1215,6 +1257,41 @@ License: BSD 3-Clause
         display: none;
     }
 
+    @media (min-width: 700px) {
+        html:not([data-gfplus-density="compact"]) .script-list .script-meta-block:has(.gf-script-date-toggle) {
+            max-width: 100%;
+            column-count: 1;
+        }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) {
+            display: grid;
+            grid-template-columns: max-content minmax(0, 1fr) max-content minmax(0, 1fr);
+            column-gap: .75rem;
+            align-items: center;
+        }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) dt:nth-of-type(-n+3) { grid-column: 1; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) dd:nth-of-type(-n+3) { grid-column: 2; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) dt:nth-of-type(n+4) { grid-column: 3; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) dd:nth-of-type(n+4) { grid-column: 4; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) :is(dt, dd):nth-of-type(3n+1) { grid-row: 1; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) :is(dt, dd):nth-of-type(3n+2) { grid-row: 2; }
+        html:not([data-gfplus-density="compact"]) .script-list .inline-script-stats:has(.gf-script-date-toggle) :is(dt, dd):nth-of-type(3n) { grid-row: 3; }
+    }
+    .gf-script-date-toggle[role="button"] { cursor: pointer; border-radius: 3px; }
+    .gf-script-date-toggle[role="button"]:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+    .gf-script-date-long, .gf-script-date-full { display: none; }
+    html[data-gfplus-density="detailed"] .gf-script-date-toggle > relative-time,
+    html[data-gfplus-density="comfortable"] .gf-script-date-toggle[data-date-format="1"] > relative-time,
+    html[data-gfplus-density="comfortable"] .gf-script-date-toggle[data-date-format="2"] > relative-time { display: none !important; }
+    html[data-gfplus-density="detailed"] .gf-script-date-full,
+    html[data-gfplus-density="comfortable"] .gf-script-date-toggle[data-date-format="1"] .gf-script-date-long,
+    html[data-gfplus-density="comfortable"] .gf-script-date-toggle[data-date-format="2"] .gf-script-date-full { display: inline; }
+
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle > relative-time { display: none !important; }
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle[data-date-format="0"] > relative-time { display: inline-block !important; }
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle .gf-script-date-long,
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle .gf-script-date-full { display: none; }
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle[data-date-format="1"] .gf-script-date-long,
+    html[data-gfplus-density] #script-stats .gf-script-date-toggle[data-date-format="2"] .gf-script-date-full { display: inline; }
     html[data-gfplus-density="compact"] .script-list .gf-script-card-actions {
         grid-column: 2;
         margin-top: .25rem;
@@ -1244,15 +1321,11 @@ License: BSD 3-Clause
         height: 1.9rem;
     }
 
+    html[data-gfplus-density="compact"] .script-list .gf-script-install-button,
     html[data-gfplus-density="compact"] .script-list .gf-script-detail-button,
     html[data-gfplus-density="compact"] .script-list .gf-script-note-button {
         width: 1.9rem;
         min-width: 1.9rem;
-    }
-
-    html[data-gfplus-density="compact"] .script-list .gf-script-install-button {
-        padding: 0 .72rem;
-        font-size: .84rem;
     }
 
     html[data-gfplus-density="detailed"] .script-list > li:not(.ad-entry):not(.gf-script-extra-info) {
@@ -2100,6 +2173,13 @@ License: BSD 3-Clause
         </div>
     `;
 
+        const modeLocale = getCurrentLocale();
+        const modeLabels = THEME_MODE_I18N[modeLocale] || THEME_MODE_I18N[modeLocale.split('-')[0]] || THEME_MODE_I18N.en;
+        ['light', 'system', 'dark'].forEach((mode, index) => {
+            const button = shadow.querySelector(`button[data-theme-value="${mode}"]`);
+            button.setAttribute('aria-label', modeLabels[index]);
+            button.title = modeLabels[index];
+        });
         const themeLabel = themeTranslations.themeToggle || 'Toggle theme';
         const group = shadow.querySelector('.theme-toggle');
         group.setAttribute('aria-label', themeLabel);
@@ -2785,19 +2865,119 @@ License: BSD 3-Clause
         }
     };
 
+    const THEME_MODE_I18N = {
+        "en": ["Light", "System", "Dark"],
+        "fr": ["Clair", "Système", "Sombre"],
+        "es": ["Claro", "Sistema", "Oscuro"],
+        "de": ["Hell", "System", "Dunkel"],
+        "it": ["Chiaro", "Sistema", "Scuro"],
+        "pt": ["Claro", "Sistema", "Escuro"],
+        "ru": ["Светлая", "Системная", "Тёмная"],
+        "ja": ["ライト", "システム", "ダーク"],
+        "zh-CN": ["浅色", "跟随系统", "深色"],
+        "zh-TW": ["淺色", "跟隨系統", "深色"],
+        "ar": ["فاتح", "النظام", "داكن"],
+        "hi": ["हल्का", "सिस्टम", "गहरा"],
+        "bn": ["হালকা", "সিস্টেম", "গাঢ়"],
+        "ur": ["ہلکا", "سسٹم", "گہرا"],
+        "ml": ["ലൈറ്റ്", "സിസ്റ്റം", "ഡാർക്ക്"],
+        "ko": ["밝게", "시스템", "어둡게"],
+        "tr": ["Açık", "Sistem", "Koyu"],
+        "pl": ["Jasny", "Systemowy", "Ciemny"],
+        "nl": ["Licht", "Systeem", "Donker"],
+        "sv": ["Ljust", "System", "Mörkt"],
+        "ro": ["Deschis", "Sistem", "Întunecat"],
+        "vi": ["Sáng", "Hệ thống", "Tối"],
+        "id": ["Terang", "Sistem", "Gelap"],
+        "ms": ["Cerah", "Sistem", "Gelap"],
+        "be": ["Светлая", "Сістэмная", "Цёмная"],
+        "nb": ["Lyst", "System", "Mørkt"],
+        "bg": ["Светла", "Системна", "Тъмна"],
+        "hr": ["Svijetlo", "Sustav", "Tamno"],
+        "cs": ["Světlý", "Systém", "Tmavý"],
+        "da": ["Lyst", "System", "Mørkt"],
+        "eo": ["Hela", "Sistemo", "Malhela"],
+        "fil": ["Maliwanag", "System", "Madilim"],
+        "fi": ["Vaalea", "Järjestelmä", "Tumma"],
+        "ckb": ["ڕوون", "سیستەم", "تاریک"],
+        "ka": ["ღია", "სისტემური", "მუქი"],
+        "el": ["Φωτεινό", "Συστήματος", "Σκοτεινό"],
+        "he": ["בהיר", "מערכת", "כהה"],
+        "hu": ["Világos", "Rendszer", "Sötét"],
+        "mr": ["उजळ", "सिस्टम", "गडद"],
+        "sr": ["Svetlo", "Sistem", "Tamno"],
+        "sk": ["Svetlý", "Systém", "Tmavý"],
+        "ug": ["يورۇق", "سىستېما", "قاراڭغۇ"],
+        "uk": ["Світла", "Системна", "Темна"],
+        "th": ["สว่าง", "ระบบ", "มืด"],
+    };
+
+    const ACCESSIBILITY_I18N = {
+        "en": ["Formatting toolbar", "Expand", "Collapse"],
+        "fr": ["Outils de mise en forme", "Déplier", "Replier"],
+        "es": ["Barra de formato", "Expandir", "Contraer"],
+        "de": ["Formatierungswerkzeuge", "Ausklappen", "Einklappen"],
+        "it": ["Barra di formattazione", "Espandi", "Comprimi"],
+        "pt": ["Barra de formatação", "Expandir", "Recolher"],
+        "ru": ["Панель форматирования", "Развернуть", "Свернуть"],
+        "ja": ["書式設定ツールバー", "展開", "折りたたむ"],
+        "zh-CN": ["格式工具栏", "展开", "折叠"],
+        "zh-TW": ["格式工具列", "展開", "收合"],
+        "ar": ["شريط أدوات التنسيق", "توسيع", "طي"],
+        "hi": ["फ़ॉर्मैटिंग टूलबार", "विस्तृत करें", "समेटें"],
+        "bn": ["ফরম্যাটিং টুলবার", "প্রসারিত করুন", "সংকুচিত করুন"],
+        "ur": ["فارمیٹنگ ٹول بار", "پھیلائیں", "سکیڑیں"],
+        "ml": ["ഫോർമാറ്റിംഗ് ടൂൾബാർ", "വികസിപ്പിക്കുക", "ചുരുക്കുക"],
+        "ko": ["서식 도구 모음", "펼치기", "접기"],
+        "tr": ["Biçimlendirme araç çubuğu", "Genişlet", "Daralt"],
+        "pl": ["Pasek formatowania", "Rozwiń", "Zwiń"],
+        "nl": ["Opmaakwerkbalk", "Uitklappen", "Inklappen"],
+        "sv": ["Formateringsverktyg", "Expandera", "Fäll ihop"],
+        "ro": ["Bară de formatare", "Extinde", "Restrânge"],
+        "vi": ["Thanh công cụ định dạng", "Mở rộng", "Thu gọn"],
+        "id": ["Bilah alat pemformatan", "Perluas", "Ciutkan"],
+        "ms": ["Bar alat pemformatan", "Kembangkan", "Runtuhkan"],
+        "be": ["Панэль фарматавання", "Разгарнуць", "Згарнуць"],
+        "nb": ["Formateringsverktøy", "Utvid", "Trekk sammen"],
+        "bg": ["Лента за форматиране", "Разгъване", "Свиване"],
+        "hr": ["Alatna traka za oblikovanje", "Proširi", "Sažmi"],
+        "cs": ["Panel formátování", "Rozbalit", "Sbalit"],
+        "da": ["Formateringsværktøjer", "Udvid", "Fold sammen"],
+        "eo": ["Formatada ilobreto", "Malfermi", "Fermi"],
+        "fil": ["Toolbar sa pag-format", "Palawakin", "Paliitin"],
+        "fi": ["Muotoilutyökalut", "Laajenna", "Pienennä"],
+        "ckb": ["تووڵباری فۆرماتکردن", "فراوانکردن", "داخستن"],
+        "ka": ["ფორმატირების პანელი", "გაშლა", "ჩაკეცვა"],
+        "el": ["Γραμμή μορφοποίησης", "Ανάπτυξη", "Σύμπτυξη"],
+        "he": ["סרגל כלי עיצוב", "הרחבה", "צמצום"],
+        "hu": ["Formázási eszköztár", "Kibontás", "Összecsukás"],
+        "mr": ["स्वरूपन साधनपट्टी", "विस्तृत करा", "संक्षिप्त करा"],
+        "sr": ["Traka za formatiranje", "Proširi", "Skupi"],
+        "sk": ["Panel formátovania", "Rozbaliť", "Zbaliť"],
+        "ug": ["فورماتلاش قورال بالداق", "كېڭەيتىش", "يىغىش"],
+        "uk": ["Панель форматування", "Розгорнути", "Згорнути"],
+        "th": ["แถบเครื่องมือจัดรูปแบบ", "ขยาย", "ย่อ"],
+    };
+    const getAccessibilityI18n = () => {
+        const locale = getCurrentLocale();
+        return ACCESSIBILITY_I18N[locale] || ACCESSIBILITY_I18N[locale.split('-')[0]] || ACCESSIBILITY_I18N.en;
+    };
+
     const getSidebarGroupLabel = (group) => {
         const textNode = Array.from(group.childNodes).find((node) => {
             return node.nodeType === Node.TEXT_NODE && node.textContent.trim();
         });
-        return textNode?.textContent.trim().replace(/\s*:\s*$/, '') || group.id || 'ce groupe';
+        return textNode?.textContent.trim().replace(/\s*:\s*$/, '') || group.id || '';
     };
 
     const updateSidebarGroupToggle = (group, button, collapsed) => {
         const label = getSidebarGroupLabel(group);
         group.setAttribute('data-gfplus-collapsed', String(collapsed));
         button.setAttribute('aria-expanded', String(!collapsed));
-        button.setAttribute('aria-label', collapsed ? `Déplier ${label}` : `Replier ${label}`);
-        button.title = collapsed ? `Déplier ${label}` : `Replier ${label}`;
+        const [, expandLabel, collapseLabel] = getAccessibilityI18n();
+        const actionLabel = [collapsed ? expandLabel : collapseLabel, label].filter(Boolean).join(' ');
+        button.setAttribute('aria-label', actionLabel);
+        button.title = actionLabel;
         button.innerHTML = collapsed
             ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>'
             : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 15-6-6-6 6"></path></svg>';
@@ -2993,14 +3173,23 @@ License: BSD 3-Clause
                 name.className = 'gf-set-script-name';
                 name.textContent = title;
 
+                const fallbackLogo = createScriptLogoElement();
+                row.appendChild(fallbackLogo);
+                void fetchScriptMetadata(getScriptLogoSourceUrl(id)).then((metadata) => {
+                    if (row.isConnected && metadata?.iconUrl) {
+                        const logo = createScriptLogoElement(metadata.iconUrl);
+                        logo.addEventListener('error', () => logo.replaceWith(fallbackLogo), { once: true });
+                        fallbackLogo.replaceWith(logo);
+                    }
+                });
+
                 const removeButton = document.createElement('button');
                 removeButton.type = 'button';
                 removeButton.className = 'gf-set-script-remove';
                 removeButton.setAttribute('aria-label', `${i18n.removeScript}: ${title}`);
                 removeButton.innerHTML = `
                     <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M18 6 6 18"></path>
-                        <path d="m6 6 12 12"></path>
+                        <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15m-9 4v7m4-7v7"></path>
                     </svg>
                 `;
                 removeButton.addEventListener('click', () => {
@@ -3108,7 +3297,8 @@ License: BSD 3-Clause
             return 0;
         }
 
-        return normalized.split('\n').length;
+        // The final newline terminates the last line without adding a visible row.
+        return normalized.replace(/\n$/, '').split('\n').length;
     };
 
     const getCodeTextFromPre = (pre) => {
@@ -3127,7 +3317,7 @@ License: BSD 3-Clause
 
     const getRenderedCodeLineCount = (pre, fallbackCount) => {
         const codeEl = pre.querySelector('code.hljs');
-        if (!codeEl || !pre.classList.contains('wrap')) {
+        if (!fallbackCount || !codeEl || !pre.classList.contains('wrap')) {
             return fallbackCount;
         }
 
@@ -3150,11 +3340,12 @@ License: BSD 3-Clause
 
     const ensureLineNumbers = (pre, codeText) => {
         const lineCount = getRenderedCodeLineCount(pre, countCodeLines(codeText));
+        let numbersEl = Array.from(pre.children).find((child) => child.classList?.contains('hljs-line-numbers'));
         if (!lineCount) {
+            numbersEl?.remove();
             return;
         }
 
-        let numbersEl = Array.from(pre.children).find((child) => child.classList?.contains('hljs-line-numbers'));
         if (!numbersEl) {
             numbersEl = document.createElement('span');
             numbersEl.className = 'hljs-line-numbers';
@@ -3176,10 +3367,12 @@ License: BSD 3-Clause
         });
     };
 
+    let lineNumberFrame = 0;
     const scheduleLineNumberSync = () => {
-        requestAnimationFrame(() => {
+        if (lineNumberFrame) return;
+        lineNumberFrame = requestAnimationFrame(() => {
+            lineNumberFrame = 0;
             syncLineNumbers();
-            requestAnimationFrame(syncLineNumbers);
         });
     };
 
@@ -3189,14 +3382,7 @@ License: BSD 3-Clause
         const state = pre.getAttribute(HIGHLIGHT_ATTR);
         const highlightApi = getHighlightApi();
         const hasHljs = typeof highlightApi?.highlightElement === 'function';
-        if (state === 'done') {
-            const codeEl = pre.querySelector('code.hljs');
-            if (codeEl) {
-                ensureLineNumbers(pre, getCodeTextFromPre(pre));
-                pre.classList.add('gf-hljs');
-            }
-            return;
-        }
+        if (state === 'done') return;
 
         let codeEl = pre.querySelector('code.hljs');
         if (!codeEl) {
@@ -3206,7 +3392,8 @@ License: BSD 3-Clause
             }
 
             codeEl = document.createElement('code');
-            const lang = getHighlightLanguage(pre) || getHighlightLanguage(pre.querySelector('code'));
+            const lang = getHighlightLanguage(pre) || getHighlightLanguage(pre.querySelector('code')) ||
+                (pre.closest('#script-content') ? (/==UserStyle==/.test(codeText) ? 'css' : 'javascript') : null);
             codeEl.classList.add('hljs');
             if (lang) {
                 codeEl.classList.add(`language-${lang}`);
@@ -3226,7 +3413,7 @@ License: BSD 3-Clause
             pre.classList.add('gf-hljs');
         }
 
-        if (hasHljs) {
+        if (hasHljs && codeEl.textContent.length <= 500000) {
             const plainText = codeEl.textContent;
             try {
                 highlightApi.highlightElement(codeEl);
@@ -3252,8 +3439,1117 @@ License: BSD 3-Clause
         applyHighlightJs();
 
         const root = document.querySelector('#script-content') || document.body;
-        const observer = new MutationObserver(applyHighlightJs);
+        const observer = new MutationObserver((records) => {
+            const hasNewCode = records.some(record => Array.from(record.addedNodes).some(node => {
+                if (node.nodeType !== 1) return false;
+                return (node.matches('pre') && !node.hasAttribute(HIGHLIGHT_ATTR)) ||
+                    Boolean(node.querySelector('pre:not([data-gfplus-hljs])'));
+            }));
+            if (hasNewCode) applyHighlightJs();
+        });
         observer.observe(root, { childList: true, subtree: true });
+    };
+
+    const CODE_TOOLS_I18N = {
+        "en": ["Copy code", "Download code", "Copied", "Copy failed"],
+        "fr": ["Copier le code", "Télécharger le code", "Copié", "Échec de la copie"],
+        "es": ["Copiar código", "Descargar código", "Copiado", "Error al copiar"],
+        "de": ["Code kopieren", "Code herunterladen", "Kopiert", "Kopieren fehlgeschlagen"],
+        "it": ["Copia codice", "Scarica codice", "Copiato", "Copia non riuscita"],
+        "pt": ["Copiar código", "Baixar código", "Copiado", "Falha ao copiar"],
+        "ru": ["Копировать код", "Скачать код", "Скопировано", "Не удалось скопировать"],
+        "ja": ["コードをコピー", "コードをダウンロード", "コピーしました", "コピーできませんでした"],
+        "zh-CN": ["复制代码", "下载代码", "已复制", "复制失败"],
+        "zh-TW": ["複製程式碼", "下載程式碼", "已複製", "複製失敗"],
+        "ar": ["نسخ الشفرة", "تنزيل الشفرة", "تم النسخ", "فشل النسخ"],
+        "hi": ["कोड कॉपी करें", "कोड डाउनलोड करें", "कॉपी किया गया", "कॉपी विफल"],
+        "bn": ["কোড কপি করুন", "কোড ডাউনলোড করুন", "কপি হয়েছে", "কপি ব্যর্থ"],
+        "ur": ["کوڈ کاپی کریں", "کوڈ ڈاؤن لوڈ کریں", "کاپی ہوگیا", "کاپی ناکام"],
+        "ml": ["കോഡ് പകർത്തുക", "കോഡ് ഡൗൺലോഡ് ചെയ്യുക", "പകർത്തി", "പകർത്താനായില്ല"],
+        "ko": ["코드 복사", "코드 다운로드", "복사됨", "복사 실패"],
+        "tr": ["Kodu kopyala", "Kodu indir", "Kopyalandı", "Kopyalama başarısız"],
+        "pl": ["Kopiuj kod", "Pobierz kod", "Skopiowano", "Nie udało się skopiować"],
+        "nl": ["Code kopiëren", "Code downloaden", "Gekopieerd", "Kopiëren mislukt"],
+        "sv": ["Kopiera kod", "Ladda ner kod", "Kopierat", "Kopiering misslyckades"],
+        "ro": ["Copiază codul", "Descarcă codul", "Copiat", "Copierea a eșuat"],
+        "vi": ["Sao chép mã", "Tải mã xuống", "Đã sao chép", "Sao chép thất bại"],
+        "id": ["Salin kode", "Unduh kode", "Disalin", "Gagal menyalin"],
+        "ms": ["Salin kod", "Muat turun kod", "Disalin", "Gagal menyalin"],
+        "be": ["Скапіяваць код", "Спампаваць код", "Скапіявана", "Не ўдалося скапіяваць"],
+        "nb": ["Kopier kode", "Last ned kode", "Kopiert", "Kopiering mislyktes"],
+        "bg": ["Копиране на кода", "Изтегляне на кода", "Копирано", "Неуспешно копиране"],
+        "hr": ["Kopiraj kod", "Preuzmi kod", "Kopirano", "Kopiranje nije uspjelo"],
+        "cs": ["Kopírovat kód", "Stáhnout kód", "Zkopírováno", "Kopírování selhalo"],
+        "da": ["Kopiér kode", "Download kode", "Kopieret", "Kopiering mislykkedes"],
+        "eo": ["Kopii kodon", "Elŝuti kodon", "Kopiita", "Kopiado malsukcesis"],
+        "fil": ["Kopyahin ang code", "I-download ang code", "Nakopya", "Hindi nakopya"],
+        "fi": ["Kopioi koodi", "Lataa koodi", "Kopioitu", "Kopiointi epäonnistui"],
+        "ckb": ["کۆدەکە لەبەر بگرەوە", "کۆدەکە دابەزێنە", "لەبەرگیرایەوە", "لەبەرگرتنەوە سەرکەوتوو نەبوو"],
+        "ka": ["კოდის კოპირება", "კოდის ჩამოტვირთვა", "დაკოპირდა", "კოპირება ვერ მოხერხდა"],
+        "el": ["Αντιγραφή κώδικα", "Λήψη κώδικα", "Αντιγράφηκε", "Η αντιγραφή απέτυχε"],
+        "he": ["העתקת קוד", "הורדת קוד", "הועתק", "ההעתקה נכשלה"],
+        "hu": ["Kód másolása", "Kód letöltése", "Másolva", "A másolás sikertelen"],
+        "mr": ["कोड कॉपी करा", "कोड डाउनलोड करा", "कॉपी केले", "कॉपी अयशस्वी"],
+        "sr": ["Kopiraj kod", "Preuzmi kod", "Kopirano", "Kopiranje nije uspelo"],
+        "sk": ["Kopírovať kód", "Stiahnuť kód", "Skopírované", "Kopírovanie zlyhalo"],
+        "ug": ["كودنى كۆچۈرۈش", "كودنى چۈشۈرۈش", "كۆچۈرۈلدى", "كۆچۈرۈش مەغلۇپ بولدى"],
+        "uk": ["Копіювати код", "Завантажити код", "Скопійовано", "Не вдалося скопіювати"],
+        "th": ["คัดลอกโค้ด", "ดาวน์โหลดโค้ด", "คัดลอกแล้ว", "คัดลอกไม่สำเร็จ"],
+    };
+
+    const CODE_ARCHIVE_I18N = {
+        "en": ["All versions (ZIP)", "Preparing archive", "Could not create the archive", "No versions available"],
+        "fr": ["Toutes les versions (ZIP)", "Préparation de l’archive", "Impossible de créer l’archive", "Aucune version disponible"],
+        "es": ["Todas las versiones (ZIP)", "Preparando archivo", "Error al crear el archivo", "No hay versiones disponibles"],
+        "de": ["Alle Versionen (ZIP)", "Archiv wird erstellt", "Archiv fehlgeschlagen", "Keine Versionen verfügbar"],
+        "it": ["Tutte le versioni (ZIP)", "Preparazione archivio", "Creazione archivio non riuscita", "Nessuna versione disponibile"],
+        "pt": ["Todas as versões (ZIP)", "Preparando arquivo", "Falha ao criar arquivo", "Nenhuma versão disponível"],
+        "ru": ["Все версии (ZIP)", "Подготовка архива", "Не удалось создать архив", "Нет доступных версий"],
+        "ja": ["全バージョン（ZIP）", "アーカイブを準備中", "アーカイブの作成に失敗しました", "バージョンがありません"],
+        "zh-CN": ["所有版本（ZIP）", "正在准备压缩包", "压缩包创建失败", "没有可用版本"],
+        "zh-TW": ["所有版本（ZIP）", "正在準備壓縮檔", "壓縮檔建立失敗", "沒有可用版本"],
+        "ar": ["كل الإصدارات (ZIP)", "جارٍ إعداد الأرشيف", "فشل إنشاء الأرشيف", "لا توجد إصدارات متاحة"],
+        "hi": ["सभी संस्करण (ZIP)", "संग्रह तैयार हो रहा है", "संग्रह बनाना विफल", "कोई संस्करण उपलब्ध नहीं"],
+        "bn": ["সব সংস্করণ (ZIP)", "আর্কাইভ তৈরি হচ্ছে", "আর্কাইভ তৈরি ব্যর্থ", "কোনো সংস্করণ উপলব্ধ নেই"],
+        "ur": ["تمام ورژن (ZIP)", "آرکائیو تیار ہو رہا ہے", "آرکائیو ناکام", "کوئی ورژن دستیاب نہیں"],
+        "ml": ["എല്ലാ പതിപ്പുകളും (ZIP)", "ആർക്കൈവ് തയ്യാറാക്കുന്നു", "ആർക്കൈവ് പരാജയപ്പെട്ടു", "പതിപ്പുകൾ ലഭ്യമല്ല"],
+        "ko": ["모든 버전 (ZIP)", "압축 파일 준비 중", "압축 파일 생성 실패", "사용 가능한 버전 없음"],
+        "tr": ["Tüm sürümler (ZIP)", "Arşiv hazırlanıyor", "Arşiv oluşturulamadı", "Kullanılabilir sürüm yok"],
+        "pl": ["Wszystkie wersje (ZIP)", "Przygotowywanie archiwum", "Nie udało się utworzyć archiwum", "Brak dostępnych wersji"],
+        "nl": ["Alle versies (ZIP)", "Archief voorbereiden", "Archief maken mislukt", "Geen versies beschikbaar"],
+        "sv": ["Alla versioner (ZIP)", "Förbereder arkiv", "Kunde inte skapa arkivet", "Inga versioner tillgängliga"],
+        "ro": ["Toate versiunile (ZIP)", "Se pregătește arhiva", "Crearea arhivei a eșuat", "Nicio versiune disponibilă"],
+        "vi": ["Tất cả phiên bản (ZIP)", "Đang chuẩn bị tệp nén", "Không thể tạo tệp nén", "Không có phiên bản"],
+        "id": ["Semua versi (ZIP)", "Menyiapkan arsip", "Gagal membuat arsip", "Tidak ada versi tersedia"],
+        "ms": ["Semua versi (ZIP)", "Menyediakan arkib", "Gagal mencipta arkib", "Tiada versi tersedia"],
+        "be": ["Усе версіі (ZIP)", "Падрыхтоўка архіва", "Не ўдалося стварыць архіў", "Няма даступных версій"],
+        "nb": ["Alle versjoner (ZIP)", "Klargjør arkiv", "Kunne ikke opprette arkivet", "Ingen versjoner tilgjengelig"],
+        "bg": ["Всички версии (ZIP)", "Подготовка на архива", "Неуспешно създаване на архив", "Няма налични версии"],
+        "hr": ["Sve verzije (ZIP)", "Priprema arhive", "Izrada arhive nije uspjela", "Nema dostupnih verzija"],
+        "cs": ["Všechny verze (ZIP)", "Příprava archivu", "Vytvoření archivu selhalo", "Nejsou dostupné žádné verze"],
+        "da": ["Alle versioner (ZIP)", "Forbereder arkiv", "Kunne ikke oprette arkivet", "Ingen versioner tilgængelige"],
+        "eo": ["Ĉiuj versioj (ZIP)", "Preparante arkivon", "Kreado de arkivo malsukcesis", "Neniuj versioj disponeblas"],
+        "fil": ["Lahat ng bersyon (ZIP)", "Inihahanda ang archive", "Hindi nagawa ang archive", "Walang available na bersyon"],
+        "fi": ["Kaikki versiot (ZIP)", "Valmistellaan arkistoa", "Arkiston luonti epäonnistui", "Versioita ei ole saatavilla"],
+        "ckb": ["هەموو وەشانەکان (ZIP)", "ئامادەکردنی ئەرشیف", "دروستکردنی ئەرشیف سەرکەوتوو نەبوو", "هیچ وەشانێک بەردەست نییە"],
+        "ka": ["ყველა ვერსია (ZIP)", "არქივის მომზადება", "არქივის შექმნა ვერ მოხერხდა", "ვერსიები მიუწვდომელია"],
+        "el": ["Όλες οι εκδόσεις (ZIP)", "Προετοιμασία αρχείου", "Η δημιουργία αρχείου απέτυχε", "Δεν υπάρχουν διαθέσιμες εκδόσεις"],
+        "he": ["כל הגרסאות (ZIP)", "מכין ארכיון", "יצירת הארכיון נכשלה", "אין גרסאות זמינות"],
+        "hu": ["Összes verzió (ZIP)", "Archívum előkészítése", "Az archívum létrehozása sikertelen", "Nincs elérhető verzió"],
+        "mr": ["सर्व आवृत्त्या (ZIP)", "संग्रह तयार होत आहे", "संग्रह तयार करणे अयशस्वी", "कोणतीही आवृत्ती उपलब्ध नाही"],
+        "sr": ["Sve verzije (ZIP)", "Priprema arhive", "Kreiranje arhive nije uspelo", "Nema dostupnih verzija"],
+        "sk": ["Všetky verzie (ZIP)", "Príprava archívu", "Vytvorenie archívu zlyhalo", "Nie sú dostupné žiadne verzie"],
+        "ug": ["بارلىق نەشرلىرى (ZIP)", "ئارخىپ تەييارلىنىۋاتىدۇ", "ئارخىپ قۇرۇش مەغلۇپ بولدى", "ئىشلەتكىلى بولىدىغان نەشر يوق"],
+        "uk": ["Усі версії (ZIP)", "Підготовка архіву", "Не вдалося створити архів", "Немає доступних версій"],
+        "th": ["ทุกเวอร์ชัน (ZIP)", "กำลังเตรียมไฟล์บีบอัด", "สร้างไฟล์บีบอัดไม่สำเร็จ", "ไม่มีเวอร์ชันที่พร้อมใช้งาน"],
+    };
+
+    const CODE_EXPORT_PROGRESS_I18N = {
+        "en": ["Cancel export", "Export cancelled"],
+        "fr": ["Annuler l’export", "Export annulé"],
+        "es": ["Cancelar exportación", "Exportación cancelada"],
+        "de": ["Export abbrechen", "Export abgebrochen"],
+        "it": ["Annulla esportazione", "Esportazione annullata"],
+        "pt": ["Cancelar exportação", "Exportação cancelada"],
+        "ru": ["Отменить экспорт", "Экспорт отменён"],
+        "ja": ["エクスポートを中止", "エクスポートを中止しました"],
+        "zh-CN": ["取消导出", "已取消导出"],
+        "zh-TW": ["取消匯出", "已取消匯出"],
+        "ar": ["إلغاء التصدير", "تم إلغاء التصدير"],
+        "hi": ["निर्यात रद्द करें", "निर्यात रद्द किया गया"],
+        "bn": ["এক্সপোর্ট বাতিল করুন", "এক্সপোর্ট বাতিল হয়েছে"],
+        "ur": ["برآمد منسوخ کریں", "برآمد منسوخ ہوگئی"],
+        "ml": ["കയറ്റുമതി റദ്ദാക്കുക", "കയറ്റുമതി റദ്ദാക്കി"],
+        "ko": ["내보내기 취소", "내보내기가 취소됨"],
+        "tr": ["Dışa aktarmayı iptal et", "Dışa aktarma iptal edildi"],
+        "pl": ["Anuluj eksport", "Eksport anulowany"],
+        "nl": ["Export annuleren", "Export geannuleerd"],
+        "sv": ["Avbryt export", "Exporten avbröts"],
+        "ro": ["Anulează exportul", "Export anulat"],
+        "vi": ["Hủy xuất", "Đã hủy xuất"],
+        "id": ["Batalkan ekspor", "Ekspor dibatalkan"],
+        "ms": ["Batalkan eksport", "Eksport dibatalkan"],
+        "be": ["Скасаваць экспарт", "Экспарт скасаваны"],
+        "nb": ["Avbryt eksport", "Eksporten ble avbrutt"],
+        "bg": ["Отказ на експортирането", "Експортирането е отменено"],
+        "hr": ["Odustani od izvoza", "Izvoz je otkazan"],
+        "cs": ["Zrušit export", "Export zrušen"],
+        "da": ["Annuller eksport", "Eksport annulleret"],
+        "eo": ["Nuligi eksporton", "Eksporto nuligita"],
+        "fil": ["Kanselahin ang pag-export", "Nakansela ang pag-export"],
+        "fi": ["Peruuta vienti", "Vienti peruttu"],
+        "ckb": ["هەناردەکردن هەڵبوەشێنەوە", "هەناردەکردن هەڵوەشێندرایەوە"],
+        "ka": ["ექსპორტის გაუქმება", "ექსპორტი გაუქმდა"],
+        "el": ["Ακύρωση εξαγωγής", "Η εξαγωγή ακυρώθηκε"],
+        "he": ["ביטול ייצוא", "הייצוא בוטל"],
+        "hu": ["Exportálás megszakítása", "Exportálás megszakítva"],
+        "mr": ["निर्यात रद्द करा", "निर्यात रद्द झाली"],
+        "sr": ["Otkaži izvoz", "Izvoz je otkazan"],
+        "sk": ["Zrušiť export", "Export zrušený"],
+        "ug": ["چىقىرىشنى ئەمەلدىن قالدۇرۇش", "چىقىرىش ئەمەلدىن قالدۇرۇلدى"],
+        "uk": ["Скасувати експорт", "Експорт скасовано"],
+        "th": ["ยกเลิกการส่งออก", "ยกเลิกการส่งออกแล้ว"],
+    };
+
+    // ZIP32 with UTF-8 filenames and uncompressed entries; no external library is needed.
+    const buildCodeVersionsZip = async (files, signal) => {
+        if (files.length > 65535) throw new Error('Too many archive entries');
+        const encoder = new TextEncoder();
+        const table = new Uint32Array(256);
+        for (let n = 0; n < 256; n++) {
+            let value = n;
+            for (let bit = 0; bit < 8; bit++) value = (value & 1) ? (0xedb88320 ^ (value >>> 1)) : value >>> 1;
+            table[n] = value >>> 0;
+        }
+        const chunks = [], central = [];
+        let offset = 0, centralSize = 0;
+        for (const file of files) {
+            if (signal?.aborted) throw new DOMException('Export cancelled', 'AbortError');
+            const name = encoder.encode(file.name);
+            const bytes = file.bytes;
+            if (name.length > 65535 || bytes.length > 0xffffffff || offset > 0xffffffff) throw new Error('Archive is too large');
+            let crc = 0xffffffff;
+            for (let start = 0; start < bytes.length; start += 524288) {
+                const end = Math.min(start + 524288, bytes.length);
+                for (let i = start; i < end; i++) crc = table[(crc ^ bytes[i]) & 255] ^ (crc >>> 8);
+                if (bytes.length > 524288 || start === 0) await new Promise((resolve) => window.setTimeout(resolve, 0));
+                if (signal?.aborted) throw new DOMException('Export cancelled', 'AbortError');
+            }
+            crc = (crc ^ 0xffffffff) >>> 0;
+            const local = new Uint8Array(30 + name.length), lv = new DataView(local.buffer);
+            lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true); lv.setUint16(6, 0x800, true);
+            lv.setUint16(12, 0x21, true); // 1980-01-01, the earliest valid ZIP date.
+            lv.setUint32(14, crc, true); lv.setUint32(18, bytes.length, true); lv.setUint32(22, bytes.length, true); lv.setUint16(26, name.length, true); local.set(name, 30);
+            const entry = new Uint8Array(46 + name.length), ev = new DataView(entry.buffer);
+            ev.setUint32(0, 0x02014b50, true); ev.setUint16(4, 20, true); ev.setUint16(6, 20, true); ev.setUint16(8, 0x800, true);
+            ev.setUint16(14, 0x21, true);
+            ev.setUint32(16, crc, true); ev.setUint32(20, bytes.length, true); ev.setUint32(24, bytes.length, true); ev.setUint16(28, name.length, true); ev.setUint32(42, offset, true); entry.set(name, 46);
+            chunks.push(local, bytes); central.push(entry); offset += local.length + bytes.length; centralSize += entry.length;
+        }
+        if (offset > 0xffffffff || centralSize > 0xffffffff || offset + centralSize > 0xffffffff) throw new Error('Archive is too large');
+        const end = new Uint8Array(22), endView = new DataView(end.buffer);
+        endView.setUint32(0, 0x06054b50, true); endView.setUint16(8, files.length, true); endView.setUint16(10, files.length, true);
+        endView.setUint32(12, centralSize, true); endView.setUint32(16, offset, true);
+        return new Blob([...chunks, ...central, end], { type: 'application/zip' });
+    };
+
+    const CODE_SEARCH_I18N = {
+        "en": ["Search code", "Previous match", "Next match"],
+        "fr": ["Rechercher dans le code", "Occurrence précédente", "Occurrence suivante"],
+        "es": ["Buscar en el código", "Coincidencia anterior", "Coincidencia siguiente"],
+        "de": ["Im Code suchen", "Vorheriger Treffer", "Nächster Treffer"],
+        "it": ["Cerca nel codice", "Occorrenza precedente", "Occorrenza successiva"],
+        "pt": ["Pesquisar no código", "Resultado anterior", "Próximo resultado"],
+        "ru": ["Поиск в коде", "Предыдущее совпадение", "Следующее совпадение"],
+        "ja": ["コード内を検索", "前の一致", "次の一致"],
+        "zh-CN": ["搜索代码", "上一处匹配", "下一处匹配"],
+        "zh-TW": ["搜尋程式碼", "上一個相符項目", "下一個相符項目"],
+        "ar": ["البحث في الشفرة", "النتيجة السابقة", "النتيجة التالية"],
+        "hi": ["कोड में खोजें", "पिछला परिणाम", "अगला परिणाम"],
+        "bn": ["কোডে খুঁজুন", "আগের ফলাফল", "পরের ফলাফল"],
+        "ur": ["کوڈ میں تلاش کریں", "پچھلا نتیجہ", "اگلا نتیجہ"],
+        "ml": ["കോഡിൽ തിരയുക", "മുമ്പത്തെ ഫലം", "അടുത്ത ഫലം"],
+        "ko": ["코드 검색", "이전 결과", "다음 결과"],
+        "tr": ["Kodda ara", "Önceki sonuç", "Sonraki sonuç"],
+        "pl": ["Szukaj w kodzie", "Poprzedni wynik", "Następny wynik"],
+        "nl": ["Zoeken in code", "Vorige resultaat", "Volgende resultaat"],
+        "sv": ["Sök i koden", "Föregående träff", "Nästa träff"],
+        "ro": ["Caută în cod", "Rezultatul anterior", "Rezultatul următor"],
+        "vi": ["Tìm trong mã", "Kết quả trước", "Kết quả tiếp theo"],
+        "id": ["Cari dalam kode", "Hasil sebelumnya", "Hasil berikutnya"],
+        "ms": ["Cari dalam kod", "Hasil sebelumnya", "Hasil seterusnya"],
+        "be": ["Пошук у кодзе", "Папярэдняе супадзенне", "Наступнае супадзенне"],
+        "nb": ["Søk i koden", "Forrige treff", "Neste treff"],
+        "bg": ["Търсене в кода", "Предишно съвпадение", "Следващо съвпадение"],
+        "hr": ["Pretraži kod", "Prethodni rezultat", "Sljedeći rezultat"],
+        "cs": ["Hledat v kódu", "Předchozí výskyt", "Další výskyt"],
+        "da": ["Søg i koden", "Forrige resultat", "Næste resultat"],
+        "eo": ["Serĉi en kodo", "Antaŭa rezulto", "Sekva rezulto"],
+        "fil": ["Maghanap sa code", "Nakaraang resulta", "Susunod na resulta"],
+        "fi": ["Hae koodista", "Edellinen osuma", "Seuraava osuma"],
+        "ckb": ["گەڕان لە کۆد", "ئەنجامی پێشوو", "ئەنجامی دواتر"],
+        "ka": ["კოდში ძიება", "წინა შედეგი", "შემდეგი შედეგი"],
+        "el": ["Αναζήτηση στον κώδικα", "Προηγούμενο αποτέλεσμα", "Επόμενο αποτέλεσμα"],
+        "he": ["חיפוש בקוד", "התוצאה הקודמת", "התוצאה הבאה"],
+        "hu": ["Keresés a kódban", "Előző találat", "Következő találat"],
+        "mr": ["कोडमध्ये शोधा", "मागील निकाल", "पुढील निकाल"],
+        "sr": ["Pretraži kod", "Prethodni rezultat", "Sledeći rezultat"],
+        "sk": ["Hľadať v kóde", "Predchádzajúci výskyt", "Nasledujúci výskyt"],
+        "ug": ["كودتىن ئىزدەش", "ئالدىنقى نەتىجە", "كېيىنكى نەتىجە"],
+        "uk": ["Пошук у коді", "Попередній збіг", "Наступний збіг"],
+        "th": ["ค้นหาในโค้ด", "ผลลัพธ์ก่อนหน้า", "ผลลัพธ์ถัดไป"],
+    };
+
+    const CODE_WORKSPACE_I18N = {
+        "en": ["Displayed version", "Initial version", "Loading…", "Could not load this version. Try again.", "Could not load the version list. Try again.", "Analysis", "Analyzing…", "Analysis unavailable in this browser.", "Lines", "UTF-8 size", "Declared functions (estimate)", "Dependencies @require", "Permissions @grant", "Sites @match", "JavaScript syntax (function body)", "Valid", "Not checked", "Error", "Close", "Code font size in pixels", "Drag or scroll to adjust. Click to edit.", "All (ZIP)", "Choose versions", "Match case", "Highlight the whole line", "Close search"],
+        "fr": ["Version affichée", "Version initiale", "Chargement…", "Impossible de charger cette version. Réessayez.", "Impossible de charger la liste des versions. Réessayez.", "Analyse", "Analyse en cours…", "Analyse indisponible dans ce navigateur.", "Lignes", "Taille en UTF-8", "Fonctions déclarées (estimation)", "Dépendances @require", "Permissions @grant", "Sites @match", "Syntaxe JavaScript (corps de fonction)", "Valide", "Non vérifiée", "Erreur", "Fermer", "Taille du code en pixels", "Faites glisser ou utilisez la molette pour ajuster la taille. Cliquez pour la saisir.", "Tout (ZIP)", "Choisir les versions", "Respecter la casse", "Surligner la ligne entière", "Fermer la recherche"],
+        "es": ["Versión mostrada", "Versión inicial", "Cargando…", "No se pudo cargar esta versión. Inténtalo de nuevo.", "No se pudo cargar la lista de versiones. Inténtalo de nuevo.", "Análisis", "Analizando…", "El análisis no está disponible en este navegador.", "Líneas", "Tamaño en UTF-8", "Funciones declaradas (estimación)", "Dependencias @require", "Permisos @grant", "Sitios @match", "Sintaxis de JavaScript (cuerpo de función)", "Válida", "Sin verificar", "Error", "Cerrar", "Tamaño del código en píxeles", "Arrastra o usa la rueda para ajustar el tamaño. Haz clic para editarlo.", "Todo (ZIP)", "Elegir versiones", "Distinguir mayúsculas y minúsculas", "Resaltar toda la línea", "Cerrar la búsqueda"],
+        "de": ["Angezeigte Version", "Ursprüngliche Version", "Wird geladen…", "Diese Version konnte nicht geladen werden. Erneut versuchen.", "Die Versionsliste konnte nicht geladen werden. Erneut versuchen.", "Analyse", "Analyse läuft…", "Die Analyse ist in diesem Browser nicht verfügbar.", "Zeilen", "UTF-8-Größe", "Deklarierte Funktionen (Schätzung)", "Abhängigkeiten @require", "Berechtigungen @grant", "Websites @match", "JavaScript-Syntax (Funktionsrumpf)", "Gültig", "Nicht geprüft", "Fehler", "Schließen", "Code-Schriftgröße in Pixeln", "Zum Anpassen ziehen oder scrollen. Zum Bearbeiten klicken.", "Alle (ZIP)", "Versionen auswählen", "Groß- und Kleinschreibung beachten", "Ganze Zeile hervorheben", "Suche schließen"],
+        "it": ["Versione visualizzata", "Versione iniziale", "Caricamento…", "Impossibile caricare questa versione. Riprova.", "Impossibile caricare l’elenco delle versioni. Riprova.", "Analisi", "Analisi in corso…", "Analisi non disponibile in questo browser.", "Righe", "Dimensione UTF-8", "Funzioni dichiarate (stima)", "Dipendenze @require", "Permessi @grant", "Siti @match", "Sintassi JavaScript (corpo della funzione)", "Valida", "Non verificata", "Errore", "Chiudi", "Dimensione del codice in pixel", "Trascina o usa la rotellina per regolare la dimensione. Fai clic per modificarla.", "Tutte (ZIP)", "Scegli le versioni", "Distingui maiuscole e minuscole", "Evidenzia l’intera riga", "Chiudi la ricerca"],
+        "pt": ["Versão exibida", "Versão inicial", "Carregando…", "Não foi possível carregar esta versão. Tente novamente.", "Não foi possível carregar a lista de versões. Tente novamente.", "Análise", "Analisando…", "Análise indisponível neste navegador.", "Linhas", "Tamanho em UTF-8", "Funções declaradas (estimativa)", "Dependências @require", "Permissões @grant", "Sites @match", "Sintaxe JavaScript (corpo da função)", "Válida", "Não verificada", "Erro", "Fechar", "Tamanho do código em pixels", "Arraste ou use a roda do mouse para ajustar. Clique para editar.", "Todas (ZIP)", "Escolher versões", "Diferenciar maiúsculas de minúsculas", "Destacar a linha inteira", "Fechar a busca"],
+        "ru": ["Отображаемая версия", "Исходная версия", "Загрузка…", "Не удалось загрузить эту версию. Повторите попытку.", "Не удалось загрузить список версий. Повторите попытку.", "Анализ", "Выполняется анализ…", "Анализ недоступен в этом браузере.", "Строки", "Размер в UTF-8", "Объявленные функции (оценка)", "Зависимости @require", "Разрешения @grant", "Сайты @match", "Синтаксис JavaScript (тело функции)", "Корректен", "Не проверен", "Ошибка", "Закрыть", "Размер шрифта кода в пикселях", "Перетащите или прокрутите колёсико для изменения. Нажмите для ввода.", "Все (ZIP)", "Выбрать версии", "Учитывать регистр", "Выделить всю строку", "Закрыть поиск"],
+        "ja": ["表示中のバージョン", "最初に表示したバージョン", "読み込み中…", "このバージョンを読み込めませんでした。もう一度お試しください。", "バージョン一覧を読み込めませんでした。もう一度お試しください。", "解析", "解析中…", "このブラウザーでは解析できません。", "行数", "UTF-8 のサイズ", "宣言された関数（概算）", "依存関係 @require", "権限 @grant", "対象サイト @match", "JavaScript の構文（関数本体）", "正常", "未確認", "エラー", "閉じる", "コードの文字サイズ（ピクセル）", "ドラッグまたはスクロールで調整し、クリックで入力します。", "すべて（ZIP）", "バージョンを選択", "大文字と小文字を区別", "行全体を強調表示", "検索を閉じる"],
+        "zh-CN": ["显示的版本", "初始版本", "正在加载…", "无法加载此版本，请重试。", "无法加载版本列表，请重试。", "分析", "正在分析…", "此浏览器不支持分析。", "行数", "UTF-8 大小", "已声明的函数（估算）", "依赖项 @require", "权限 @grant", "匹配网站 @match", "JavaScript 语法（函数体）", "有效", "未检查", "错误", "关闭", "代码字号（像素）", "拖动或滚动鼠标滚轮可调整字号，点击可直接输入。", "全部（ZIP）", "选择版本", "区分大小写", "高亮整行", "关闭搜索"],
+        "zh-TW": ["顯示的版本", "初始版本", "載入中…", "無法載入此版本，請再試一次。", "無法載入版本清單，請再試一次。", "分析", "分析中…", "此瀏覽器無法使用分析功能。", "行數", "UTF-8 大小", "已宣告的函式（估算）", "相依項目 @require", "權限 @grant", "符合的網站 @match", "JavaScript 語法（函式本體）", "有效", "未檢查", "錯誤", "關閉", "程式碼字型大小（像素）", "拖曳或捲動滑鼠滾輪可調整大小，按一下可直接輸入。", "全部（ZIP）", "選擇版本", "區分大小寫", "醒目顯示整行", "關閉搜尋"],
+        "ar": ["الإصدار المعروض", "الإصدار الأولي", "جارٍ التحميل…", "تعذّر تحميل هذا الإصدار. حاول مجددًا.", "تعذّر تحميل قائمة الإصدارات. حاول مجددًا.", "التحليل", "جارٍ التحليل…", "التحليل غير متاح في هذا المتصفح.", "الأسطر", "الحجم بترميز UTF-8", "الدوال المعلنة (تقدير)", "التبعيات @require", "الأذونات @grant", "المواقع @match", "صياغة JavaScript (جسم الدالة)", "صحيحة", "لم تُفحص", "خطأ", "إغلاق", "حجم خط الشفرة بالبكسل", "اسحب أو مرّر لتغيير الحجم. انقر لإدخال قيمة.", "الكل (ZIP)", "اختيار الإصدارات", "مطابقة حالة الأحرف", "تمييز السطر بالكامل", "إغلاق البحث"],
+        "hi": ["दिखाया गया संस्करण", "शुरुआती संस्करण", "लोड हो रहा है…", "यह संस्करण लोड नहीं हो सका। फिर कोशिश करें।", "संस्करणों की सूची लोड नहीं हो सकी। फिर कोशिश करें।", "विश्लेषण", "विश्लेषण हो रहा है…", "इस ब्राउज़र में विश्लेषण उपलब्ध नहीं है।", "पंक्तियाँ", "UTF-8 आकार", "घोषित फ़ंक्शन (अनुमान)", "निर्भरताएँ @require", "अनुमतियाँ @grant", "साइटें @match", "JavaScript सिंटैक्स (फ़ंक्शन का मुख्य भाग)", "मान्य", "जाँचा नहीं गया", "त्रुटि", "बंद करें", "पिक्सेल में कोड का फ़ॉन्ट आकार", "आकार बदलने के लिए खींचें या स्क्रॉल करें। लिखने के लिए क्लिक करें।", "सभी (ZIP)", "संस्करण चुनें", "बड़े और छोटे अक्षरों में अंतर करें", "पूरी पंक्ति हाइलाइट करें", "खोज बंद करें"],
+        "bn": ["প্রদর্শিত সংস্করণ", "প্রাথমিক সংস্করণ", "লোড হচ্ছে…", "এই সংস্করণটি লোড করা যায়নি। আবার চেষ্টা করুন।", "সংস্করণের তালিকা লোড করা যায়নি। আবার চেষ্টা করুন।", "বিশ্লেষণ", "বিশ্লেষণ চলছে…", "এই ব্রাউজারে বিশ্লেষণ উপলব্ধ নয়।", "লাইন", "UTF-8 আকার", "ঘোষিত ফাংশন (আনুমানিক)", "নির্ভরতা @require", "অনুমতি @grant", "সাইট @match", "JavaScript সিনট্যাক্স (ফাংশনের মূল অংশ)", "বৈধ", "পরীক্ষা করা হয়নি", "ত্রুটি", "বন্ধ করুন", "পিক্সেলে কোডের ফন্টের আকার", "আকার বদলাতে টানুন বা স্ক্রল করুন। লিখতে ক্লিক করুন।", "সব (ZIP)", "সংস্করণ বাছুন", "বড় ও ছোট অক্ষর আলাদা করুন", "পুরো লাইন হাইলাইট করুন", "অনুসন্ধান বন্ধ করুন"],
+        "ur": ["دکھایا گیا ورژن", "ابتدائی ورژن", "لوڈ ہو رہا ہے…", "یہ ورژن لوڈ نہیں ہو سکا۔ دوبارہ کوشش کریں۔", "ورژنوں کی فہرست لوڈ نہیں ہو سکی۔ دوبارہ کوشش کریں۔", "تجزیہ", "تجزیہ جاری ہے…", "اس براؤزر میں تجزیہ دستیاب نہیں ہے۔", "سطریں", "UTF-8 حجم", "اعلان کردہ فنکشن (تخمینہ)", "انحصارات @require", "اجازتیں @grant", "ویب سائٹس @match", "JavaScript نحو (فنکشن کا متن)", "درست", "جانچ نہیں ہوئی", "خرابی", "بند کریں", "پکسل میں کوڈ کے فونٹ کا سائز", "سائز بدلنے کے لیے گھسیٹیں یا اسکرول کریں۔ قدر درج کرنے کے لیے کلک کریں۔", "سب (ZIP)", "ورژن منتخب کریں", "بڑے اور چھوٹے حروف میں فرق کریں", "پوری سطر نمایاں کریں", "تلاش بند کریں"],
+        "ml": ["കാണിക്കുന്ന പതിപ്പ്", "ആദ്യ പതിപ്പ്", "ലോഡ് ചെയ്യുന്നു…", "ഈ പതിപ്പ് ലോഡ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക.", "പതിപ്പുകളുടെ പട്ടിക ലോഡ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക.", "വിശകലനം", "വിശകലനം നടക്കുന്നു…", "ഈ ബ്രൗസറിൽ വിശകലനം ലഭ്യമല്ല.", "വരികൾ", "UTF-8 വലുപ്പം", "പ്രഖ്യാപിച്ച ഫങ്ഷനുകൾ (ഏകദേശം)", "ആശ്രിത ഘടകങ്ങൾ @require", "അനുമതികൾ @grant", "സൈറ്റുകൾ @match", "JavaScript സിന്റാക്സ് (ഫങ്ഷന്റെ ഉള്ളടക്കം)", "സാധുവാണ്", "പരിശോധിച്ചിട്ടില്ല", "പിശക്", "അടയ്ക്കുക", "കോഡ് ഫോണ്ടിന്റെ വലുപ്പം പിക്സലിൽ", "വലുപ്പം മാറ്റാൻ വലിക്കുകയോ സ്ക്രോൾ ചെയ്യുകയോ ചെയ്യുക. നേരിട്ട് നൽകാൻ ക്ലിക്ക് ചെയ്യുക.", "എല്ലാം (ZIP)", "പതിപ്പുകൾ തിരഞ്ഞെടുക്കുക", "വലിയതും ചെറിയതുമായ അക്ഷരങ്ങൾ വേർതിരിക്കുക", "വരി മുഴുവൻ ഹൈലൈറ്റ് ചെയ്യുക", "തിരച്ചിൽ അടയ്ക്കുക"],
+        "ko": ["표시 중인 버전", "초기 버전", "불러오는 중…", "이 버전을 불러올 수 없습니다. 다시 시도하세요.", "버전 목록을 불러올 수 없습니다. 다시 시도하세요.", "분석", "분석 중…", "이 브라우저에서는 분석을 사용할 수 없습니다.", "줄 수", "UTF-8 크기", "선언된 함수 (추정)", "의존성 @require", "권한 @grant", "사이트 @match", "JavaScript 구문 (함수 본문)", "유효함", "확인하지 않음", "오류", "닫기", "코드 글꼴 크기 (픽셀)", "드래그하거나 휠로 크기를 조정하세요. 클릭하면 직접 입력할 수 있습니다.", "전체 (ZIP)", "버전 선택", "대소문자 구분", "줄 전체 강조", "검색 닫기"],
+        "tr": ["Görüntülenen sürüm", "İlk sürüm", "Yükleniyor…", "Bu sürüm yüklenemedi. Tekrar deneyin.", "Sürüm listesi yüklenemedi. Tekrar deneyin.", "Analiz", "Analiz ediliyor…", "Bu tarayıcıda analiz kullanılamıyor.", "Satırlar", "UTF-8 boyutu", "Tanımlanan işlevler (tahmini)", "Bağımlılıklar @require", "İzinler @grant", "Siteler @match", "JavaScript sözdizimi (işlev gövdesi)", "Geçerli", "Kontrol edilmedi", "Hata", "Kapat", "Piksel cinsinden kod yazı boyutu", "Ayarlamak için sürükleyin veya tekerleği kullanın. Değer girmek için tıklayın.", "Tümü (ZIP)", "Sürümleri seç", "Büyük/küçük harfe duyarlı", "Tüm satırı vurgula", "Aramayı kapat"],
+        "pl": ["Wyświetlana wersja", "Wersja początkowa", "Wczytywanie…", "Nie udało się wczytać tej wersji. Spróbuj ponownie.", "Nie udało się wczytać listy wersji. Spróbuj ponownie.", "Analiza", "Trwa analiza…", "Analiza jest niedostępna w tej przeglądarce.", "Wiersze", "Rozmiar w UTF-8", "Zadeklarowane funkcje (szacunek)", "Zależności @require", "Uprawnienia @grant", "Witryny @match", "Składnia JavaScript (ciało funkcji)", "Poprawna", "Niesprawdzona", "Błąd", "Zamknij", "Rozmiar czcionki kodu w pikselach", "Przeciągnij lub przewiń, aby dostosować. Kliknij, aby wpisać wartość.", "Wszystkie (ZIP)", "Wybierz wersje", "Uwzględnij wielkość liter", "Podświetl cały wiersz", "Zamknij wyszukiwanie"],
+        "nl": ["Weergegeven versie", "Oorspronkelijk getoonde versie", "Laden…", "Deze versie kon niet worden geladen. Probeer het opnieuw.", "De versielijst kon niet worden geladen. Probeer het opnieuw.", "Analyse", "Analyseren…", "Analyse is niet beschikbaar in deze browser.", "Regels", "Grootte in UTF-8", "Gedeclareerde functies (schatting)", "Afhankelijkheden @require", "Machtigingen @grant", "Sites @match", "JavaScript-syntaxis (functiebody)", "Geldig", "Niet gecontroleerd", "Fout", "Sluiten", "Lettergrootte van code in pixels", "Sleep of scrol om aan te passen. Klik om een waarde in te voeren.", "Alles (ZIP)", "Versies kiezen", "Hoofdlettergevoelig", "Hele regel markeren", "Zoeken sluiten"],
+        "sv": ["Visad version", "Ursprungligen visad version", "Läser in…", "Det gick inte att läsa in den här versionen. Försök igen.", "Det gick inte att läsa in versionslistan. Försök igen.", "Analys", "Analyserar…", "Analys är inte tillgänglig i den här webbläsaren.", "Rader", "Storlek i UTF-8", "Deklarerade funktioner (uppskattning)", "Beroenden @require", "Behörigheter @grant", "Webbplatser @match", "JavaScript-syntax (funktionskropp)", "Giltig", "Inte kontrollerad", "Fel", "Stäng", "Kodens teckenstorlek i pixlar", "Dra eller rulla för att ändra storleken. Klicka för att ange ett värde.", "Alla (ZIP)", "Välj versioner", "Skilj på stora och små bokstäver", "Markera hela raden", "Stäng sökningen"],
+        "ro": ["Versiunea afișată", "Versiunea inițială", "Se încarcă…", "Această versiune nu a putut fi încărcată. Încearcă din nou.", "Lista de versiuni nu a putut fi încărcată. Încearcă din nou.", "Analiză", "Se analizează…", "Analiza nu este disponibilă în acest browser.", "Linii", "Dimensiune în UTF-8", "Funcții declarate (estimare)", "Dependențe @require", "Permisiuni @grant", "Site-uri @match", "Sintaxă JavaScript (corpul funcției)", "Validă", "Neverificată", "Eroare", "Închide", "Dimensiunea fontului codului în pixeli", "Trage sau derulează pentru a ajusta dimensiunea. Fă clic pentru a introduce o valoare.", "Toate (ZIP)", "Alege versiunile", "Diferențiază majusculele de minuscule", "Evidențiază întreaga linie", "Închide căutarea"],
+        "vi": ["Phiên bản đang hiển thị", "Phiên bản ban đầu", "Đang tải…", "Không tải được phiên bản này. Hãy thử lại.", "Không tải được danh sách phiên bản. Hãy thử lại.", "Phân tích", "Đang phân tích…", "Trình duyệt này không hỗ trợ phân tích.", "Số dòng", "Kích thước UTF-8", "Hàm được khai báo (ước tính)", "Phụ thuộc @require", "Quyền @grant", "Trang web @match", "Cú pháp JavaScript (thân hàm)", "Hợp lệ", "Chưa kiểm tra", "Lỗi", "Đóng", "Cỡ chữ mã nguồn (pixel)", "Kéo hoặc cuộn để đổi cỡ chữ. Nhấp để nhập giá trị.", "Tất cả (ZIP)", "Chọn phiên bản", "Phân biệt hoa thường", "Tô sáng cả dòng", "Đóng tìm kiếm"],
+        "id": ["Versi yang ditampilkan", "Versi awal", "Memuat…", "Versi ini tidak dapat dimuat. Coba lagi.", "Daftar versi tidak dapat dimuat. Coba lagi.", "Analisis", "Menganalisis…", "Analisis tidak tersedia di peramban ini.", "Baris", "Ukuran UTF-8", "Fungsi yang dideklarasikan (perkiraan)", "Dependensi @require", "Izin @grant", "Situs @match", "Sintaks JavaScript (badan fungsi)", "Valid", "Belum diperiksa", "Kesalahan", "Tutup", "Ukuran huruf kode dalam piksel", "Seret atau gulir untuk menyesuaikan. Klik untuk memasukkan nilai.", "Semua (ZIP)", "Pilih versi", "Bedakan huruf besar dan kecil", "Sorot seluruh baris", "Tutup pencarian"],
+        "ms": ["Versi yang dipaparkan", "Versi awal", "Sedang memuatkan…", "Versi ini tidak dapat dimuatkan. Cuba lagi.", "Senarai versi tidak dapat dimuatkan. Cuba lagi.", "Analisis", "Sedang menganalisis…", "Analisis tidak tersedia dalam pelayar ini.", "Baris", "Saiz UTF-8", "Fungsi yang diisytiharkan (anggaran)", "Kebergantungan @require", "Keizinan @grant", "Laman @match", "Sintaks JavaScript (badan fungsi)", "Sah", "Belum disemak", "Ralat", "Tutup", "Saiz fon kod dalam piksel", "Seret atau tatal untuk melaraskan saiz. Klik untuk memasukkan nilai.", "Semua (ZIP)", "Pilih versi", "Bezakan huruf besar dan kecil", "Serlahkan seluruh baris", "Tutup carian"],
+        "be": ["Паказаная версія", "Пачатковая версія", "Загрузка…", "Не ўдалося загрузіць гэтую версію. Паспрабуйце яшчэ раз.", "Не ўдалося загрузіць спіс версій. Паспрабуйце яшчэ раз.", "Аналіз", "Ідзе аналіз…", "Аналіз недаступны ў гэтым браўзеры.", "Радкі", "Памер у UTF-8", "Абвешчаныя функцыі (ацэнка)", "Залежнасці @require", "Дазволы @grant", "Сайты @match", "Сінтаксіс JavaScript (цела функцыі)", "Карэктны", "Не правераны", "Памылка", "Закрыць", "Памер шрыфту кода ў пікселях", "Перацягніце або пракруціце колца, каб змяніць памер. Націсніце, каб увесці значэнне.", "Усе (ZIP)", "Выбраць версіі", "Улічваць рэгістр", "Вылучыць увесь радок", "Закрыць пошук"],
+        "nb": ["Vist versjon", "Opprinnelig vist versjon", "Laster inn…", "Kunne ikke laste inn denne versjonen. Prøv igjen.", "Kunne ikke laste inn versjonslisten. Prøv igjen.", "Analyse", "Analyserer…", "Analyse er ikke tilgjengelig i denne nettleseren.", "Linjer", "Størrelse i UTF-8", "Deklarerte funksjoner (anslag)", "Avhengigheter @require", "Tillatelser @grant", "Nettsteder @match", "JavaScript-syntaks (funksjonskropp)", "Gyldig", "Ikke kontrollert", "Feil", "Lukk", "Skriftstørrelse for kode i piksler", "Dra eller rull for å justere størrelsen. Klikk for å angi en verdi.", "Alle (ZIP)", "Velg versjoner", "Skill mellom store og små bokstaver", "Marker hele linjen", "Lukk søket"],
+        "bg": ["Показвана версия", "Първоначална версия", "Зареждане…", "Тази версия не можа да се зареди. Опитайте отново.", "Списъкът с версии не можа да се зареди. Опитайте отново.", "Анализ", "Анализиране…", "Анализът не е наличен в този браузър.", "Редове", "Размер в UTF-8", "Декларирани функции (приблизително)", "Зависимости @require", "Разрешения @grant", "Сайтове @match", "Синтаксис на JavaScript (тяло на функция)", "Валиден", "Непроверен", "Грешка", "Затваряне", "Размер на шрифта на кода в пиксели", "Плъзнете или превъртете, за да промените размера. Щракнете, за да въведете стойност.", "Всички (ZIP)", "Избор на версии", "Различаване на главни и малки букви", "Открояване на целия ред", "Затваряне на търсенето"],
+        "hr": ["Prikazana verzija", "Početna verzija", "Učitavanje…", "Ova se verzija nije mogla učitati. Pokušajte ponovno.", "Popis verzija nije se mogao učitati. Pokušajte ponovno.", "Analiza", "Analiza u tijeku…", "Analiza nije dostupna u ovom pregledniku.", "Retci", "Veličina u UTF-8", "Deklarirane funkcije (procjena)", "Ovisnosti @require", "Dopuštenja @grant", "Web-mjesta @match", "Sintaksa JavaScripta (tijelo funkcije)", "Ispravna", "Nije provjerena", "Pogreška", "Zatvori", "Veličina fonta koda u pikselima", "Povucite ili pomičite kotačić za prilagodbu. Kliknite za unos vrijednosti.", "Sve (ZIP)", "Odaberi verzije", "Razlikuj velika i mala slova", "Istakni cijeli redak", "Zatvori pretraživanje"],
+        "cs": ["Zobrazená verze", "Původně zobrazená verze", "Načítání…", "Tuto verzi se nepodařilo načíst. Zkuste to znovu.", "Seznam verzí se nepodařilo načíst. Zkuste to znovu.", "Analýza", "Probíhá analýza…", "Analýza není v tomto prohlížeči dostupná.", "Řádky", "Velikost v UTF-8", "Deklarované funkce (odhad)", "Závislosti @require", "Oprávnění @grant", "Weby @match", "Syntaxe JavaScriptu (tělo funkce)", "Platná", "Neověřena", "Chyba", "Zavřít", "Velikost písma kódu v pixelech", "Pro změnu velikosti táhněte nebo použijte kolečko. Kliknutím zadáte hodnotu.", "Všechny (ZIP)", "Vybrat verze", "Rozlišovat malá a velká písmena", "Zvýraznit celý řádek", "Zavřít vyhledávání"],
+        "da": ["Vist version", "Oprindeligt vist version", "Indlæser…", "Denne version kunne ikke indlæses. Prøv igen.", "Versionslisten kunne ikke indlæses. Prøv igen.", "Analyse", "Analyserer…", "Analyse er ikke tilgængelig i denne browser.", "Linjer", "Størrelse i UTF-8", "Deklarerede funktioner (skøn)", "Afhængigheder @require", "Tilladelser @grant", "Websteder @match", "JavaScript-syntaks (funktionskrop)", "Gyldig", "Ikke kontrolleret", "Fejl", "Luk", "Kodens skriftstørrelse i pixels", "Træk eller rul for at justere størrelsen. Klik for at indtaste en værdi.", "Alle (ZIP)", "Vælg versioner", "Skeln mellem store og små bogstaver", "Fremhæv hele linjen", "Luk søgningen"],
+        "eo": ["Montrata versio", "Komenca versio", "Ŝargado…", "Ne eblis ŝargi ĉi tiun version. Reprovu.", "Ne eblis ŝargi la liston de versioj. Reprovu.", "Analizo", "Analizado…", "Analizo ne disponeblas en ĉi tiu retumilo.", "Linioj", "Grando en UTF-8", "Deklaritaj funkcioj (takso)", "Dependaĵoj @require", "Permesoj @grant", "Retejoj @match", "Sintakso de JavaScript (korpo de funkcio)", "Valida", "Ne kontrolita", "Eraro", "Fermi", "Tipargrando de la kodo en rastrumeroj", "Trenu aŭ rulumu por ĝustigi la grandon. Klaku por enigi valoron.", "Ĉiuj (ZIP)", "Elekti versiojn", "Distingi majusklojn kaj minusklojn", "Emfazi la tutan linion", "Fermi la serĉon"],
+        "fil": ["Ipinapakitang bersyon", "Unang ipinakitang bersyon", "Nilo-load…", "Hindi ma-load ang bersyong ito. Subukan muli.", "Hindi ma-load ang listahan ng mga bersyon. Subukan muli.", "Pagsusuri", "Sinusuri…", "Hindi available ang pagsusuri sa browser na ito.", "Mga linya", "Laki sa UTF-8", "Mga idineklarang function (tantiya)", "Mga dependency na @require", "Mga pahintulot na @grant", "Mga site na @match", "Syntax ng JavaScript (katawan ng function)", "Balido", "Hindi nasuri", "Error", "Isara", "Laki ng font ng code sa pixel", "I-drag o mag-scroll para baguhin ang laki. I-click para maglagay ng halaga.", "Lahat (ZIP)", "Pumili ng mga bersyon", "Itugma ang malaki at maliit na titik", "I-highlight ang buong linya", "Isara ang paghahanap"],
+        "fi": ["Näytettävä versio", "Aluksi näytetty versio", "Ladataan…", "Tätä versiota ei voitu ladata. Yritä uudelleen.", "Versioluetteloa ei voitu ladata. Yritä uudelleen.", "Analyysi", "Analysoidaan…", "Analyysi ei ole käytettävissä tässä selaimessa.", "Rivit", "Koko UTF-8-muodossa", "Määritellyt funktiot (arvio)", "Riippuvuudet @require", "Käyttöoikeudet @grant", "Sivustot @match", "JavaScript-syntaksi (funktion runko)", "Kelvollinen", "Ei tarkistettu", "Virhe", "Sulje", "Koodin fonttikoko pikseleinä", "Säädä kokoa vetämällä tai vierittämällä. Anna arvo napsauttamalla.", "Kaikki (ZIP)", "Valitse versiot", "Erota isot ja pienet kirjaimet", "Korosta koko rivi", "Sulje haku"],
+        "ckb": ["وەشانی پیشاندراو", "وەشانی سەرەتایی", "بار دەکرێت…", "ئەم وەشانە بار نەکرا. دووبارە هەوڵ بدەوە.", "لیستی وەشانەکان بار نەکرا. دووبارە هەوڵ بدەوە.", "شیکردنەوە", "شیکردنەوە بەردەوامە…", "شیکردنەوە لەم وێبگەڕەدا بەردەست نییە.", "هێڵەکان", "قەبارە بە UTF-8", "فەنکشنە ڕاگەیەندراوەکان (خەمڵاندن)", "وابەستەییەکان @require", "مۆڵەتەکان @grant", "ماڵپەڕەکان @match", "ڕستەسازی JavaScript (ناوەڕۆکی فەنکشن)", "دروستە", "پشکنین نەکراوە", "هەڵە", "داخستن", "قەبارەی فۆنتی کۆد بە پیکسڵ", "بۆ گۆڕینی قەبارە ڕایبکێشە یان بسکرۆڵە. بۆ نووسینی بەها کلیک بکە.", "هەموو (ZIP)", "هەڵبژاردنی وەشانەکان", "جیاکردنەوەی پیتی گەورە و بچووک", "دیاریکردنی تەواوی هێڵ", "داخستنی گەڕان"],
+        "ka": ["ნაჩვენები ვერსია", "თავდაპირველი ვერსია", "იტვირთება…", "ამ ვერსიის ჩატვირთვა ვერ მოხერხდა. სცადეთ ხელახლა.", "ვერსიების სიის ჩატვირთვა ვერ მოხერხდა. სცადეთ ხელახლა.", "ანალიზი", "მიმდინარეობს ანალიზი…", "ანალიზი ამ ბრაუზერში მიუწვდომელია.", "სტრიქონები", "ზომა UTF-8-ში", "გამოცხადებული ფუნქციები (მიახლოებით)", "დამოკიდებულებები @require", "ნებართვები @grant", "საიტები @match", "JavaScript-ის სინტაქსი (ფუნქციის სხეული)", "სწორია", "შეუმოწმებელია", "შეცდომა", "დახურვა", "კოდის შრიფტის ზომა პიქსელებში", "ზომის შესაცვლელად გადაათრიეთ ან გადაახვიეთ. მნიშვნელობის შესაყვანად დააწკაპუნეთ.", "ყველა (ZIP)", "ვერსიების არჩევა", "დიდი და პატარა ასოების გარჩევა", "მთელი სტრიქონის მონიშვნა", "ძიების დახურვა"],
+        "el": ["Εμφανιζόμενη έκδοση", "Αρχική έκδοση", "Φόρτωση…", "Δεν ήταν δυνατή η φόρτωση αυτής της έκδοσης. Δοκιμάστε ξανά.", "Δεν ήταν δυνατή η φόρτωση της λίστας εκδόσεων. Δοκιμάστε ξανά.", "Ανάλυση", "Γίνεται ανάλυση…", "Η ανάλυση δεν είναι διαθέσιμη σε αυτό το πρόγραμμα περιήγησης.", "Γραμμές", "Μέγεθος σε UTF-8", "Δηλωμένες συναρτήσεις (εκτίμηση)", "Εξαρτήσεις @require", "Δικαιώματα @grant", "Ιστότοποι @match", "Σύνταξη JavaScript (σώμα συνάρτησης)", "Έγκυρη", "Δεν ελέγχθηκε", "Σφάλμα", "Κλείσιμο", "Μέγεθος γραμματοσειράς κώδικα σε pixel", "Σύρετε ή κάντε κύλιση για προσαρμογή. Κάντε κλικ για εισαγωγή τιμής.", "Όλες (ZIP)", "Επιλογή εκδόσεων", "Διάκριση πεζών και κεφαλαίων", "Επισήμανση ολόκληρης γραμμής", "Κλείσιμο αναζήτησης"],
+        "he": ["גרסה מוצגת", "גרסה שהוצגה בתחילה", "בטעינה…", "לא ניתן לטעון את הגרסה הזו. נסו שוב.", "לא ניתן לטעון את רשימת הגרסאות. נסו שוב.", "ניתוח", "מתבצע ניתוח…", "הניתוח אינו זמין בדפדפן הזה.", "שורות", "גודל ב־UTF-8", "פונקציות שהוצהרו (הערכה)", "תלויות @require", "הרשאות @grant", "אתרים @match", "תחביר JavaScript (גוף הפונקציה)", "תקין", "לא נבדק", "שגיאה", "סגירה", "גודל גופן הקוד בפיקסלים", "גררו או גללו כדי לשנות את הגודל. לחצו כדי להזין ערך.", "הכול (ZIP)", "בחירת גרסאות", "הבחנה בין אותיות גדולות וקטנות", "הדגשת כל השורה", "סגירת החיפוש"],
+        "hu": ["Megjelenített verzió", "Eredetileg megjelenített verzió", "Betöltés…", "Nem sikerült betölteni ezt a verziót. Próbáld újra.", "Nem sikerült betölteni a verziólistát. Próbáld újra.", "Elemzés", "Elemzés folyamatban…", "Az elemzés ebben a böngészőben nem érhető el.", "Sorok", "UTF-8-méret", "Deklarált függvények (becslés)", "Függőségek @require", "Engedélyek @grant", "Webhelyek @match", "JavaScript-szintaxis (függvénytörzs)", "Érvényes", "Nincs ellenőrizve", "Hiba", "Bezárás", "A kód betűmérete képpontban", "Húzással vagy görgetéssel állítható. Kattintással megadható az érték.", "Mind (ZIP)", "Verziók kiválasztása", "Kis- és nagybetűk megkülönböztetése", "Teljes sor kiemelése", "Keresés bezárása"],
+        "mr": ["दाखवलेली आवृत्ती", "सुरुवातीची आवृत्ती", "लोड होत आहे…", "ही आवृत्ती लोड करता आली नाही. पुन्हा प्रयत्न करा.", "आवृत्त्यांची यादी लोड करता आली नाही. पुन्हा प्रयत्न करा.", "विश्लेषण", "विश्लेषण सुरू आहे…", "या ब्राउझरमध्ये विश्लेषण उपलब्ध नाही.", "ओळी", "UTF-8 आकार", "घोषित फंक्शन्स (अंदाज)", "अवलंबित्वे @require", "परवानग्या @grant", "साइट्स @match", "JavaScript वाक्यरचना (फंक्शनचा मुख्य भाग)", "वैध", "तपासले नाही", "त्रुटी", "बंद करा", "पिक्सेलमध्ये कोडचा फॉन्ट आकार", "आकार बदलण्यासाठी ओढा किंवा स्क्रोल करा. मूल्य लिहिण्यासाठी क्लिक करा.", "सर्व (ZIP)", "आवृत्त्या निवडा", "मोठी आणि लहान अक्षरे वेगळी माना", "संपूर्ण ओळ हायलाइट करा", "शोध बंद करा"],
+        "sr": ["Prikazana verzija", "Prvobitno prikazana verzija", "Učitavanje…", "Ova verzija nije mogla da se učita. Pokušajte ponovo.", "Spisak verzija nije mogao da se učita. Pokušajte ponovo.", "Analiza", "Analiza je u toku…", "Analiza nije dostupna u ovom pregledaču.", "Redovi", "Veličina u UTF-8", "Deklarisane funkcije (procena)", "Zavisnosti @require", "Dozvole @grant", "Sajtovi @match", "JavaScript sintaksa (telo funkcije)", "Ispravna", "Nije proverena", "Greška", "Zatvori", "Veličina fonta koda u pikselima", "Prevucite ili pomerite točkić za podešavanje. Kliknite za unos vrednosti.", "Sve (ZIP)", "Izaberi verzije", "Razlikuj velika i mala slova", "Istakni ceo red", "Zatvori pretragu"],
+        "sk": ["Zobrazená verzia", "Pôvodne zobrazená verzia", "Načítava sa…", "Túto verziu sa nepodarilo načítať. Skúste to znova.", "Zoznam verzií sa nepodarilo načítať. Skúste to znova.", "Analýza", "Prebieha analýza…", "Analýza nie je v tomto prehliadači dostupná.", "Riadky", "Veľkosť v UTF-8", "Deklarované funkcie (odhad)", "Závislosti @require", "Oprávnenia @grant", "Weby @match", "Syntax JavaScriptu (telo funkcie)", "Platná", "Neoverená", "Chyba", "Zavrieť", "Veľkosť písma kódu v pixeloch", "Veľkosť upravíte potiahnutím alebo kolieskom. Kliknutím zadáte hodnotu.", "Všetky (ZIP)", "Vybrať verzie", "Rozlišovať malé a veľké písmená", "Zvýrazniť celý riadok", "Zavrieť vyhľadávanie"],
+        "ug": ["كۆرسىتىلگەن نەشرى", "دەسلەپكى نەشرى", "يۈكلىنىۋاتىدۇ…", "بۇ نەشرىنى يۈكلىگىلى بولمىدى. قايتا سىناڭ.", "نەشر تىزىملىكىنى يۈكلىگىلى بولمىدى. قايتا سىناڭ.", "تەھلىل", "تەھلىل قىلىنىۋاتىدۇ…", "بۇ توركۆرگۈچتە تەھلىل ئىشلەتكىلى بولمايدۇ.", "قۇرلار", "UTF-8 دىكى چوڭلۇقى", "ئېلان قىلىنغان فۇنكسىيەلەر (مۆلچەر)", "بېقىندىلىقلار @require", "ئىجازەتلەر @grant", "تور بېكەتلىرى @match", "JavaScript گرامماتىكىسى (فۇنكسىيە گەۋدىسى)", "ئىناۋەتلىك", "تەكشۈرۈلمىدى", "خاتالىق", "تاقاش", "كود خەت چوڭلۇقى (پىكسېل)", "چوڭلۇقنى تەڭشەش ئۈچۈن سۆرەڭ ياكى سىيرىڭ. قىممەت كىرگۈزۈش ئۈچۈن چېكىڭ.", "ھەممىسى (ZIP)", "نەشرلەرنى تاللاش", "چوڭ ۋە كىچىك ھەرپلەرنى پەرقلەندۈرۈش", "پۈتۈن قۇرنى گەۋدىلەندۈرۈش", "ئىزدەشنى تاقاش"],
+        "uk": ["Відображена версія", "Початкова версія", "Завантаження…", "Не вдалося завантажити цю версію. Спробуйте ще раз.", "Не вдалося завантажити список версій. Спробуйте ще раз.", "Аналіз", "Триває аналіз…", "Аналіз недоступний у цьому браузері.", "Рядки", "Розмір у UTF-8", "Оголошені функції (оцінка)", "Залежності @require", "Дозволи @grant", "Сайти @match", "Синтаксис JavaScript (тіло функції)", "Коректний", "Не перевірено", "Помилка", "Закрити", "Розмір шрифту коду в пікселях", "Перетягніть або прокрутіть, щоб змінити розмір. Натисніть, щоб ввести значення.", "Усі (ZIP)", "Вибрати версії", "Враховувати регістр", "Виділити весь рядок", "Закрити пошук"],
+        "th": ["เวอร์ชันที่แสดง", "เวอร์ชันที่แสดงครั้งแรก", "กำลังโหลด…", "โหลดเวอร์ชันนี้ไม่ได้ โปรดลองอีกครั้ง", "โหลดรายการเวอร์ชันไม่ได้ โปรดลองอีกครั้ง", "วิเคราะห์", "กำลังวิเคราะห์…", "เบราว์เซอร์นี้ไม่รองรับการวิเคราะห์", "จำนวนบรรทัด", "ขนาดในรูปแบบ UTF-8", "ฟังก์ชันที่ประกาศ (โดยประมาณ)", "ส่วนที่ต้องใช้ @require", "สิทธิ์ @grant", "เว็บไซต์ @match", "ไวยากรณ์ JavaScript (ส่วนเนื้อหาฟังก์ชัน)", "ถูกต้อง", "ยังไม่ได้ตรวจสอบ", "ข้อผิดพลาด", "ปิด", "ขนาดตัวอักษรของโค้ดเป็นพิกเซล", "ลากหรือเลื่อนเพื่อปรับขนาด คลิกเพื่อป้อนค่า", "ทั้งหมด (ZIP)", "เลือกเวอร์ชัน", "แยกตัวพิมพ์เล็กและใหญ่", "เน้นทั้งบรรทัด", "ปิดการค้นหา"],
+    };
+
+    const getCodeWorkspaceLabels = (locale) => {
+        const [
+            version, original, loading, failed, versionError,
+            analysis, working, unavailable, lines, size, functions,
+            imports, grants, matches, syntax, valid, syntaxUnavailable, syntaxError,
+            close, fontSize, fontHint, zipAll, zipChoose, matchCase, wholeLine, closeSearch
+        ] = CODE_WORKSPACE_I18N[locale] || CODE_WORKSPACE_I18N[locale.split('-')[0]] || CODE_WORKSPACE_I18N.en;
+        return {
+            version, original, loading, failed, versionError,
+            analysis, working, unavailable, lines, size, functions,
+            imports, grants, matches, syntax, valid, syntaxUnavailable, syntaxError,
+            close, fontSize, fontHint, zipAll, zipChoose, matchCase, wholeLine, closeSearch
+        };
+    };
+
+    const initCodeWorkspace = ({ pre, group, downloadGroup, displayGroup, locale, labels: t, onCodeChange }) => {
+        const root = document.querySelector('#script-content');
+        const match = location.pathname.match(/\/scripts\/(\d+)(?:[-/]|$)/);
+        if (!root || !match) return;
+        const scriptId = match[1];
+        const readPreference = (key, fallback) => { try { return localStorage.getItem(key) || fallback; } catch { return fallback; } };
+        const savePreference = (key, value) => { try { localStorage.setItem(key, value); } catch {} };
+        const make = (tag, className, text) => { const el = document.createElement(tag); if (className) el.className = className; if (text != null) el.textContent = text; return el; };
+        const style = make('style');
+        style.textContent = `
+            .gf-code-workspace-select { max-width:10rem; min-width:0; min-height:32px; padding:3px 5px; border:0 !important; border-radius:5px; background:transparent !important; color:var(--overall-text-color) !important; box-shadow:none !important; transform:none !important; font:inherit; font-size:.78rem; cursor:pointer; }
+            .gf-code-workspace-select:hover { background:color-mix(in srgb, var(--link-color) 10%, var(--content-background-color)) !important; box-shadow:none !important; transform:none !important; }
+            .gf-code-workspace-select:focus { outline:none; box-shadow:none !important; }
+            .gf-code-workspace-select:focus-visible:not(.gf-code-pointer-focus) { outline:2px solid var(--link-color) !important; outline-offset:-2px; }
+            .gf-code-workspace { position:relative; display:inline-flex; }
+            .gf-code-export-group.gf-code-workspace-open, .gf-code-export-group:has(.gf-code-workspace-panel:not([hidden])) { z-index:4; }
+            .gf-code-workspace-panel { position:absolute; inset-inline-end:0; top:100%; z-index:20; box-sizing:border-box; max-width:calc(100vw - 24px); max-height:min(65vh, 32rem); overflow:auto; padding:12px; border:1px solid var(--content-border-color, #777); border-radius:0 0 8px 8px; background:var(--content-background-color, #fff); color:var(--overall-text-color, #222); box-shadow:none !important; text-align:start; }
+            #script-content .code-container { border-radius:7px; }
+            #script-content :is(pre.gf-hljs, .code-container) { border-top-right-radius:0; }
+            /* Measure the code at its own height, even when the gutter still has extra rows. */
+            #script-content pre.gf-hljs > code.hljs { align-self:flex-start; }
+            .gf-code-analysis-panel { width:min(22rem, calc(100vw - 24px)); }
+            .gf-code-workspace-panel[hidden] { display:none; }
+            .gf-code-workspace-head { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+            .gf-code-workspace-panel button { min-height:30px; padding:4px 7px; border:0 !important; border-radius:5px; background:transparent !important; color:inherit; box-shadow:none !important; transform:none !important; cursor:pointer; }
+            .gf-code-workspace-panel button:hover { background:color-mix(in srgb, var(--link-color, #4974bd) 10%, var(--content-background-color, #fff)) !important; box-shadow:none !important; transform:none !important; }
+            .gf-code-workspace-panel button:focus-visible { outline:2px solid var(--link-color, #4974bd); outline-offset:-2px; }
+            .gf-code-analysis-panel .gf-code-workspace-head { padding-block-end:6px; }
+            .gf-code-analysis-panel .gf-code-workspace-head strong { display:inline-flex; align-items:center; gap:8px; }
+            .gf-code-analysis-panel button.gf-code-analysis-close { display:grid; flex:none; place-items:center; width:28px; height:28px; min-height:28px; padding:0 !important; color:var(--overall-text-color, CanvasText) !important; }
+            .gf-code-analysis-close svg.gf-code-analysis-icon { display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
+            .gf-code-analysis-panel svg.gf-code-analysis-icon { width:16px; height:16px; flex:none; }
+            .gf-code-workspace-results { font-size:.82rem; overflow-wrap:anywhere; }
+            .gf-code-workspace-results:empty { display:none; }
+            .gf-code-workspace-results > p { margin:.35rem 0; }
+            .gf-code-analysis-stats { display:grid; gap:5px; margin:0; padding:8px 10px; border-radius:6px; background:color-mix(in srgb, currentColor 5%, transparent); }
+            .gf-code-analysis-stat, .gf-code-analysis-heading { display:flex; align-items:center; gap:8px; }
+            .gf-code-analysis-stat dt { display:flex; align-items:center; gap:8px; min-width:0; }
+            .gf-code-analysis-stat dd, .gf-code-analysis-count { flex:none; margin:0; margin-inline-start:auto; font-weight:600; font-variant-numeric:tabular-nums; }
+            .gf-code-analysis-section { padding:8px 2px; border-bottom:1px solid var(--content-border-color, #777); }
+            .gf-code-analysis-section:last-child { border-bottom:0; padding-block-end:0; }
+            .gf-code-analysis-heading strong { font-size:inherit; }
+            .gf-code-analysis-count { opacity:.75; }
+            .gf-code-analysis-section ul { list-style:none; padding:0; margin:5px 0 0; max-height:8rem; overflow-y:auto; }
+            .gf-code-analysis-section li, .gf-code-analysis-message { margin:0; padding:3px 0 3px 24px; font-family:var(--font-family-monospace, monospace); font-size:.76rem; }
+            .gf-code-analysis-section ul.gf-code-analysis-grants { display:flex; flex-wrap:wrap; gap:5px; padding-inline-start:24px; }
+            .gf-code-analysis-grants > li { padding:0; min-width:0; max-width:100%; }
+            .gf-code-analysis-grants .gf-script-permission-chip { box-sizing:border-box; font-size:inherit; }
+            .gf-code-analysis-status { font-size:.76rem; }
+            .gf-code-font-size { display:inline-flex; align-items:center; gap:2px; min-height:32px; padding:0 7px; border-radius:7px; color:var(--overall-text-color); font-size:.78rem; font-variant-numeric:tabular-nums; cursor:grab; user-select:none; touch-action:none; transition:background-color .16s ease; }
+            .gf-code-font-size.is-dragging { cursor:grabbing; }
+            .gf-code-font-size input { cursor:grab; }
+            .gf-code-font-size input:focus { cursor:text; }
+            .gf-code-font-size.is-dragging input { cursor:grabbing; user-select:none; }
+            .gf-code-font-size:hover { background:color-mix(in srgb, var(--link-color) 10%, var(--content-background-color)); }
+            .gf-code-font-roller { position:relative; display:inline-block; flex:0 0 3ch; width:3ch; height:1.5em; overflow:hidden; line-height:1.5; }
+            .gf-code-font-roller-strip { position:absolute; inset:0; display:flex; flex-direction:column; height:100%; text-align:end; pointer-events:none; transition:transform 150ms cubic-bezier(.2,.75,.25,1); }
+            .gf-code-font-roller-strip > span { display:block; flex:0 0 100%; box-sizing:border-box; margin:0; padding:0; overflow:hidden; white-space:nowrap; word-break:normal; overflow-wrap:normal; line-height:inherit; }
+            .gf-code-font-size.is-dragging .gf-code-font-roller-strip { transition:none; }
+            @media (prefers-reduced-motion: reduce) { .gf-code-font-roller-strip { transition:none; } }
+            .gf-code-font-roller input { position:absolute; inset:0; height:100%; opacity:0; }
+            .gf-code-font-roller input:focus { opacity:1; }
+            .gf-code-font-roller:focus-within .gf-code-font-roller-strip { visibility:hidden; }
+            .gf-code-font-size input { box-sizing:border-box; width:100% !important; min-width:0 !important; padding:0 !important; margin:0 !important; border:0 !important; background:transparent !important; color:inherit !important; box-shadow:none !important; outline:none; font:inherit; text-align:end; appearance:textfield; -moz-appearance:textfield; }
+            .gf-code-font-size input::-webkit-inner-spin-button, .gf-code-font-size input::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+            .gf-code-font-size input:focus-visible { outline:2px solid var(--link-color); outline-offset:2px; }
+        `;
+        (document.head || document.documentElement).appendChild(style);
+        const fontControl = make('span', 'gf-code-font-size');
+        const roller = make('span', 'gf-code-font-roller');
+        const strip = make('span', 'gf-code-font-roller-strip');
+        strip.setAttribute('aria-hidden', 'true');
+        const minSize = 8, maxSize = 32;
+        for (let size = minSize; size <= maxSize; size++) {
+            strip.append(make('span', '', String(size)));
+        }
+        const fontInput = make('input'); fontInput.type = 'number'; fontInput.min = String(minSize); fontInput.max = String(maxSize); fontInput.step = '1';
+        fontInput.setAttribute('aria-label', t.fontSize);
+        fontControl.title = t.fontHint;
+        const defaultSize = 14;
+        const savedSize = Number(readPreference('gfplus-code-font-size', String(defaultSize)));
+        const clampSize = value => Math.max(minSize, Math.min(maxSize, value));
+        let fontSize = Number.isFinite(savedSize) && savedSize >= minSize && savedSize <= maxSize ? Math.round(savedSize) : defaultSize;
+        let fontSyncTimer = 0;
+        const positionStrip = value => {
+            strip.style.transform = `translateY(${(minSize - value) * 100}%)`;
+        };
+        const applyFontSize = (value, persist = true) => {
+            const nextSize = Math.round(clampSize(value));
+            if (fontInput.value !== String(nextSize)) fontInput.value = String(nextSize);
+            if (nextSize === fontSize && pre.style.getPropertyValue('--hljs-font-size')) return;
+            fontSize = nextSize;
+            pre.style.setProperty('--hljs-font-size', `${fontSize}px`);
+            pre.style.setProperty('--hljs-line-height', `${Math.round(fontSize * 1.7)}px`);
+            clearTimeout(fontSyncTimer);
+            if (persist) {
+                savePreference('gfplus-code-font-size', String(fontSize));
+                fontSyncTimer = window.setTimeout(scheduleLineNumberSync, 120);
+            }
+        };
+        applyFontSize(fontSize, false);
+        positionStrip(fontSize);
+        scheduleLineNumberSync();
+        let wheelAmount = 0, wheelTimer = 0;
+        fontControl.addEventListener('wheel', event => {
+            if (drag || !event.deltaY || event.ctrlKey || event.metaKey) return;
+            event.preventDefault();
+            wheelAmount += event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 60 : 1);
+            clearTimeout(wheelTimer);
+            wheelTimer = window.setTimeout(() => { wheelAmount = 0; }, 240);
+            if (Math.abs(wheelAmount) >= 30) {
+                applyFontSize(fontSize + (wheelAmount < 0 ? 1 : -1));
+                positionStrip(fontSize);
+                wheelAmount = 0;
+            }
+        }, { passive:false });
+        let drag = null;
+        fontControl.addEventListener('pointerdown', event => {
+            if (event.button !== 0 || event.isPrimary === false) return;
+            if (document.activeElement === fontInput && event.target === fontInput) return;
+            event.preventDefault();
+            const rowHeight = roller.getBoundingClientRect().height || 16;
+            const transform = window.getComputedStyle(strip).transform;
+            const initial = window.DOMMatrixReadOnly && transform && transform !== 'none'
+                ? minSize - new window.DOMMatrixReadOnly(transform).m42 / rowHeight
+                : fontSize;
+            drag = {
+                id: event.pointerId,
+                y: event.clientY,
+                initial,
+                rowHeight,
+                moved: false
+            };
+            fontControl.setPointerCapture?.(event.pointerId);
+        });
+        document.addEventListener('pointermove', event => {
+            if (!drag || event.pointerId !== drag.id) return;
+            const distance = drag.y - event.clientY;
+            if (!drag.moved && Math.abs(distance) < 5) return;
+            if (!drag.moved) {
+                drag.moved = true;
+                if (document.activeElement === fontInput) fontInput.blur();
+                fontControl.classList.add('is-dragging');
+            }
+            event.preventDefault();
+            const position = clampSize(drag.initial + distance / drag.rowHeight);
+            positionStrip(position);
+            applyFontSize(position, false);
+        }, { passive:false });
+        const finishDrag = event => {
+            if (!drag || event.pointerId !== drag.id) return;
+            const moved = drag.moved;
+            drag = null;
+            fontControl.classList.remove('is-dragging');
+            if (moved) {
+                positionStrip(fontSize);
+                savePreference('gfplus-code-font-size', String(fontSize));
+                clearTimeout(fontSyncTimer);
+                scheduleLineNumberSync();
+            }
+            if (fontControl.hasPointerCapture?.(event.pointerId)) fontControl.releasePointerCapture(event.pointerId);
+            if (!moved && event.type === 'pointerup') { fontInput.focus({ preventScroll:true }); fontInput.select(); }
+        };
+        document.addEventListener('pointerup', finishDrag);
+        document.addEventListener('pointercancel', finishDrag);
+        fontControl.addEventListener('lostpointercapture', finishDrag);
+        const commitFontSize = () => {
+            const value = Number(fontInput.value);
+            applyFontSize(fontInput.value.trim() !== '' && Number.isFinite(value) ? value : fontSize);
+            positionStrip(fontSize);
+        };
+        fontInput.addEventListener('change', commitFontSize);
+        fontInput.addEventListener('blur', commitFontSize);
+        fontInput.addEventListener('keydown', event => {
+            if (event.key === 'Enter') { event.preventDefault(); commitFontSize(); fontInput.blur(); }
+            else if (event.key === 'Escape') { event.preventDefault(); fontInput.value = String(fontSize); fontInput.blur(); }
+        });
+        roller.append(strip, fontInput);
+        fontControl.append(roller, make('span', '', 'px'));
+        const versions = make('select','gf-code-workspace-select'); versions.title=t.version; versions.setAttribute('aria-label',t.version);
+        const original = make('option','',t.original); original.value='original'; versions.append(original);
+        for (const select of [versions]) {
+            select.addEventListener('pointerdown', () => select.classList.add('gf-code-pointer-focus'));
+            select.addEventListener('keydown', () => select.classList.remove('gf-code-pointer-focus'));
+            select.addEventListener('blur', () => select.classList.remove('gf-code-pointer-focus'));
+        }
+        const analysisIcon = path => {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.classList.add('gf-code-analysis-icon');
+            svg.setAttribute('viewBox', '0 0 24 24');
+            svg.setAttribute('aria-hidden', 'true');
+            const shape = document.createElementNS(svg.namespaceURI, 'path');
+            shape.setAttribute('d', path);
+            svg.append(shape);
+            return svg;
+        };
+        const chartIcon = 'M4 19h16M7 15v-4m5 4V6m5 9V9';
+        const wrapper = make('span', 'gf-code-workspace');
+        const opener = make('button', 'gf-code-tool'); opener.type='button'; opener.title=t.analysis; opener.setAttribute('aria-label',t.analysis); opener.setAttribute('aria-expanded','false');
+        opener.append(analysisIcon(chartIcon));
+        const panel=make('div','gf-code-workspace-panel gf-code-analysis-panel'); panel.hidden=true;
+        const head=make('div','gf-code-workspace-head'); const title=make('strong','',t.analysis);
+        title.prepend(analysisIcon(chartIcon));
+        const close = make('button', 'gf-code-analysis-close');
+        close.type = 'button';
+        close.setAttribute('aria-label', t.close);
+        close.append(analysisIcon('M6 6l12 12M18 6 6 18'));
+        head.append(title, close);
+        const results=make('div','gf-code-workspace-results'); results.setAttribute('aria-live','polite');
+        panel.append(head,results); wrapper.append(opener,panel); downloadGroup.append(versions); displayGroup.append(fontControl,wrapper);
+        const setOpen = (open) => { panel.hidden=!open; group.classList.toggle('gf-code-workspace-open', open); opener.setAttribute('aria-expanded',String(open)); if (!open) opener.focus({preventScroll:true}); };
+        opener.addEventListener('click', () => { const open=panel.hidden; setOpen(open); if (open) analyzeCode(); }); close.addEventListener('click', () => setOpen(false));
+        panel.addEventListener('keydown', (event) => { if (event.key === 'Escape') { event.preventDefault(); setOpen(false); } });
+        document.addEventListener('pointerdown', (event) => { if (!panel.hidden && !wrapper.contains(event.target)) { panel.hidden=true; group.classList.remove('gf-code-workspace-open'); opener.setAttribute('aria-expanded','false'); } });
+        const initialCode = getCodeTextFromPre(pre); let lastVersion='original', versionRequest=0, runningRequest=null, worker=null, workerUrl=null;
+        const showError = (message) => { results.replaceChildren(make('p','',message)); };
+        const applyCode = (text) => {
+            const code = pre.querySelector('code.hljs');
+            if (!code) throw new Error('Code element unavailable');
+            pre.setAttribute(HIGHLIGHT_ATTR, 'done');
+            code.textContent = text; code.removeAttribute('data-highlighted');
+            if (text.length <= 500000) {
+                const api = getHighlightApi();
+                if (api) { try { api.highlightElement(code); } catch (error) { code.textContent=text; disableHighlightApi(error); } }
+            }
+            ensureLineNumbers(pre, text); scheduleLineNumberSync(); onCodeChange(); if (!panel.hidden) analyzeCode();
+        };
+        const apiUrl = new URL(`/${locale}/scripts/${scriptId}/versions.json`, `${location.protocol}//api.${location.hostname}`);
+        apiUrl.searchParams.set('list_all','1'); apiUrl.searchParams.set('show_all_versions','1');
+        let versionsLoaded=false, versionsPromise=null;
+        const loadVersions = () => {
+            if (versionsLoaded) return Promise.resolve();
+            if (versionsPromise) return versionsPromise;
+            versionsPromise=(async () => {
+            versions.title=t.loading;
+            try {
+                const controller = new AbortController(); const timeout = window.setTimeout(() => controller.abort(),30000);
+                let data;
+                try { const response=await fetch(apiUrl,{credentials:'omit',signal:controller.signal}); if (!response.ok || new URL(response.url).origin !== apiUrl.origin) throw new Error('Invalid response'); data=await response.json(); } finally { clearTimeout(timeout); }
+                if (!Array.isArray(data)) throw new Error('Invalid history');
+                const fragment=document.createDocumentFragment();
+                data.forEach((entry) => {
+                    try {
+                        const url=new URL(entry.code_url,location.origin);
+                        if (url.protocol!=='https:' || !['greasyfork.org','sleazyfork.org'].includes(url.hostname) || !new RegExp(`^/scripts/${scriptId}(?:-|/)`).test(url.pathname)) return;
+                        const id=url.searchParams.get('version'); const filename=url.pathname.split('/').pop();
+                        if (!/^\d+$/.test(id || '') || !filename) return;
+                        const option=make('option','',`${entry.version || id}${entry.created_at ? ' · '+String(entry.created_at).slice(0,10) : ''}`); option.value=id;
+                        option.dataset.url=new URL(`/scripts/${scriptId}/${id}/${filename}`,`https://update.${url.hostname}`).href; fragment.append(option);
+                    } catch {}
+                });
+                versions.replaceChildren(original,fragment); versions.value=lastVersion; versionsLoaded=true; versions.title=t.version;
+            } catch { versions.title=t.versionError; }
+            })().finally(() => { versionsPromise=null; });
+            return versionsPromise;
+        };
+        versions.addEventListener('focus', loadVersions);
+        loadVersions();
+        versions.addEventListener('change', async () => {
+            if (worker) { worker.terminate(); worker=null; if (workerUrl) URL.revokeObjectURL(workerUrl); workerUrl=null; }
+            const selected=versions.value, requestId=++versionRequest; runningRequest?.abort?.(); runningRequest=null;
+            if (selected==='original') { applyCode(initialCode); lastVersion=selected; results.replaceChildren(); return; }
+            const url=versions.selectedOptions[0]?.dataset.url;
+            if (!url || typeof GM_xmlhttpRequest !== 'function') { versions.value=lastVersion; showError(t.failed); return; }
+            versions.disabled=true; showError(t.loading);
+            try {
+                const text=await new Promise((resolve,reject) => {
+                    runningRequest=GM_xmlhttpRequest({method:'GET',url,anonymous:true,timeout:30000,responseType:'text',
+                        onload:(response) => { try { if (response.status<200 || response.status>=300 || (response.finalUrl && new URL(response.finalUrl).origin!==new URL(url).origin) || /^content-type:\s*text\/html/im.test(response.responseHeaders || '') || typeof response.responseText!=='string') throw new Error('Invalid response'); resolve(response.responseText); } catch (error) { reject(error); } },
+                        onerror:() => reject(new Error('Network error')), ontimeout:() => reject(new Error('Timeout')), onabort:() => reject(new Error('Aborted')) });
+                });
+                if (requestId!==versionRequest) return;
+                applyCode(text); lastVersion=selected; results.replaceChildren();
+            } catch { if (requestId===versionRequest) { versions.value=lastVersion; showError(t.failed); } }
+            finally { if (requestId===versionRequest) { runningRequest=null; versions.disabled=false; } }
+        });
+        const analyzeSource = function () {
+            self.onmessage = ({data: {code, isStyle}}) => {
+                const metadata = { require:[], grant:[], match:[] }; let inside=false, lineCount=code ? 1 : 0, functions=0;
+                const lines=code.split(/\r\n|\r|\n/); lineCount=code ? lines.length : 0;
+                for (const line of lines) {
+                    if (/^\s*(?:\/\/|\*)\s*==User(?:Script|Style)==/.test(line)) { inside=true; continue; }
+                    if (/^\s*(?:\/\/|\*)\s*==\/User(?:Script|Style)==/.test(line)) { inside=false; continue; }
+                    if (inside) { const m=line.match(/^\s*(?:\/\/|\*)\s*@(require|grant|match)\s+(.+)$/i); if (m) metadata[m[1].toLowerCase()].push(m[2].trim()); }
+                    functions += (line.match(/\bfunction\s*\*?\s*[\w$]*\s*\(/g) || []).length;
+                }
+                let syntax = null;
+                if (!isStyle) { try { new Function(code); syntax = {valid:true}; } catch (error) { if (error instanceof SyntaxError) syntax = {valid:false, message:String(error.message)}; } }
+                self.postMessage({lineCount, bytes:new TextEncoder().encode(code).byteLength, functions, metadata, syntax});
+            };
+        };
+        const analyzeCode = () => {
+            if (worker) { worker.terminate(); worker=null; if (workerUrl) URL.revokeObjectURL(workerUrl); workerUrl=null; results.replaceChildren(); }
+            try {
+                workerUrl=URL.createObjectURL(new Blob([`(${analyzeSource.toString()})();`],{type:'text/javascript'})); worker=new Worker(workerUrl);
+                showError(t.working);
+                const finish=() => { worker?.terminate(); worker=null; URL.revokeObjectURL(workerUrl); workerUrl=null; };
+                worker.onerror=() => { finish(); showError(t.unavailable); };
+                worker.onmessage=({data}) => {
+                    finish();
+                    const stats = make('dl', 'gf-code-analysis-stats');
+                    const metrics = [
+                        [t.lines, data.lineCount.toLocaleString(locale), 'M4 6h16M4 12h16M4 18h10'],
+                        [t.size, `${data.bytes.toLocaleString(locale)} B`, 'M6 3h8l4 4v14H6zM14 3v5h4M9 12h6m-6 4h6'],
+                        [t.functions, data.functions.toLocaleString(locale), 'm8 7-5 5 5 5m8-10 5 5-5 5m-3-13-2 16']
+                    ];
+                    for (const [label, value, icon] of metrics) {
+                        const row = make('div', 'gf-code-analysis-stat');
+                        const term = make('dt', '', label);
+                        term.prepend(analysisIcon(icon));
+                        row.append(term, make('dd', '', value));
+                        stats.append(row);
+                    }
+
+                    const syntax = make('div', 'gf-code-analysis-section');
+                    const syntaxHeading = make('div', 'gf-code-analysis-heading');
+                    const syntaxLabel = make('strong', '', t.syntax);
+                    const status = data.syntax?.valid ? t.valid : data.syntax ? t.syntaxError : t.syntaxUnavailable;
+                    const statusIcon = data.syntax?.valid ? 'm5 12 4 4L19 6' : data.syntax ? 'M12 7v6m0 4h.01M12 3l10 18H2z' : 'M6 12h12';
+                    syntaxHeading.append(analysisIcon(statusIcon), syntaxLabel, make('span', 'gf-code-analysis-count gf-code-analysis-status', status));
+                    syntax.append(syntaxHeading);
+                    if (data.syntax?.message) syntax.append(make('p', 'gf-code-analysis-message', data.syntax.message));
+                    results.replaceChildren(stats, syntax);
+
+                    const groups = [
+                        [t.imports, data.metadata.require, 'm12 3 8 4.5v9L12 21l-8-4.5v-9zM4 7.5l8 4.5 8-4.5M12 12v9'],
+                        [t.grants, data.metadata.grant, 'M12 3 5 6v5c0 5 3 8 7 10 4-2 7-5 7-10V6zM9 12l2 2 4-4'],
+                        [t.matches, data.metadata.match, 'M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0m0 0h18M12 3c-4 4-4 14 0 18m0-18c4 4 4 14 0 18']
+                    ];
+                    for (const [label, items, icon] of groups) {
+                        const isGrantList = items === data.metadata.grant;
+                        const section = make('div', 'gf-code-analysis-section');
+                        const heading = make('div', 'gf-code-analysis-heading');
+                        heading.append(analysisIcon(icon), make('strong', '', label), make('span', 'gf-code-analysis-count', items.length.toLocaleString(locale)));
+                        section.append(heading);
+                        if (items.length) {
+                            const list = make('ul', isGrantList ? 'gf-code-analysis-grants' : '');
+                            for (const value of items) {
+                                const item = make('li');
+                                if (isGrantList) item.append(createPermissionChip(value));
+                                else item.textContent = value;
+                                list.append(item);
+                            }
+                            section.append(list);
+                        }
+                        results.append(section);
+                    }
+                };
+                const source=getCodeTextFromPre(pre); worker.postMessage({code:source, isStyle:/==UserStyle==/.test(source) || /(?:^|\s)(?:lang|language)-css(?:\s|$)/.test(pre.className)});
+            } catch { if (workerUrl) URL.revokeObjectURL(workerUrl); workerUrl=null; worker=null; showError(t.unavailable); }
+        };
+        return { loadVersions, versions };
+    };
+
+    const initScriptCodeTools = () => {
+        const toggle = document.querySelector('#script-content #wrap-lines');
+        const pre = document.querySelector('#script-content .code-container pre, #script-content #code-container pre');
+        const controls = toggle?.parentElement;
+        if (!controls || !pre || controls.hasAttribute('data-gfplus-code-tools')) return;
+        const locale = getCurrentLocale();
+        const labels = getCodeWorkspaceLabels(locale);
+        const [copyLabel, downloadLabel, copiedLabel, failedLabel] = CODE_TOOLS_I18N[locale] || CODE_TOOLS_I18N[locale.split('-')[0]] || CODE_TOOLS_I18N.en;
+        const [archiveLabel, preparingLabel, archiveFailedLabel, noVersionsLabel] = CODE_ARCHIVE_I18N[locale] || CODE_ARCHIVE_I18N[locale.split('-')[0]] || CODE_ARCHIVE_I18N.en;
+        const [searchLabel, previousLabel, nextLabel] = CODE_SEARCH_I18N[locale] || CODE_SEARCH_I18N[locale.split('-')[0]] || CODE_SEARCH_I18N.en;
+        const [cancelLabel, cancelledLabel] = CODE_EXPORT_PROGRESS_I18N[locale] || CODE_EXPORT_PROGRESS_I18N[locale.split('-')[0]] || CODE_EXPORT_PROGRESS_I18N.en;
+        const style = document.createElement('style');
+        style.textContent = `
+            .gf-code-tools-row { display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: .65rem; row-gap: .4rem; margin-block: .65rem 0; }
+            .gf-code-tools-row > #wrap-lines, .gf-code-tools-row > label[for="wrap-lines"] { margin-bottom: .65rem; }
+            .gf-code-tools-actions { display: inline-flex; flex-wrap: wrap; align-items: flex-end; gap: .35rem; order: 3; margin-inline-start: auto; max-width: 100%; }
+            .gf-code-tools-actions button.gf-code-tool { display: inline-flex; align-items: center; justify-content: center; gap: .35rem; min-height: 32px; padding: .35rem .6rem; border: 1px solid transparent !important; border-radius: 7px !important; background: transparent !important; color: var(--overall-text-color) !important; font-size: .82rem; line-height: 1.2; box-shadow: none !important; transform: none !important; transition: background-color .16s ease, border-color .16s ease; }
+            .gf-code-tools-actions button.gf-code-tool:hover { background: color-mix(in srgb, var(--link-color) 10%, var(--content-background-color)) !important; border-color: transparent !important; box-shadow: none !important; transform: none !important; }
+            .gf-code-tools-actions button.gf-code-tool:focus:not(:focus-visible) { outline: none !important; box-shadow: none !important; transform: none !important; }
+            .gf-code-tools-actions button.gf-code-tool:focus-visible { outline: 2px solid var(--link-color); outline-offset: 2px; }
+            .gf-code-format-wrap { position: relative; display: inline-flex; align-items: center; flex: none; }
+            .gf-code-format-wrap::after { content: ''; position: absolute; inset-inline-end: .6rem; width: .35rem; height: .35rem; border-inline-end: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(45deg); pointer-events: none; opacity: .7; }
+            .gf-code-tools-actions select.gf-code-format { appearance: none; -webkit-appearance: none; width: auto; min-height: 32px; padding: .3rem 1.55rem .3rem .6rem; padding-inline: .6rem 1.55rem; border: 0 !important; border-radius: 7px; background: transparent !important; color: var(--overall-text-color) !important; font-size: .82rem; box-shadow: none !important; cursor: pointer; transition: background-color .16s ease; }
+            .gf-code-tools-actions select.gf-code-format:hover { background: color-mix(in srgb, var(--link-color) 10%, var(--content-background-color)) !important; }
+            .gf-code-tools-actions select.gf-code-format:focus { border: 0 !important; box-shadow: none !important; outline: none; }
+            .gf-code-tools-actions select.gf-code-format:focus-visible:not(.gf-code-format-pointer-focus) { outline: 2px solid var(--link-color) !important; outline-offset: 1px; }
+            .gf-code-tools-actions svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+            .gf-code-tools-actions .gf-code-archive-label { font-weight:400 !important; }
+            .gf-code-toolbar-separator { width:1px; height:18px; margin:0 3px; background:var(--content-border-color); opacity:.8; flex:none; }
+            .gf-code-tool-section { display:inline-flex; align-items:center; flex:0 0 auto; gap:2px; min-width:0; max-width:100%; }
+            .gf-code-zip-wrap { position:relative; display:inline-flex; }
+            .gf-code-zip-menu { width:auto; padding:5px; }
+            .gf-code-zip-menu label { white-space:nowrap; display:flex; align-items:center; gap:7px; padding:5px 6px; font-size:.8rem; cursor:pointer; overflow-wrap:anywhere; }
+            .gf-code-zip-menu input { margin:0; accent-color:var(--link-color); }
+            .gf-code-export-group { position: relative; z-index: 1; display: inline-flex; align-items: center; flex-wrap: wrap; max-width: 100%; box-sizing: border-box; gap: 2px; padding: 3px; margin-bottom: -1px; border: 1px solid var(--code-container-border-color, var(--content-border-color)); border-bottom-color: var(--hljs-bg, var(--code-background-color)); border-radius: 10px 10px 0 0; background: var(--hljs-bg, var(--code-background-color)); transition: background-color .18s ease, border-color .18s ease; }
+            .gf-code-tools-actions button.gf-code-tool[hidden], .gf-code-export-progress[hidden] { display: none !important; }
+            .gf-code-export-progress { position: absolute; inset-inline: 3px; bottom: 0; width: calc(100% - 6px); height: 2px; border: 0; color: var(--link-color); accent-color: var(--link-color); }
+            .gf-code-export-progress::-webkit-progress-bar { background: transparent; }
+            .gf-code-export-progress::-webkit-progress-value { background: var(--link-color); }
+            .gf-code-export-progress::-moz-progress-bar { background: var(--link-color); }
+            .gf-code-reading-actions:empty { display:none; }
+            @media (max-width: 800px) {
+                #script-content :is(pre.gf-hljs, .code-container) { border-top-left-radius:0; }
+                .gf-code-tools-row { align-items:center; justify-content:center; column-gap:.4rem; }
+                .gf-code-tools-row > #wrap-lines, .gf-code-tools-row > label[for="wrap-lines"] { margin-bottom:0; }
+                .gf-code-tools-row > .gf-code-tools-actions { width:100%; min-width:0; }
+                .gf-code-tools-row > .gf-code-reading-actions { width:auto; order:0; margin-inline-start:0; flex-wrap:nowrap; }
+                .gf-code-tools-row .gf-code-export-group { width:100%; min-width:0; justify-content:center; }
+                .gf-code-export-group .gf-code-desktop-separator { display:none; }
+                .gf-code-export-group .gf-code-workspace-select { max-width:min(7rem, 30vw); }
+                .gf-code-export-group :is(.gf-code-workspace, .gf-code-zip-wrap) { position:static; }
+                .gf-code-export-group .gf-code-workspace-panel { max-width:min(100%, calc(100vw - 24px)); }
+                .gf-code-zip-menu label { white-space:normal; }
+                .gf-code-zip-menu input { flex:none; }
+            }
+            @media (max-width: 600px) {
+                .gf-code-export-group .gf-code-tool-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+            }
+            .gf-code-tools-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+            .gf-code-search-anchor { position: sticky; top: 0; inset-inline-start: 0; z-index: 2; width: 100%; height: 0; pointer-events: none; }
+            .gf-code-search { position: absolute; top: 6px; inset-inline-end: 8px; display: flex; align-items: center; gap: .1rem; box-sizing: border-box; width: min(26rem, calc(100% - 16px)); min-width: 0; padding: 2px 3px 2px .5rem; border: 1px solid var(--code-container-border-color, var(--content-border-color)); border-radius: 6px; background: var(--hljs-bg, var(--content-background-color)); box-shadow: none !important; pointer-events: auto; }
+            .gf-code-search[hidden] { display: none; }
+            .gf-code-search button.gf-code-search-nav[aria-pressed="true"] { background: color-mix(in srgb, var(--link-color) 18%, var(--content-background-color)) !important; }
+            .gf-code-search button.gf-code-search-nav:focus { box-shadow: none !important; outline: none; }
+            .gf-code-search button.gf-code-search-nav:focus-visible { outline: 2px solid var(--link-color); outline-offset: -2px; }
+            .gf-code-search input.gf-code-search-input { flex: 1 1 auto; width: 100%; min-width: 0; padding: .35rem 0 !important; border: 0 !important; outline: 0; box-shadow: none !important; background: transparent !important; color: var(--overall-text-color) !important; font: inherit; font-size: .875rem; }
+            .gf-code-search-count { flex: none; font-size: .78rem; color: var(--overall-text-color); opacity: .75; white-space: nowrap; font-variant-numeric: tabular-nums; }
+            .gf-code-search button.gf-code-search-nav { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 28px !important; min-width: 28px !important; max-width: 28px; height: 28px !important; min-height: 28px !important; max-height: 28px; box-sizing: border-box; padding: 0 !important; border: 0 !important; border-radius: 7px !important; background: transparent !important; color: var(--overall-text-color) !important; box-shadow: none !important; transform: none !important; }
+            .gf-code-search button.gf-code-search-nav:hover:not(:disabled) { background: color-mix(in srgb, var(--link-color) 10%, var(--content-background-color)) !important; }
+            .gf-code-search button.gf-code-search-nav:disabled { opacity: .35; cursor: default; }
+            .gf-code-search button.gf-code-search-nav:focus-visible { outline: 2px solid var(--link-color); outline-offset: 1px; }
+            .gf-code-search svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+            ::highlight(gf-code-search-matches) { background-color: #fde68a; color: #1f2937; }
+            ::highlight(gf-code-search-current) { background-color: #f59e0b; color: #111827; }
+            ::highlight(gf-code-search-line) { background-color: rgba(215, 160, 49, .3); }
+
+        `;
+        appendStyle(style);
+        controls.classList.add('gf-code-tools-row');
+        const actions = document.createElement('span'); actions.className = 'gf-code-tools-actions';
+        const status = document.createElement('span'); status.className = 'gf-code-tools-status'; status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
+        const makeButton = (label, paths) => {
+            const button = document.createElement('button'); button.type = 'button'; button.className = 'gf-code-tool';
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('aria-hidden', 'true'); svg.innerHTML = paths;
+            const text = document.createElement('span'); text.className = 'gf-code-tool-label'; text.textContent = label; button.append(svg, text); button.title = label; return button;
+        };
+        const copy = makeButton(copyLabel, '<rect x="8" y="8" width="11" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"></path>');
+        copy.querySelector('span')?.remove();
+        copy.setAttribute('aria-label', copyLabel);
+        copy.title = copyLabel;
+        const download = makeButton(downloadLabel, '<path d="M12 3v11m-4-4 4 4 4-4M5 18v2h14v-2"></path>');
+        download.querySelector('span')?.remove(); download.setAttribute('aria-label', downloadLabel);
+        const archive = makeButton(archiveLabel, '<path d="M4 5h16v4H4zM5 9h14v10H5zM10 13h4"></path>');
+        archive.querySelector('span').classList.add('gf-code-archive-label');
+        archive.querySelector('span').textContent = labels.zipAll;
+        const cancelArchive = makeButton(cancelLabel, '<path d="M6 6l12 12M18 6 6 18"></path>');
+        cancelArchive.querySelector('span')?.remove();
+        cancelArchive.setAttribute('aria-label', cancelLabel);
+        cancelArchive.hidden = true;
+        const archiveProgress = document.createElement('progress');
+        archiveProgress.className = 'gf-code-export-progress';
+        archiveProgress.setAttribute('aria-label', preparingLabel);
+        archiveProgress.hidden = true;
+        let archiveController = null;
+        cancelArchive.addEventListener('click', () => archiveController?.abort());
+        const feedbackTimers = new WeakMap();
+        const showCodeToolFeedback = (button, success) => {
+            const icon = button.querySelector('svg');
+            if (!icon) return;
+            if (!icon.dataset.originalIcon) icon.dataset.originalIcon = icon.innerHTML;
+            clearTimeout(feedbackTimers.get(button));
+            icon.innerHTML = success ? '<path d="m5 12 4 4L19 6"></path>' : '<path d="M7 7l10 10M17 7 7 17"></path>';
+            feedbackTimers.set(button, window.setTimeout(() => { icon.innerHTML = icon.dataset.originalIcon; feedbackTimers.delete(button); }, 1600));
+        };
+        const isStyle = () => /==UserStyle==/.test(getCodeTextFromPre(pre)) || /(?:^|\s)(?:lang|language)-css(?:\s|$)/.test(pre.className);
+        const format = document.createElement('select');
+        format.className = 'gf-code-format';
+        format.setAttribute('aria-label', `${downloadLabel} — .js / .css / .txt`);
+        format.addEventListener('pointerdown', () => format.classList.add('gf-code-format-pointer-focus'));
+        format.addEventListener('keydown', () => format.classList.remove('gf-code-format-pointer-focus'));
+        format.addEventListener('blur', () => format.classList.remove('gf-code-format-pointer-focus'));
+        const addFormat = (value, label) => {
+            const option = document.createElement('option'); option.value = value; option.textContent = label; format.appendChild(option);
+        };
+        addFormat('original', isStyle() ? '.user.css' : '.user.js');
+        addFormat('plain', isStyle() ? '.css' : '.js');
+        addFormat('text', '.txt');
+        try { const saved = localStorage.getItem('gfplus-code-export-format'); if (['original', 'plain', 'text'].includes(saved)) format.value = saved; } catch {}
+        format.addEventListener('change', () => { try { localStorage.setItem('gfplus-code-export-format', format.value); } catch {} });
+        const exportExtension = (original) => format.value === 'text' ? '.txt' : format.value === 'plain' ? (original.endsWith('.css') ? '.css' : '.js') : original;
+        copy.addEventListener('click', async () => {
+            try {
+                if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+                await navigator.clipboard.writeText(getCodeTextFromPre(pre));
+                status.textContent = copiedLabel;
+                showCodeToolFeedback(copy, true);
+            } catch { status.textContent = failedLabel; showCodeToolFeedback(copy, false); }
+        });
+        download.addEventListener('click', () => {
+            const code = getCodeTextFromPre(pre);
+            const originalExtension = isStyle() ? '.user.css' : '.user.js';
+            const nameMatch = code.match(/^\s*\/\/\s*@name\s+(.+)$/m) || code.match(/^\s*\*\s*@name\s+(.+)$/m);
+            const base = (nameMatch?.[1] || 'script').replace(/[\\/:*?"<>|\x00-\x1f]/g, '_').trim().slice(0, 120) || 'script';
+            const objectUrl = URL.createObjectURL(new Blob([code], { type: 'text/plain;charset=utf-8' }));
+            const link = document.createElement('a'); link.href = objectUrl; link.download = `${base}${exportExtension(originalExtension)}`;
+            document.body.appendChild(link); link.click(); link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+            showCodeToolFeedback(download, true);
+        });
+        archive.addEventListener('click', async () => {
+            if (archiveController) return;
+            const match = location.pathname.match(/\/scripts\/(\d+)(?:[-/]|$)/);
+            if (!match) { status.textContent = archiveFailedLabel; return; }
+            const scriptId = match[1];
+            const selectedArchiveIds = selectedVersionIds === null ? null : new Set(selectedVersionIds);
+            archive.disabled = true; zipMore.disabled = true;
+            format.disabled = true;
+            cancelArchive.hidden = false;
+            archiveProgress.hidden = false;
+            archiveProgress.removeAttribute('value');
+            status.textContent = preparingLabel;
+            const controller = new AbortController();
+            archiveController = controller;
+            const abortError = () => new DOMException('Export cancelled', 'AbortError');
+            const request = async (url, type) => {
+                if (controller.signal.aborted) throw abortError();
+                if (type === 'bytes' && typeof GM_xmlhttpRequest === 'function') {
+                    return new Promise((resolve, reject) => {
+                        let handle;
+                        const onAbort = () => { handle?.abort?.(); reject(abortError()); };
+                        const finish = (fn, value) => { controller.signal.removeEventListener('abort', onAbort); fn(value); };
+                        controller.signal.addEventListener('abort', onAbort, { once: true });
+                        try {
+                            handle = GM_xmlhttpRequest({
+                                method: 'GET', url: url.href, responseType: 'arraybuffer', anonymous: true, timeout: 30000,
+                                onload: (result) => {
+                                    try {
+                                        if (controller.signal.aborted) throw abortError();
+                                        if (result.status < 200 || result.status >= 300) throw new Error(`HTTP ${result.status}`);
+                                        if (result.finalUrl && new URL(result.finalUrl).origin !== url.origin) throw new Error('Unexpected code origin');
+                                        if (/^content-type:\s*text\/html/im.test(result.responseHeaders || '')) throw new Error('Invalid code response');
+                                        if (!result.response || typeof result.response.byteLength !== 'number') throw new Error('Invalid code data');
+                                        finish(resolve, new Uint8Array(result.response));
+                                    } catch (error) { finish(reject, error); }
+                                },
+                                onerror: () => finish(reject, new Error('Version request failed')),
+                                ontimeout: () => finish(reject, new Error('Version request timed out')),
+                                onabort: () => finish(reject, abortError())
+                            });
+                            if (controller.signal.aborted) onAbort();
+                        } catch (error) { finish(reject, error); }
+                    });
+                }
+                const requestController = new AbortController();
+                const onAbort = () => requestController.abort();
+                controller.signal.addEventListener('abort', onAbort, { once: true });
+                const timeout = window.setTimeout(() => requestController.abort(), 30000);
+                try {
+                    const response = await fetch(url, { credentials: 'omit', signal: requestController.signal });
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    if (new URL(response.url).origin !== url.origin) throw new Error('Unexpected response origin');
+                    if (type === 'bytes' && /text\/html/i.test(response.headers.get('content-type') || '')) throw new Error('Invalid code response');
+                    return type === 'json' ? await response.json() : new Uint8Array(await response.arrayBuffer());
+                } finally {
+                    clearTimeout(timeout);
+                    controller.signal.removeEventListener('abort', onAbort);
+                }
+            };
+            try {
+                const api = new URL(`/${locale}/scripts/${scriptId}/versions.json`, `${location.protocol}//api.${location.hostname}`);
+                api.searchParams.set('list_all', '1'); api.searchParams.set('show_all_versions', '1');
+                let versions = await request(api, 'json');
+                if (!Array.isArray(versions)) throw new Error('Invalid version history');
+                if (selectedArchiveIds !== null) versions = versions.filter(version => { try { return selectedArchiveIds.has(new URL(version.code_url, location.origin).searchParams.get('version')); } catch { return false; } });
+                if (!versions.length) { status.textContent = noVersionsLabel; showCodeToolFeedback(archive, false); return; }
+                if (versions.length > 65535) throw new Error('Too many versions');
+                archiveProgress.max = versions.length;
+                archiveProgress.value = 0;
+                const files = new Array(versions.length);
+                let cursor = 0, complete = 0, failure = null;
+                const worker = async () => {
+                    while (!failure && !controller.signal.aborted && cursor < versions.length) {
+                        const index = cursor++;
+                        try {
+                            const version = versions[index];
+                            const codeUrl = new URL(version.code_url, location.origin);
+                            if (codeUrl.protocol !== 'https:' || !['greasyfork.org', 'sleazyfork.org'].includes(codeUrl.hostname) || !new RegExp(`^/scripts/${scriptId}(?:-|/)`).test(codeUrl.pathname)) throw new Error('Unexpected code URL');
+                            const versionId = codeUrl.searchParams.get('version');
+                            if (!/^\d+$/.test(versionId || '')) throw new Error('Missing version ID');
+                            const filename = codeUrl.pathname.split('/').pop();
+                            if (!filename) throw new Error('Missing code filename');
+                            const downloadUrl = new URL(`/scripts/${scriptId}/${versionId}/${filename}`, `https://update.${codeUrl.hostname}`);
+                            const bytes = await request(downloadUrl, 'bytes');
+                            const versionName = String(version.version || 'version').replace(/[\\/:*?"<>|\x00-\x1f]/g, '_').trim().slice(0, 80) || 'version';
+                            const extension = /\.user\.css$/i.test(codeUrl.pathname) ? '.user.css' : /\.user\.js$/i.test(codeUrl.pathname) ? '.user.js' : '.js';
+                            files[index] = { name: `${versionId}-${versionName}${exportExtension(extension)}`, bytes };
+                            complete++;
+                            archiveProgress.value = complete;
+                            if (!failure) status.textContent = `${preparingLabel} ${complete}/${versions.length}`;
+                        } catch (error) { if (!failure) failure = error; }
+                    }
+                };
+                await Promise.all(Array.from({ length: Math.min(3, versions.length) }, worker));
+                if (controller.signal.aborted) throw abortError();
+                if (failure) throw failure;
+                archiveProgress.removeAttribute('value');
+                const blob = await buildCodeVersionsZip(files, controller.signal);
+                if (controller.signal.aborted) throw abortError();
+                const objectUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a'); link.href = objectUrl; link.download = `script-${scriptId}-versions.zip`;
+                document.body.appendChild(link); link.click(); link.remove();
+                window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+                status.textContent = '';
+                showCodeToolFeedback(archive, true);
+            } catch (error) {
+                if (controller.signal.aborted) {
+                    status.textContent = cancelledLabel;
+                } else {
+                    console.warn('GreasyFork Premium: could not export script history.', error);
+                    status.textContent = archiveFailedLabel;
+                    showCodeToolFeedback(archive, false);
+                }
+            } finally {
+                archiveController = null;
+                archive.disabled = selectedVersionIds !== null && selectedVersionIds.size === 0;
+                zipMore.disabled = false;
+                format.disabled = false;
+                cancelArchive.hidden = true;
+                archiveProgress.hidden = true;
+            }
+        });
+        const exportGroup = document.createElement('span'); exportGroup.className = 'gf-code-export-group';
+        const searchToggle = makeButton(searchLabel, '<circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 4 4"></path>');
+        searchToggle.querySelector('span')?.remove();
+        searchToggle.setAttribute('aria-label', searchLabel); searchToggle.title = searchLabel;
+        searchToggle.setAttribute('aria-expanded', 'false'); searchToggle.setAttribute('aria-controls', 'gf-code-search');
+        const formatWrap = document.createElement('span'); formatWrap.className = 'gf-code-format-wrap'; formatWrap.appendChild(format);
+        const separator = () => { const el=document.createElement('span'); el.className='gf-code-toolbar-separator'; el.setAttribute('aria-hidden','true'); return el; };
+        const firstSeparator=separator(), versionSeparator=separator(), displaySeparator=separator();
+        firstSeparator.classList.add('gf-code-desktop-separator');
+        const toolSection = (...items) => {
+            const section = document.createElement('span');
+            section.className = 'gf-code-tool-section';
+            section.append(...items);
+            return section;
+        };
+        const zipWrap=document.createElement('span'); zipWrap.className='gf-code-zip-wrap';
+        const zipMore=makeButton(labels.zipChoose, '<path d="M12 5v14M5 12h14"></path>'); zipMore.querySelector('span')?.remove(); zipMore.setAttribute('aria-label',zipMore.title); zipMore.setAttribute('aria-expanded','false');
+        const zipMenu=document.createElement('div'); zipMenu.className='gf-code-workspace-panel gf-code-zip-menu'; zipMenu.hidden=true; zipMenu.setAttribute('role','group'); zipMenu.setAttribute('aria-label',zipMore.title); zipWrap.append(zipMore,zipMenu);
+        let selectedVersionIds=null, workspace=null;
+        zipMore.addEventListener('click',async()=>{
+            zipMenu.hidden=!zipMenu.hidden; zipMore.setAttribute('aria-expanded',String(!zipMenu.hidden)); if (zipMenu.hidden) return;
+            zipMenu.textContent=preparingLabel;
+            await workspace?.loadVersions();
+            const options=Array.from(workspace?.versions.options || []).filter(option=>option.value!=='original');
+            zipMenu.replaceChildren();
+            if (!options.length) { zipMenu.textContent=noVersionsLabel; return; }
+            options.forEach(option=>{
+                const label=document.createElement('label'), check=document.createElement('input'); check.type='checkbox'; check.value=option.value; check.checked=selectedVersionIds===null || selectedVersionIds.has(option.value);
+                check.addEventListener('change',()=>{ if (selectedVersionIds===null) selectedVersionIds=new Set(options.map(item=>item.value)); if(check.checked) selectedVersionIds.add(check.value); else selectedVersionIds.delete(check.value); archive.disabled=selectedVersionIds.size === 0; });
+                label.append(check,document.createTextNode(option.textContent)); zipMenu.append(label);
+            });
+        });
+        document.addEventListener('pointerdown',event=>{ if (!zipWrap.contains(event.target)) { zipMenu.hidden=true; zipMore.setAttribute('aria-expanded','false'); } });
+        zipMenu.addEventListener('keydown',event=>{if(event.key==='Escape'){zipMenu.hidden=true;zipMore.setAttribute('aria-expanded','false');zipMore.focus();}});
+        const downloadGroup = toolSection(firstSeparator, download, formatWrap);
+        const archiveGroup = toolSection(versionSeparator, archive, zipWrap, cancelArchive);
+        const displayGroup = toolSection(displaySeparator);
+        exportGroup.append(copy, searchToggle, downloadGroup, archiveGroup, displayGroup, archiveProgress);
+        const readingActions = document.createElement('span');
+        readingActions.className = 'gf-code-tools-actions gf-code-reading-actions';
+        const wrapLabel = controls.querySelector('label[for="wrap-lines"]');
+        (wrapLabel || toggle).after(readingActions);
+        const mobileCodeTools = window.matchMedia?.('(max-width: 800px)');
+        const placeReadingActions = () => {
+            if (mobileCodeTools?.matches) readingActions.append(copy, searchToggle);
+            else downloadGroup.before(copy, searchToggle);
+        };
+        placeReadingActions();
+        mobileCodeTools?.addEventListener?.('change', placeReadingActions);
+        actions.append(exportGroup, status);
+        const search = document.createElement('div'); search.id = 'gf-code-search'; search.className = 'gf-code-search'; search.setAttribute('role', 'search'); search.hidden = true;
+        const input = document.createElement('input'); input.type = 'search'; input.className = 'gf-code-search-input';
+        input.placeholder = searchLabel; input.setAttribute('aria-label', searchLabel); input.setAttribute('dir', 'auto');
+        const count = document.createElement('span'); count.className = 'gf-code-search-count'; count.setAttribute('role', 'status'); count.setAttribute('aria-live', 'polite'); count.textContent = '0 / 0';
+        const makeSearchButton = (label, path) => {
+            const button = document.createElement('button'); button.type = 'button'; button.className = 'gf-code-search-nav';
+            button.title = label; button.setAttribute('aria-label', label); button.disabled = true;
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); icon.setAttribute('viewBox', '0 0 24 24'); icon.setAttribute('aria-hidden', 'true'); icon.innerHTML = path;
+            button.appendChild(icon); return button;
+        };
+        const previous = makeSearchButton(previousLabel, '<path d="m6 14 6-6 6 6"></path>');
+        const next = makeSearchButton(nextLabel, '<path d="m6 10 6 6 6-6"></path>');
+        const caseLabel = labels.matchCase;
+        const closeSearchLabel = labels.closeSearch;
+        const caseToggle = makeSearchButton(caseLabel, ''); caseToggle.innerHTML = 'Aa'; caseToggle.disabled = false; caseToggle.setAttribute('aria-pressed', 'false');
+        const closeSearch = makeSearchButton(closeSearchLabel, '<path d="M6 6l12 12M18 6 6 18"></path>'); closeSearch.disabled = false;
+        const lineLabel = labels.wholeLine;
+        const lineToggle=makeSearchButton(lineLabel, '<path d="M4 7h16M4 12h16M4 17h16"></path>'); lineToggle.disabled=false; lineToggle.setAttribute('aria-pressed','false');
+        const registry = window.CSS?.highlights;
+        const hasHighlights = Boolean(registry && typeof window.Highlight === 'function');
+        let ranges = [], matchOffsets = [], searchText = '', searchNodes = [], current = -1, searchTimer = 0, searchRun = 0, ownsSelection = false;
+        const clearHighlights = () => {
+            if (hasHighlights) { registry.delete('gf-code-search-matches'); registry.delete('gf-code-search-current'); registry.delete('gf-code-search-line'); }
+            if (ownsSelection) { window.getSelection()?.removeAllRanges(); ownsSelection = false; }
+        };
+        const showMatch = (scroll) => {
+            const range = ranges[current];
+            count.textContent = range ? `${current + 1} / ${ranges.length}` : `0 / ${ranges.length}`;
+            previous.disabled = next.disabled = !range;
+            if (!range) return;
+            let activeRange = range;
+            if (lineToggle.getAttribute('aria-pressed') === 'true') {
+                const offset = matchOffsets[current];
+                const start = offset === 0 ? 0 : searchText.lastIndexOf('\n', offset - 1) + 1;
+                const newline = searchText.indexOf('\n', offset);
+                const end = newline < 0 ? searchText.length : newline;
+                const findNode = (offset, endBoundary) => {
+                    let lo=0, hi=searchNodes.length-1;
+                    while (lo<hi) { const mid=(lo+hi)>>1; if (searchNodes[mid].end < offset || (!endBoundary && searchNodes[mid].end===offset)) lo=mid+1; else hi=mid; }
+                    return searchNodes[lo];
+                };
+                const first=findNode(start,false), last=findNode(end,true);
+                if (first && last) { const lineRange=document.createRange(); lineRange.setStart(first.node,start-first.start); lineRange.setEnd(last.node,end-last.start); activeRange=lineRange; }
+            }
+            if (hasHighlights) {
+                registry.delete('gf-code-search-current'); registry.delete('gf-code-search-line');
+                if (lineToggle.getAttribute('aria-pressed') === 'true') registry.delete('gf-code-search-matches');
+                else if (ranges.length && !registry.has('gf-code-search-matches')) { const matchesHighlight=new window.Highlight(); ranges.forEach(item=>matchesHighlight.add(item)); registry.set('gf-code-search-matches',matchesHighlight); }
+                const highlight = new window.Highlight(activeRange); highlight.priority = 1;
+                registry.set(lineToggle.getAttribute('aria-pressed') === 'true' ? 'gf-code-search-line' : 'gf-code-search-current', highlight);
+            } else {
+                const selection = window.getSelection();
+                if (selection) { selection.removeAllRanges(); selection.addRange(activeRange); ownsSelection = true; }
+            }
+            if (!scroll) return;
+            const matchBounds = range.getBoundingClientRect();
+            const scrollTargets = [pre, pre.closest('.code-container, #code-container')].filter(Boolean).map(container => ({ container, bounds: container.getBoundingClientRect() }));
+            for (const { container, bounds } of scrollTargets) {
+                if (matchBounds.top < bounds.top || matchBounds.bottom > bounds.bottom) container.scrollTop += matchBounds.top - bounds.top - bounds.height / 2;
+                if (matchBounds.left < bounds.left || matchBounds.right > bounds.right) container.scrollLeft += matchBounds.left - bounds.left - bounds.width / 3;
+            }
+            if (matchBounds.top < 0 || matchBounds.bottom > window.innerHeight) window.scrollBy({ top: matchBounds.top - window.innerHeight / 2, behavior: 'smooth' });
+        };
+        const runSearch = () => {
+            searchTimer = 0;
+            const run = ++searchRun;
+            clearHighlights(); ranges = []; matchOffsets = []; searchText = ''; searchNodes = []; current = -1;
+            const query = input.value;
+            const code = pre.querySelector('code.hljs') || pre.querySelector('code') || pre;
+            if (!query) { showMatch(false); return; }
+            const walker = document.createTreeWalker(code, NodeFilter.SHOW_TEXT);
+            const nodes = []; let text = '', node;
+            while ((node = walker.nextNode())) {
+                if (node.parentElement?.closest('.hljs-line-numbers')) continue;
+                const start = text.length; text += node.data; nodes.push({ node, start, end: text.length });
+            }
+            if (!nodes.length) { showMatch(false); return; }
+            const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            searchText = text; searchNodes = nodes;
+            const matches = text.matchAll(new RegExp(escaped, caseToggle.getAttribute('aria-pressed') === 'true' ? 'gu' : 'giu'));
+            const highlight = hasHighlights ? new window.Highlight() : null;
+            let startIndex = 0, endIndex = 0;
+            const processMatches = () => {
+                if (run !== searchRun) return;
+                let item, processed = 0;
+                while (processed++ < 500 && !(item = matches.next()).done) {
+                    const match = item.value, start = match.index, end = start + match[0].length;
+                    while (startIndex < nodes.length - 1 && nodes[startIndex].end <= start) startIndex++;
+                    endIndex = Math.max(endIndex, startIndex);
+                    while (endIndex < nodes.length - 1 && nodes[endIndex].end < end) endIndex++;
+                    const range = document.createRange();
+                    range.setStart(nodes[startIndex].node, start - nodes[startIndex].start);
+                    range.setEnd(nodes[endIndex].node, end - nodes[endIndex].start);
+                    ranges.push(range); matchOffsets.push(start); highlight?.add(range);
+                }
+                if (!item?.done) { window.setTimeout(processMatches, 0); return; }
+                if (highlight && ranges.length) registry.set('gf-code-search-matches', highlight);
+                current = ranges.length ? 0 : -1;
+                showMatch(Boolean(ranges.length));
+            };
+            processMatches();
+        };
+        const step = (amount) => { if (ranges.length) { current = (current + amount + ranges.length) % ranges.length; showMatch(true); } };
+        input.addEventListener('input', () => { searchRun++; clearTimeout(searchTimer); searchTimer = window.setTimeout(runSearch, 150); });
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                if (searchTimer) { clearTimeout(searchTimer); runSearch(); }
+                else if (!ranges.length) runSearch();
+                else step(event.shiftKey ? -1 : 1);
+            }
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                search.hidden = true; searchToggle.setAttribute('aria-expanded', 'false');
+                searchRun++; clearTimeout(searchTimer); searchTimer = 0; clearHighlights(); searchToggle.focus();
+            }
+        });
+        previous.addEventListener('click', () => step(-1)); next.addEventListener('click', () => step(1));
+        caseToggle.addEventListener('click', () => { caseToggle.setAttribute('aria-pressed', String(caseToggle.getAttribute('aria-pressed') !== 'true')); clearTimeout(searchTimer); runSearch(); });
+        lineToggle.addEventListener('click', () => { lineToggle.setAttribute('aria-pressed',String(lineToggle.getAttribute('aria-pressed') !== 'true')); showMatch(false); });
+        closeSearch.addEventListener('click', () => { search.hidden = true; searchToggle.setAttribute('aria-expanded', 'false'); searchRun++; clearTimeout(searchTimer); searchTimer = 0; clearHighlights(); searchToggle.focus(); });
+        searchToggle.addEventListener('click', () => {
+            const open = search.hidden;
+            search.hidden = !open;
+            searchToggle.setAttribute('aria-expanded', String(open));
+            if (open) { input.focus({ preventScroll: true }); if (input.value) runSearch(); }
+            else { searchRun++; clearTimeout(searchTimer); searchTimer = 0; clearHighlights(); }
+        });
+        search.append(input, count, caseToggle, lineToggle, previous, next, closeSearch);
+        const searchAnchor = document.createElement('div'); searchAnchor.className = 'gf-code-search-anchor'; searchAnchor.appendChild(search);
+        pre.parentElement.insertBefore(searchAnchor, pre);
+        workspace = initCodeWorkspace({ pre, group: exportGroup, downloadGroup, displayGroup, locale, labels, onCodeChange: () => { searchRun++; clearTimeout(searchTimer); clearHighlights(); ranges = []; matchOffsets = []; searchText = ''; searchNodes = []; searchTimer = 0; current = -1; if (!search.hidden && input.value) runSearch(); else showMatch(false); } });
+        controls.appendChild(actions); controls.setAttribute('data-gfplus-code-tools', 'done');
     };
 
     // Script Logos
@@ -3368,6 +4664,12 @@ License: BSD 3-Clause
 
         scriptMetadataCache.set(codeUrl, fetchPromise);
         return fetchPromise;
+    };
+
+    const getScriptLogoSourceUrl = (id) => {
+        if (!/^\d+$/.test(id)) return null;
+        // Greasy Fork can omit @icon and @icon64 from the generated .meta.js file.
+        return `https://update.${location.hostname}/scripts/${id}/script.user.js`;
     };
 
     const PERMISSION_CATEGORY_ICONS = {
@@ -3486,6 +4788,18 @@ License: BSD 3-Clause
         return 'other';
     };
 
+    const createPermissionChip = (grant) => {
+        const category = getPermissionCategory(grant);
+        const chip = document.createElement('span');
+        chip.className = 'gf-script-permission-chip';
+        chip.setAttribute('data-permission-category', category);
+        chip.insertAdjacentHTML('beforeend', PERMISSION_CATEGORY_ICONS[category]);
+        const code = document.createElement('code');
+        code.textContent = grant;
+        chip.appendChild(code);
+        return chip;
+    };
+
     const createScriptLogoElement = (iconUrl) => {
         if (iconUrl) {
             const img = document.createElement('img');
@@ -3566,7 +4880,12 @@ License: BSD 3-Clause
         }
 
         const listItem = link.closest('li[data-code-url]');
-        const codeUrl = listItem ? listItem.getAttribute('data-code-url') : null;
+        let codeUrl = listItem?.getAttribute('data-code-url');
+        if (!codeUrl && link.closest('.script-list h2') && new URLSearchParams(location.search).has('set')) {
+            const url = new URL(link.href, location.href);
+            const id = url.pathname.match(/\/scripts\/(\d+)(?:-[^/]+)?\/?$/)?.[1];
+            if (url.origin === location.origin && id) codeUrl = getScriptLogoSourceUrl(id);
+        }
         if (!codeUrl) {
             return;
         }
@@ -3643,6 +4962,9 @@ License: BSD 3-Clause
 
     const applyScriptLogos = () => {
         document.querySelectorAll('a.script-link').forEach(ensureLogoForLink);
+        if (new URLSearchParams(location.search).has('set')) {
+            document.querySelectorAll('.script-list h2 a[href*="/scripts/"]:not(.script-link)').forEach(ensureLogoForLink);
+        }
         ensureLogoForHeaderTitle();
     };
 
@@ -4309,71 +5631,14 @@ License: BSD 3-Clause
 
         applyFavoriteIds(favoriteIds);
     };
-    const INSTALL_BUTTON_ICON_ONLY_ATTR = 'data-gfplus-icon-only';
-    const installButtonLayoutObservers = new WeakMap();
-    let installButtonLayoutFrame = 0;
-
-    const rectanglesOverlap = (left, right) => (
-        left.left < right.right &&
-        left.right > right.left &&
-        left.top < right.bottom &&
-        left.bottom > right.top
-    );
-
-    const syncScriptInstallButtonLayout = (button) => {
-        if (!button?.isConnected) {
-            return;
-        }
-
-        button.removeAttribute(INSTALL_BUTTON_ICON_ONLY_ATTR);
-        const buttonRect = button.getBoundingClientRect();
-        const scope = button.closest('article, #install-area, #script-info') || button.parentElement;
-        const conflicts = scope
-            ? scope.querySelectorAll('.script-meta-block, .script-meta-block *, relative-time')
-            : [];
-        const overlaps = Array.from(conflicts).some((element) => (
-            element !== button && rectanglesOverlap(buttonRect, element.getBoundingClientRect())
-        ));
-
-        if (overlaps) {
-            button.setAttribute(INSTALL_BUTTON_ICON_ONLY_ATTR, 'true');
-        }
-    };
-
-    const scheduleScriptInstallButtonLayoutSync = () => {
-        if (installButtonLayoutFrame) {
-            return;
-        }
-
-        installButtonLayoutFrame = requestAnimationFrame(() => {
-            installButtonLayoutFrame = 0;
-            document.querySelectorAll('.gf-script-install-button').forEach(syncScriptInstallButtonLayout);
-        });
-    };
-
-    window.addEventListener('resize', scheduleScriptInstallButtonLayoutSync, { passive: true });
-
-    const observeScriptInstallButtonLayout = (button) => {
-        if (installButtonLayoutObservers.has(button)) {
-            return;
-        }
-
-        const scope = button.closest('article, #install-area, #script-info') || button.parentElement;
-        if (!scope || typeof ResizeObserver !== 'function') {
-            return;
-        }
-
-        const observer = new ResizeObserver(() => syncScriptInstallButtonLayout(button));
-        observer.observe(scope);
-        installButtonLayoutObservers.set(button, observer);
-    };
-
     const createScriptInstallButton = (codeUrl, locale) => {
         const installLabel = getUserNavI18n(locale).install || 'Install';
         const installButton = document.createElement('a');
         installButton.className = 'gf-script-install-button';
         installButton.href = codeUrl;
-        installButton.textContent = installLabel;
+        installButton.target = '_blank';
+        installButton.rel = 'noopener noreferrer';
+        installButton.title = installLabel;
         installButton.setAttribute('aria-label', installLabel);
 
         const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -4385,10 +5650,6 @@ License: BSD 3-Clause
             <path d="M5 20h14"></path>
         `;
         installButton.prepend(icon);
-        requestAnimationFrame(() => {
-            observeScriptInstallButtonLayout(installButton);
-            syncScriptInstallButtonLayout(installButton);
-        });
 
         return installButton;
     };
@@ -4944,10 +6205,73 @@ License: BSD 3-Clause
             detailButton.setAttribute('aria-label', shouldOpen ? i18n.hideDetails : i18n.showDetails);
 
             if (shouldOpen) {
+                let placeholder = null;
+                let frame = 0;
+                const restoreToActions = () => {
+                    if (!placeholder) return;
+                    detailButton.classList.remove('gf-script-detail-floating');
+                    ['left', 'top', 'width', 'height'].forEach((property) => detailButton.style.removeProperty(property));
+                    placeholder.replaceWith(detailButton);
+                    placeholder = null;
+                };
+                const cleanup = () => {
+                    window.removeEventListener('scroll', schedulePosition, true);
+                    window.removeEventListener('resize', schedulePosition);
+                    if (frame) cancelAnimationFrame(frame);
+                };
+                const updatePosition = () => {
+                    frame = 0;
+                    const anchor = placeholder || detailButton;
+                    if (!anchor.isConnected || !panel.isConnected) {
+                        cleanup();
+                        if (placeholder) detailButton.remove();
+                        return;
+                    }
+                    const origin = anchor.getBoundingClientRect();
+                    const limit = 12;
+                    if (origin.top >= limit) {
+                        restoreToActions();
+                        return;
+                    }
+                    if (!placeholder) {
+                        placeholder = document.createElement('span');
+                        placeholder.className = 'gf-script-detail-placeholder';
+                        placeholder.setAttribute('aria-hidden', 'true');
+                        placeholder.style.width = `${origin.width}px`;
+                        placeholder.style.height = `${origin.height}px`;
+                        detailButton.replaceWith(placeholder);
+                        detailButton.classList.add('gf-script-detail-floating');
+                        document.body.appendChild(detailButton);
+                    }
+                    const bounds = panel.getBoundingClientRect();
+                    const progress = Math.max(0, Math.min(1, (limit - origin.top) / 120));
+                    const targetX = bounds.right - origin.width;
+                    const top = Math.min(limit, Math.max(bounds.bottom, origin.bottom) - origin.height);
+                    detailButton.style.left = `${origin.left + (targetX - origin.left) * progress}px`;
+                    detailButton.style.top = `${top}px`;
+                    detailButton.style.width = `${origin.width}px`;
+                    detailButton.style.height = `${origin.height}px`;
+                };
+                const schedulePosition = () => {
+                    if (!frame) frame = requestAnimationFrame(updatePosition);
+                };
+                detailButton._gfRestorePosition = () => {
+                    cleanup();
+                    restoreToActions();
+                };
+                window.addEventListener('scroll', schedulePosition, { passive: true, capture: true });
+                window.addEventListener('resize', schedulePosition, { passive: true });
+                updatePosition();
+                detailButton.blur();
                 await loadScriptExtraInfoPanel(panel);
+                if (panel.getAttribute('data-open') === 'true' && detailButton._gfRestorePosition) {
+                    schedulePosition();
+                }
+            } else {
+                detailButton._gfRestorePosition?.();
+                delete detailButton._gfRestorePosition;
+                detailButton.blur();
             }
-
-            detailButton.blur();
         });
 
         return detailButton;
@@ -5036,16 +6360,8 @@ License: BSD 3-Clause
             list.id = `${SCRIPT_PERMISSIONS_ID}-list`;
             list.className = 'gf-script-permissions-list';
             metadata.grants.forEach((grant) => {
-                const category = getPermissionCategory(grant);
                 const item = document.createElement('li');
-                const chip = document.createElement('span');
-                chip.className = 'gf-script-permission-chip';
-                chip.setAttribute('data-permission-category', category);
-                chip.insertAdjacentHTML('beforeend', PERMISSION_CATEGORY_ICONS[category]);
-                const code = document.createElement('code');
-                code.textContent = grant;
-                chip.appendChild(code);
-                item.appendChild(chip);
+                item.appendChild(createPermissionChip(grant));
                 list.appendChild(item);
             });
 
@@ -5139,7 +6455,10 @@ License: BSD 3-Clause
             article.appendChild(actions);
             article.appendChild(notePanel);
             if (extraInfoPanel) {
-                article.appendChild(extraInfoPanel);
+                const extraWrapper = document.createElement('div');
+                extraWrapper.className = 'gf-script-extra-wrapper';
+                extraWrapper.appendChild(extraInfoPanel);
+                article.appendChild(extraWrapper);
             }
             listItem.setAttribute(SCRIPT_CARD_ACTIONS_ATTR, 'done');
         });
@@ -9267,10 +10586,234 @@ License: BSD 3-Clause
         }
     };
 
+    const LIGHTBOX_ACTION_LABELS = {
+        en: ['Download image', 'Copy image link', 'Copy image', 'Action completed', 'Could not complete this action', "Touch and hold the image, then choose Copy."],
+        fr: ['Télécharger l’image', 'Copier le lien de l’image', 'Copier l’image', 'Action effectuée', 'Impossible d’effectuer cette action', "Appuie longuement sur l’image, puis choisis Copier."],
+        'fr-CA': ['Télécharger l’image', 'Copier le lien de l’image', 'Copier l’image', 'Opération terminée', 'Impossible de terminer l’opération', "Appuie longuement sur l’image, puis choisis Copier."],
+        es: ['Descargar imagen', 'Copiar enlace de la imagen', 'Copiar imagen', 'Acción completada', 'No se pudo completar la acción', "Mantén pulsada la imagen y elige Copiar."],
+        'es-419': ['Descargar imagen', 'Copiar enlace de la imagen', 'Copiar imagen', 'Listo', 'No se pudo completar la acción', "Mantén pulsada la imagen y elige Copiar."],
+        de: ['Bild herunterladen', 'Bildlink kopieren', 'Bild kopieren', 'Aktion abgeschlossen', 'Aktion fehlgeschlagen', "Halte das Bild gedrückt und wähle Kopieren."],
+        it: ['Scarica immagine', 'Copia il link dell’immagine', 'Copia immagine', 'Operazione completata', 'Impossibile completare l’operazione', "Tieni premuta l’immagine, poi scegli Copia."],
+        pt: ['Transferir imagem', 'Copiar ligação da imagem', 'Copiar imagem', 'Ação concluída', 'Não foi possível concluir a ação', "Mantenha a imagem pressionada e escolha Copiar."],
+        'pt-BR': ['Baixar imagem', 'Copiar link da imagem', 'Copiar imagem', 'Ação concluída', 'Não foi possível concluir a ação', "Mantenha a imagem pressionada e escolha Copiar."],
+        ru: ['Скачать изображение', 'Копировать ссылку на изображение', 'Копировать изображение', 'Готово', 'Не удалось выполнить действие', "Нажмите и удерживайте изображение, затем выберите «Копировать»."],
+        ja: ['画像をダウンロード', '画像リンクをコピー', '画像をコピー', '完了しました', '操作を完了できませんでした', "画像を長押しして「コピー」を選択します。"],
+        'zh-CN': ['下载图片', '复制图片链接', '复制图片', '操作完成', '无法完成操作', "长按图片，然后选择「复制」。"],
+        'zh-TW': ['下載圖片', '複製圖片連結', '複製圖片', '操作完成', '無法完成操作', "長按圖片，再選擇「複製」。"],
+        ar: ['تنزيل الصورة', 'نسخ رابط الصورة', 'نسخ الصورة', 'اكتمل الإجراء', 'تعذّر إكمال الإجراء', "اضغط مطولًا على الصورة، ثم اختر نسخ."],
+        hi: ['छवि डाउनलोड करें', 'छवि का लिंक कॉपी करें', 'छवि कॉपी करें', 'कार्रवाई पूरी हुई', 'कार्रवाई पूरी नहीं हो सकी', "छवि को दबाकर रखें, फिर कॉपी चुनें।"],
+        bn: ['ছবি ডাউনলোড করুন', 'ছবির লিংক কপি করুন', 'ছবি কপি করুন', 'কাজ সম্পন্ন', 'কাজটি সম্পন্ন করা যায়নি', "ছবিটি চেপে ধরে রাখুন, তারপর কপি বেছে নিন।"],
+        ur: ['تصویر ڈاؤن لوڈ کریں', 'تصویر کا لنک کاپی کریں', 'تصویر کاپی کریں', 'عمل مکمل ہوا', 'عمل مکمل نہیں ہو سکا', "تصویر کو دبا کر رکھیں، پھر کاپی منتخب کریں۔"],
+        ml: ['ചിത്രം ഡൗൺലോഡ് ചെയ്യുക', 'ചിത്രത്തിന്റെ ലിങ്ക് പകർത്തുക', 'ചിത്രം പകർത്തുക', 'പൂർത്തിയായി', 'പ്രവർത്തനം പൂർത്തിയാക്കാനായില്ല', "ചിത്രത്തിൽ അമർത്തിപ്പിടിച്ച് പകർത്തുക തിരഞ്ഞെടുക്കുക."],
+        ko: ['이미지 다운로드', '이미지 링크 복사', '이미지 복사', '작업 완료', '작업을 완료할 수 없습니다', "이미지를 길게 누른 다음 복사를 선택하세요."],
+        tr: ['Görseli indir', 'Görsel bağlantısını kopyala', 'Görseli kopyala', 'İşlem tamamlandı', 'İşlem tamamlanamadı', "Görsele basılı tutup Kopyala’yı seçin."],
+        pl: ['Pobierz obraz', 'Kopiuj link do obrazu', 'Kopiuj obraz', 'Gotowe', 'Nie udało się wykonać operacji', "Przytrzymaj obraz, a następnie wybierz Kopiuj."],
+        nl: ['Afbeelding downloaden', 'Afbeeldingslink kopiëren', 'Afbeelding kopiëren', 'Voltooid', 'De actie kon niet worden voltooid', "Houd de afbeelding ingedrukt en kies Kopieer."],
+        sv: ['Ladda ned bilden', 'Kopiera bildlänken', 'Kopiera bilden', 'Klart', 'Åtgärden kunde inte slutföras', "Håll fingret på bilden och välj Kopiera."],
+        ro: ['Descarcă imaginea', 'Copiază linkul imaginii', 'Copiază imaginea', 'Acțiune finalizată', 'Acțiunea nu a putut fi finalizată', "Ține apăsat pe imagine, apoi alege Copiază."],
+        vi: ['Tải ảnh xuống', 'Sao chép liên kết ảnh', 'Sao chép ảnh', 'Đã hoàn tất', 'Không thể hoàn tất thao tác', "Nhấn giữ ảnh, rồi chọn Sao chép."],
+        id: ['Unduh gambar', 'Salin tautan gambar', 'Salin gambar', 'Selesai', 'Tindakan tidak dapat diselesaikan', "Tekan lama gambar, lalu pilih Salin."],
+        ms: ['Muat turun imej', 'Salin pautan imej', 'Salin imej', 'Selesai', 'Tindakan tidak dapat diselesaikan', "Tekan lama pada imej, kemudian pilih Salin."],
+        be: ['Спампаваць выяву', 'Скапіяваць спасылку на выяву', 'Скапіяваць выяву', 'Гатова', 'Не ўдалося выканаць дзеянне', "Націсніце і ўтрымлівайце выяву, затым выберыце «Капіяваць»."],
+        nb: ['Last ned bildet', 'Kopier bildelenken', 'Kopier bildet', 'Ferdig', 'Kunne ikke fullføre handlingen', "Trykk og hold på bildet, og velg Kopier."],
+        bg: ['Изтегляне на изображението', 'Копиране на връзката към изображението', 'Копиране на изображението', 'Готово', 'Действието не можа да бъде завършено', "Натиснете и задръжте изображението, след което изберете „Копиране“."],
+        hr: ['Preuzmi sliku', 'Kopiraj poveznicu slike', 'Kopiraj sliku', 'Gotovo', 'Radnju nije bilo moguće dovršiti', "Dodirni i zadrži sliku, zatim odaberi Kopiraj."],
+        cs: ['Stáhnout obrázek', 'Zkopírovat odkaz na obrázek', 'Zkopírovat obrázek', 'Hotovo', 'Akci se nepodařilo dokončit', "Podržte prst na obrázku a vyberte Kopírovat."],
+        da: ['Download billedet', 'Kopiér billedlinket', 'Kopiér billedet', 'Færdig', 'Handlingen kunne ikke fuldføres', "Tryk og hold på billedet, og vælg Kopiér."],
+        eo: ['Elŝuti bildon', 'Kopii bildligilon', 'Kopii bildon', 'Finite', 'Ne eblis plenumi la agon', "Tenu la fingron sur la bildo, poste elektu Kopii."],
+        fil: ['I-download ang larawan', 'Kopyahin ang link ng larawan', 'Kopyahin ang larawan', 'Tapos na', 'Hindi maisagawa ang aksyon', "Pindutin nang matagal ang larawan, tapos piliin ang Kopyahin."],
+        fi: ['Lataa kuva', 'Kopioi kuvan linkki', 'Kopioi kuva', 'Valmis', 'Toimintoa ei voitu suorittaa', "Pidä kuvaa painettuna ja valitse Kopioi."],
+        ckb: ['داگرتنی وێنە', 'لەبەرگرتنەوەی بەستەری وێنە', 'لەبەرگرتنەوەی وێنە', 'تەواو بوو', 'کردارەکە تەواو نەبوو', "پەنجە لەسەر وێنەکە ڕابگرە، پاشان لەبەرگرتنەوە هەڵبژێرە."],
+        ka: ['სურათის ჩამოტვირთვა', 'სურათის ბმულის კოპირება', 'სურათის კოპირება', 'მოქმედება დასრულდა', 'მოქმედება ვერ დასრულდა', "ხანგრძლივად შეეხეთ სურათს და აირჩიეთ კოპირება."],
+        el: ['Λήψη εικόνας', 'Αντιγραφή συνδέσμου εικόνας', 'Αντιγραφή εικόνας', 'Η ενέργεια ολοκληρώθηκε', 'Η ενέργεια δεν ολοκληρώθηκε', "Πατήστε παρατεταμένα την εικόνα και επιλέξτε Αντιγραφή."],
+        he: ['הורדת תמונה', 'העתקת קישור לתמונה', 'העתקת תמונה', 'הפעולה הושלמה', 'לא ניתן להשלים את הפעולה', "לחצו לחיצה ארוכה על התמונה ובחרו העתקה."],
+        hu: ['Kép letöltése', 'Kép hivatkozásának másolása', 'Kép másolása', 'Kész', 'A művelet nem sikerült', "Tartsd lenyomva a képet, majd válaszd a Másolás lehetőséget."],
+        mr: ['प्रतिमा डाउनलोड करा', 'प्रतिमेची लिंक कॉपी करा', 'प्रतिमा कॉपी करा', 'कृती पूर्ण झाली', 'कृती पूर्ण करता आली नाही', "प्रतिमेवर दाबून ठेवा, मग कॉपी निवडा."],
+        sr: ['Preuzmi sliku', 'Kopiraj vezu do slike', 'Kopiraj sliku', 'Gotovo', 'Radnju nije bilo moguće dovršiti', "Dodirni i zadrži sliku, pa izaberi Kopiraj."],
+        sk: ['Stiahnuť obrázok', 'Skopírovať odkaz na obrázok', 'Skopírovať obrázok', 'Hotovo', 'Akciu sa nepodarilo dokončiť', "Podržte prst na obrázku a vyberte Kopírovať."],
+        ug: ['رەسىمنى چۈشۈرۈش', 'رەسىم ئۇلانمىسىنى كۆچۈرۈش', 'رەسىمنى كۆچۈرۈش', 'تاماملاندى', 'مەشغۇلات تاماملانمىدى', "رەسىمنى بېسىپ تۇرۇڭ، ئاندىن «كۆچۈرۈش»نى تاللاڭ."],
+        uk: ['Завантажити зображення', 'Копіювати посилання на зображення', 'Копіювати зображення', 'Готово', 'Не вдалося виконати дію', "Натисніть і утримуйте зображення, а потім виберіть «Копіювати»."],
+        th: ['ดาวน์โหลดรูปภาพ', 'คัดลอกลิงก์รูปภาพ', 'คัดลอกรูปภาพ', 'ดำเนินการแล้ว', 'ไม่สามารถดำเนินการให้เสร็จได้', "แตะรูปภาพค้างไว้ แล้วเลือกคัดลอก"]
+    };
+
+    const fetchLightboxImage = async (source) => {
+        const response = await fetch(source, { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('Image unavailable');
+        return response.blob();
+    };
+
+    const renderLightboxImageAsPng = async (image) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        canvas.getContext('2d').drawImage(image, 0, 0);
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(png => {
+                if (png) resolve(png);
+                else reject(new Error('PNG conversion failed'));
+            }, 'image/png');
+        });
+    };
+
+    const getLightboxClipboardImage = async (source, displayedImage) => {
+        const displayedSource = displayedImage?.currentSrc || displayedImage?.src;
+        if (displayedSource === source && displayedImage.complete && displayedImage.naturalWidth) {
+            const url = new URL(source);
+            if (url.origin === location.origin || url.protocol === 'data:' || displayedImage.crossOrigin != null) {
+                try {
+                    return await renderLightboxImageAsPng(displayedImage);
+                } catch {
+                    // Retry with the original image if the displayed image cannot be read.
+                }
+            }
+        }
+        const blob = await fetchLightboxImage(source);
+        if (blob.type === 'image/png') return blob;
+
+        const objectUrl = URL.createObjectURL(blob);
+        try {
+            const image = new Image();
+            image.src = objectUrl;
+            await image.decode();
+            return await renderLightboxImageAsPng(image);
+        } finally {
+            URL.revokeObjectURL(objectUrl);
+        }
+    };
+
+    const downloadLightboxImage = async (source) => {
+        const blob = await fetchLightboxImage(source);
+        const sourceUrl = new URL(source);
+        const filename = /^https?:$/.test(sourceUrl.protocol) ? sourceUrl.pathname.split('/').pop() : '';
+        const extension = blob.type.match(/^image\/([\w.+-]+)$/)?.[1];
+        const fallbackName = extension ? `image.${extension === 'svg+xml' ? 'svg' : extension}` : 'image';
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        try { link.download = filename ? decodeURIComponent(filename) : fallbackName; }
+        catch { link.download = fallbackName; }
+        document.body.append(link);
+        try {
+            link.click();
+        } finally {
+            link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+        }
+    };
+
+    const lightboxClipboardCache = new WeakMap();
+
+    const prepareLightboxClipboardImage = (source, image) => {
+        const existing = lightboxClipboardCache.get(image);
+        if (existing?.source === source) return existing;
+
+        const entry = { source, blob: null };
+        entry.pending = Promise.resolve().then(() => getLightboxClipboardImage(source, image)).then(blob => {
+            entry.blob = blob;
+            return blob;
+        });
+        lightboxClipboardCache.set(image, entry);
+        void entry.pending.catch(() => {
+            if (lightboxClipboardCache.get(image) === entry) lightboxClipboardCache.delete(image);
+        });
+        return entry;
+    };
+
+    const copyLightboxImage = (source, displayedImage) => {
+        const clipboardWindow = typeof pageWindow.ClipboardItem === 'function' && pageWindow.navigator.clipboard?.write
+            ? pageWindow
+            : window;
+        const clipboard = clipboardWindow.navigator.clipboard;
+        if (!clipboard?.write || typeof clipboardWindow.ClipboardItem !== 'function') {
+            throw new Error('Image clipboard unavailable');
+        }
+        const { blob, pending } = prepareLightboxClipboardImage(source, displayedImage);
+        const png = blob || clipboardWindow.Promise.resolve(pending);
+        if (!blob) void png.catch(() => {});
+        return clipboard.write([new clipboardWindow.ClipboardItem({ 'image/png': png })]);
+    };
+
+    const bindLightboxActions = (lightbox) => {
+        if (lightbox.querySelector('.gfplus-lightbox-actions')) return;
+        const close = lightbox.querySelector('.lum-close-button');
+        if (!close?.parentElement) return;
+
+        const locale = getCurrentLocale();
+        const [download, copyLink, copyImage, done, failed, holdToCopy] =
+            LIGHTBOX_ACTION_LABELS[locale] || LIGHTBOX_ACTION_LABELS[locale.split('-')[0]] || LIGHTBOX_ACTION_LABELS.en;
+        const toolbar = document.createElement('div');
+        toolbar.className = 'gfplus-lightbox-actions';
+        const feedback = document.createElement('span');
+        feedback.className = 'gfplus-lightbox-action-status';
+        feedback.setAttribute('role', 'status');
+        let feedbackTimer = 0;
+        const notify = (message, success, persistent = false) => {
+            feedback.textContent = message;
+            feedback.classList.toggle('gfplus-lightbox-action-success', success);
+            clearTimeout(feedbackTimer);
+            if (!persistent) feedbackTimer = window.setTimeout(() => { feedback.textContent = ''; }, 2200);
+        };
+
+        const actions = [
+            [download, 'M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4', downloadLightboxImage],
+            [copyLink, 'M10 13a4 4 0 0 0 6 0l4-4a4 4 0 0 0-6-6l-2 2m2 6a4 4 0 0 0-6 0l-4 4a4 4 0 0 0 6 6l2-2', source => navigator.clipboard.writeText(source)],
+            [copyImage, 'M10 8h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zM16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2', copyLightboxImage]
+        ];
+
+        for (const [label, path, run] of actions) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.title = label;
+            button.setAttribute('aria-label', label);
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            icon.setAttribute('viewBox', '0 0 24 24');
+            icon.setAttribute('aria-hidden', 'true');
+            const shape = document.createElementNS(icon.namespaceURI, 'path');
+            shape.setAttribute('d', path);
+            icon.append(shape);
+            button.append(icon);
+            let iconTimer = 0;
+            const isImageCopy = run === copyLightboxImage;
+            if (isImageCopy) {
+                button.addEventListener('pointerdown', (event) => {
+                    if (event.pointerType !== 'touch' || !navigator.clipboard?.write) return;
+                    const image = lightbox.querySelector('.lum-img, .lum-lightbox-inner img, img');
+                    const source = image?.currentSrc || image?.src;
+                    if (source) prepareLightboxClipboardImage(source, image);
+                }, { passive: true });
+            }
+            button.addEventListener('click', async (event) => {
+                event.stopPropagation();
+                const image = lightbox.querySelector('.lum-img, .lum-lightbox-inner img, img');
+                const source = image?.currentSrc || image?.src;
+                if (!source || button.getAttribute('aria-busy') === 'true') return;
+                clearTimeout(iconTimer);
+                shape.setAttribute('d', path);
+                try {
+                    const pending = run(source, image);
+                    button.setAttribute('aria-busy', 'true');
+                    await pending;
+                    shape.setAttribute('d', 'm5 12 4 4L19 6');
+                    iconTimer = window.setTimeout(() => shape.setAttribute('d', path), 1600);
+                    notify(done, true);
+                } catch {
+                    const nativeCopy = isImageCopy && (event.pointerType === 'touch' || window.matchMedia?.('(any-pointer: coarse)').matches);
+                    notify(nativeCopy ? holdToCopy : failed, false, nativeCopy);
+                } finally {
+                    button.removeAttribute('aria-busy');
+                }
+            });
+            toolbar.append(button);
+        }
+        toolbar.append(feedback);
+        close.before(toolbar);
+    };
+
     const updateLightboxScrollLock = () => {
-        const lightboxOpen = Boolean(document.querySelector('.lum-lightbox.lum-open'));
-        root.classList.toggle(LIGHTBOX_SCROLL_LOCK_CLASS, lightboxOpen);
-        if (lightboxOpen) {
+        const lightbox = document.querySelector('.lum-lightbox.lum-open');
+        root.classList.toggle(LIGHTBOX_SCROLL_LOCK_CLASS, Boolean(lightbox));
+        if (lightbox) {
+            bindLightboxActions(lightbox);
             bindLightboxImageZoom();
         } else {
             resetLightboxImageZoom();
@@ -9286,6 +10829,24 @@ License: BSD 3-Clause
     };
 
     const initLightboxScrollLock = () => {
+        const style = document.createElement('style');
+        style.textContent = `
+            .lum-lightbox .gfplus-lightbox-actions { position:absolute; z-index:4; top:12px; left:50%; transform:translateX(-50%); display:flex; gap:5px; }
+            .lum-lightbox .gfplus-lightbox-actions button { display:grid; place-items:center; box-sizing:border-box; flex:none; width:40px; height:40px; min-width:0; min-height:0; padding:0 !important; border:1px solid #fff3; border-radius:50%; background:#17171799 !important; color:#fff !important; cursor:pointer; box-shadow:none !important; transform:none !important; transition:background-color .16s ease, border-color .16s ease; }
+            .lum-lightbox .gfplus-lightbox-actions button:hover { background:#171717d9 !important; border-color:#fff6; }
+            .lum-lightbox .gfplus-lightbox-actions button:focus-visible { outline:2px solid #fff; outline-offset:2px; }
+            .lum-lightbox .gfplus-lightbox-actions button[aria-busy="true"] { opacity:.65; cursor:wait; }
+            .gfplus-lightbox-actions svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+            .gfplus-lightbox-action-status { position:absolute; top:calc(100% + 6px); left:50%; transform:translateX(-50%); width:max-content; max-width:min(220px, calc(100vw - 48px)); box-sizing:border-box; padding:4px 8px; border-radius:5px; background:#171717e0; color:#fff; font-size:.75rem; line-height:1.35; overflow-wrap:anywhere; }
+            .gfplus-lightbox-action-status.gfplus-lightbox-action-success { width:1px; height:1px; padding:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+            .gfplus-lightbox-action-status:empty { visibility:hidden; }
+            .lum-lightbox img.gfplus-lightbox-zoomable { -webkit-touch-callout:default !important; }
+            @media (max-width:600px) {
+                .lum-lightbox .gfplus-lightbox-actions { left:12px; transform:none; gap:4px; }
+                .gfplus-lightbox-action-status { left:0; transform:none; }
+            }
+        `;
+        appendStyle(style);
         updateLightboxScrollLock();
 
         if (!lightboxScrollPreventInitialized) {
@@ -9647,7 +11208,7 @@ License: BSD 3-Clause
         const toolbar = document.createElement('div');
         toolbar.className = 'gf-editor-toolbar';
         toolbar.setAttribute('role', 'toolbar');
-        toolbar.setAttribute('aria-label', 'Outils de mise en forme');
+        toolbar.setAttribute('aria-label', getAccessibilityI18n()[0]);
         const i18n = getUserNavI18n(getCurrentLocale()).editor;
         getEditorToolbarButtons(i18n).forEach((buttonConfig) => {
             toolbar.appendChild(createEditorToolbarButton(buttonConfig, previewable, textarea, i18n));
@@ -9677,6 +11238,69 @@ License: BSD 3-Clause
     };
 
     // Script List Density
+    const SCRIPT_DATE_FORMAT_KEYS = {
+        created: 'gfplus-created-date-format',
+        updated: 'gfplus-updated-date-format'
+    };
+    const scriptDateFormats = Object.fromEntries(Object.entries(SCRIPT_DATE_FORMAT_KEYS).map(([kind, key]) => {
+        let value = 0;
+        try { value = Number(localStorage.getItem(key)); } catch { /* Use the default format. */ }
+        return [kind, Number.isInteger(value) && value >= 0 && value <= 2 ? value : 0];
+    }));
+    const syncScriptDateControls = () => {
+        document.querySelectorAll('.script-list dd.script-list-created-date relative-time, .script-list dd.script-list-updated-date relative-time, #script-stats dd.script-show-created-date relative-time, #script-stats dd.script-show-updated-date relative-time').forEach((time) => {
+            let control = time.parentElement;
+            const dateCell = time.closest('dd');
+            const onScriptPage = Boolean(time.closest('#script-stats'));
+            const kind = dateCell?.matches('.script-list-created-date, .script-show-created-date') ? 'created' : 'updated';
+            if (!control?.classList.contains('gf-script-date-toggle')) {
+                const date = new Date(time.getAttribute('datetime'));
+                if (Number.isNaN(date.getTime())) return;
+                const formatDate = (options) => {
+                    try { return new Intl.DateTimeFormat(getCurrentLocale(), options).format(date); }
+                    catch { return new Intl.DateTimeFormat(undefined, options).format(date); }
+                };
+                control = document.createElement('span');
+                control.className = 'gf-script-date-toggle';
+                control.dataset.dateKind = kind;
+                const long = document.createElement('span');
+                long.className = 'gf-script-date-long';
+                long.textContent = formatDate({ dateStyle: 'long' });
+                const full = document.createElement('span');
+                full.className = 'gf-script-date-full';
+                full.textContent = formatDate({ dateStyle: 'long', timeStyle: 'short' });
+                time.replaceWith(control);
+                control.append(time, long, full);
+                const cycle = () => {
+                    if (!onScriptPage && currentDensity !== 'comfortable') return;
+                    scriptDateFormats[kind] = (scriptDateFormats[kind] + 1) % 3;
+                    try { localStorage.setItem(SCRIPT_DATE_FORMAT_KEYS[kind], String(scriptDateFormats[kind])); } catch { /* Keep the preference for this session. */ }
+                    document.querySelectorAll(`.gf-script-date-toggle[data-date-kind="${kind}"]`).forEach((item) => {
+                        item.dataset.dateFormat = String(scriptDateFormats[kind]);
+                    });
+                };
+                control.addEventListener('click', cycle);
+                control.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        cycle();
+                    }
+                });
+            }
+            if (control.dataset.dateFormat !== String(scriptDateFormats[kind])) {
+                control.dataset.dateFormat = String(scriptDateFormats[kind]);
+            }
+            if (onScriptPage || currentDensity === 'comfortable') {
+                if (!control.hasAttribute('role')) {
+                    control.setAttribute('role', 'button');
+                    control.setAttribute('tabindex', '0');
+                }
+            } else {
+                control.removeAttribute('role');
+                control.removeAttribute('tabindex');
+            }
+        });
+    };
     const setInterfaceDensity = (density) => {
         if (!DENSITY_OPTIONS.includes(density)) {
             return;
@@ -9684,6 +11308,7 @@ License: BSD 3-Clause
 
         currentDensity = density;
         root.setAttribute('data-gfplus-density', density);
+        syncScriptDateControls();
         localStorage.setItem(DENSITY_STORAGE_KEY, density);
 
         document.querySelectorAll('gf-script-density').forEach((host) => {
@@ -10173,6 +11798,7 @@ License: BSD 3-Clause
     };
 
     const applyScriptDensityControls = () => {
+        syncScriptDateControls();
         syncScriptPageWidth();
         document.querySelectorAll('.script-list').forEach((scriptList) => {
             if (
@@ -10325,6 +11951,319 @@ License: BSD 3-Clause
         resizeFields();
     };
 
+    const USER_PREVIEW_I18N = {
+        "en": { loading: "Loading…", unavailable: "Preview unavailable", statsUnavailable: "Statistics unavailable", joined: "Joined", message: "Send a message", report: "Report this user", scripts: "Scripts", total: "Installs", daily: "Daily" },
+        "fr": { loading: "Chargement…", unavailable: "Aperçu indisponible", statsUnavailable: "Statistiques indisponibles", joined: "Inscrit depuis", message: "Écrire un message", report: "Signaler cet utilisateur", scripts: "Scripts", total: "Installations", daily: "Par jour" },
+        "es": { loading: "Cargando…", unavailable: "Vista previa no disponible", statsUnavailable: "Estadísticas no disponibles", joined: "Se unió el", message: "Enviar un mensaje", report: "Denunciar a este usuario", scripts: "Scripts", total: "Instalaciones", daily: "Por día" },
+        "de": { loading: "Laden…", unavailable: "Vorschau nicht verfügbar", statsUnavailable: "Statistiken nicht verfügbar", joined: "Dabei seit", message: "Nachricht senden", report: "Benutzer melden", scripts: "Skripte", total: "Installationen", daily: "Pro Tag" },
+        "it": { loading: "Caricamento…", unavailable: "Anteprima non disponibile", statsUnavailable: "Statistiche non disponibili", joined: "Iscritto dal", message: "Invia un messaggio", report: "Segnala utente", scripts: "Script", total: "Installazioni", daily: "Al giorno" },
+        "pt": { loading: "Carregando…", unavailable: "Prévia indisponível", statsUnavailable: "Estatísticas indisponíveis", joined: "Inscrito em", message: "Enviar mensagem", report: "Denunciar usuário", scripts: "Scripts", total: "Instalações", daily: "Por dia" },
+        "ru": { loading: "Загрузка…", unavailable: "Предпросмотр недоступен", statsUnavailable: "Статистика недоступна", joined: "Дата регистрации", message: "Написать сообщение", report: "Пожаловаться на пользователя", scripts: "Скрипты", total: "Установки", daily: "В день" },
+        "ja": { loading: "読み込み中…", unavailable: "プレビューを表示できません", statsUnavailable: "統計を表示できません", joined: "登録日", message: "メッセージを送る", report: "ユーザーを報告", scripts: "スクリプト", total: "インストール", daily: "1日あたり" },
+        "zh-CN": { loading: "加载中…", unavailable: "无法显示预览", statsUnavailable: "无法获取统计信息", joined: "加入时间", message: "发送消息", report: "举报此用户", scripts: "脚本", total: "安装量", daily: "每日" },
+        "zh-TW": { loading: "載入中…", unavailable: "無法顯示預覽", statsUnavailable: "無法取得統計資料", joined: "加入時間", message: "傳送訊息", report: "檢舉此使用者", scripts: "腳本", total: "安裝次數", daily: "每日" },
+        "ar": { loading: "جارٍ التحميل…", unavailable: "المعاينة غير متاحة", statsUnavailable: "الإحصاءات غير متاحة", joined: "تاريخ الانضمام", message: "إرسال رسالة", report: "الإبلاغ عن المستخدم", scripts: "السكربتات", total: "التثبيتات", daily: "يوميًا" },
+        "hi": { loading: "लोड हो रहा है…", unavailable: "पूर्वावलोकन उपलब्ध नहीं", statsUnavailable: "आँकड़े उपलब्ध नहीं", joined: "सदस्य बने", message: "संदेश भेजें", report: "उपयोगकर्ता की रिपोर्ट करें", scripts: "स्क्रिप्ट", total: "इंस्टॉल", daily: "प्रतिदिन" },
+        "bn": { loading: "লোড হচ্ছে…", unavailable: "প্রিভিউ উপলব্ধ নয়", statsUnavailable: "পরিসংখ্যান উপলব্ধ নয়", joined: "যোগ দিয়েছেন", message: "বার্তা পাঠান", report: "ব্যবহারকারীকে রিপোর্ট করুন", scripts: "স্ক্রিপ্ট", total: "ইনস্টল", daily: "প্রতিদিন" },
+        "ur": { loading: "لوڈ ہو رہا ہے…", unavailable: "پیش نظارہ دستیاب نہیں", statsUnavailable: "اعداد و شمار دستیاب نہیں", joined: "شمولیت کی تاریخ", message: "پیغام بھیجیں", report: "صارف کی رپورٹ کریں", scripts: "اسکرپٹس", total: "انسٹال", daily: "روزانہ" },
+        "ml": { loading: "ലോഡ് ചെയ്യുന്നു…", unavailable: "പ്രിവ്യൂ ലഭ്യമല്ല", statsUnavailable: "സ്ഥിതിവിവരക്കണക്കുകൾ ലഭ്യമല്ല", joined: "ചേർന്ന തീയതി", message: "സന്ദേശം അയയ്ക്കുക", report: "ഉപയോക്താവിനെ റിപ്പോർട്ട് ചെയ്യുക", scripts: "സ്ക്രിപ്റ്റുകൾ", total: "ഇൻസ്റ്റാളുകൾ", daily: "പ്രതിദിനം" },
+        "ko": { loading: "불러오는 중…", unavailable: "미리보기를 사용할 수 없음", statsUnavailable: "통계를 사용할 수 없음", joined: "가입일", message: "메시지 보내기", report: "사용자 신고", scripts: "스크립트", total: "설치", daily: "일일" },
+        "pl": { loading: "Ładowanie…", unavailable: "Podgląd niedostępny", statsUnavailable: "Statystyki niedostępne", joined: "Dołączenie", message: "Wyślij wiadomość", report: "Zgłoś użytkownika", scripts: "Skrypty", total: "Instalacje", daily: "Dziennie" },
+        "nl": { loading: "Laden…", unavailable: "Voorbeeld niet beschikbaar", statsUnavailable: "Statistieken niet beschikbaar", joined: "Lid sinds", message: "Bericht sturen", report: "Gebruiker melden", scripts: "Scripts", total: "Installaties", daily: "Per dag" },
+        "sv": { loading: "Läser in…", unavailable: "Förhandsvisning saknas", statsUnavailable: "Statistik saknas", joined: "Medlem sedan", message: "Skicka meddelande", report: "Rapportera användare", scripts: "Skript", total: "Installationer", daily: "Per dag" },
+        "ro": { loading: "Se încarcă…", unavailable: "Previzualizare indisponibilă", statsUnavailable: "Statistici indisponibile", joined: "Membru din", message: "Trimite mesaj", report: "Raportează utilizatorul", scripts: "Scripturi", total: "Instalări", daily: "Pe zi" },
+        "vi": { loading: "Đang tải…", unavailable: "Không thể xem trước", statsUnavailable: "Không có thống kê", joined: "Tham gia", message: "Gửi tin nhắn", report: "Báo cáo người dùng", scripts: "Tập lệnh", total: "Lượt cài", daily: "Mỗi ngày" },
+        "id": { loading: "Memuat…", unavailable: "Pratinjau tidak tersedia", statsUnavailable: "Statistik tidak tersedia", joined: "Bergabung", message: "Kirim pesan", report: "Laporkan pengguna", scripts: "Skrip", total: "Pemasangan", daily: "Per hari" },
+        "ms": { loading: "Memuatkan…", unavailable: "Pratonton tidak tersedia", statsUnavailable: "Statistik tidak tersedia", joined: "Menyertai", message: "Hantar mesej", report: "Laporkan pengguna", scripts: "Skrip", total: "Pemasangan", daily: "Sehari" },
+        "be": { loading: "Загрузка…", unavailable: "Папярэдні прагляд недаступны", statsUnavailable: "Статыстыка недаступная", joined: "Дата рэгістрацыі", message: "Адправіць паведамленне", report: "Паскардзіцца на карыстальніка", scripts: "Скрыпты", total: "Усталяванні", daily: "У дзень" },
+        "nb": { loading: "Laster…", unavailable: "Forhåndsvisning utilgjengelig", statsUnavailable: "Statistikk utilgjengelig", joined: "Medlem siden", message: "Send melding", report: "Rapporter bruker", scripts: "Skript", total: "Installasjoner", daily: "Per dag" },
+        "bg": { loading: "Зареждане…", unavailable: "Прегледът не е наличен", statsUnavailable: "Статистиката не е налична", joined: "Регистрация", message: "Изпращане на съобщение", report: "Докладване на потребителя", scripts: "Скриптове", total: "Инсталации", daily: "На ден" },
+        "hr": { loading: "Učitavanje…", unavailable: "Pregled nije dostupan", statsUnavailable: "Statistika nije dostupna", joined: "Član od", message: "Pošalji poruku", report: "Prijavi korisnika", scripts: "Skripte", total: "Instalacije", daily: "Dnevno" },
+        "cs": { loading: "Načítání…", unavailable: "Náhled není dostupný", statsUnavailable: "Statistiky nejsou dostupné", joined: "Členem od", message: "Poslat zprávu", report: "Nahlásit uživatele", scripts: "Skripty", total: "Instalace", daily: "Denně" },
+        "da": { loading: "Indlæser…", unavailable: "Forhåndsvisning er ikke tilgængelig", statsUnavailable: "Statistik er ikke tilgængelig", joined: "Medlem siden", message: "Send besked", report: "Anmeld bruger", scripts: "Scripts", total: "Installationer", daily: "Pr. dag" },
+        "eo": { loading: "Ŝargante…", unavailable: "Antaŭrigardo ne disponeblas", statsUnavailable: "Statistikoj ne disponeblas", joined: "Aliĝis", message: "Sendi mesaĝon", report: "Raporti uzanton", scripts: "Skriptoj", total: "Instaloj", daily: "Tage" },
+        "fil": { loading: "Naglo-load…", unavailable: "Hindi available ang preview", statsUnavailable: "Hindi available ang mga estadistika", joined: "Sumali noong", message: "Magpadala ng mensahe", report: "I-report ang user", scripts: "Mga script", total: "Mga install", daily: "Bawat araw" },
+        "fi": { loading: "Ladataan…", unavailable: "Esikatselu ei ole saatavilla", statsUnavailable: "Tilastot eivät ole saatavilla", joined: "Liittynyt", message: "Lähetä viesti", report: "Ilmoita käyttäjästä", scripts: "Skriptit", total: "Asennukset", daily: "Päivässä" },
+        "ckb": { loading: "بارکردن…", unavailable: "پێشبینین بەردەست نییە", statsUnavailable: "ئامارەکان بەردەست نین", joined: "بەرواری بەشداربوون", message: "نامە بنێرە", report: "بەکارهێنەر ڕاپۆرت بکە", scripts: "سکریپتەکان", total: "دامەزراندنەکان", daily: "ڕۆژانە" },
+        "ka": { loading: "იტვირთება…", unavailable: "გადახედვა მიუწვდომელია", statsUnavailable: "სტატისტიკა მიუწვდომელია", joined: "რეგისტრაციის თარიღი", message: "შეტყობინების გაგზავნა", report: "მომხმარებლის გასაჩივრება", scripts: "სკრიპტები", total: "ინსტალაციები", daily: "დღეში" },
+        "el": { loading: "Φόρτωση…", unavailable: "Η προεπισκόπηση δεν είναι διαθέσιμη", statsUnavailable: "Τα στατιστικά δεν είναι διαθέσιμα", joined: "Μέλος από", message: "Αποστολή μηνύματος", report: "Αναφορά χρήστη", scripts: "Σενάρια", total: "Εγκαταστάσεις", daily: "Ανά ημέρα" },
+        "he": { loading: "טוען…", unavailable: "התצוגה המקדימה אינה זמינה", statsUnavailable: "הסטטיסטיקה אינה זמינה", joined: "הצטרפות", message: "שליחת הודעה", report: "דיווח על משתמש", scripts: "סקריפטים", total: "התקנות", daily: "ליום" },
+        "hu": { loading: "Betöltés…", unavailable: "Az előnézet nem érhető el", statsUnavailable: "A statisztika nem érhető el", joined: "Csatlakozott", message: "Üzenet küldése", report: "Felhasználó jelentése", scripts: "Szkriptek", total: "Telepítések", daily: "Naponta" },
+        "mr": { loading: "लोड होत आहे…", unavailable: "पूर्वावलोकन उपलब्ध नाही", statsUnavailable: "आकडेवारी उपलब्ध नाही", joined: "सामील झाले", message: "संदेश पाठवा", report: "वापरकर्त्याची तक्रार करा", scripts: "स्क्रिप्ट", total: "इंस्टॉल", daily: "दररोज" },
+        "sr": { loading: "Učitavanje…", unavailable: "Pregled nije dostupan", statsUnavailable: "Statistika nije dostupna", joined: "Član od", message: "Pošalji poruku", report: "Prijavi korisnika", scripts: "Skripte", total: "Instalacije", daily: "Dnevno" },
+        "sk": { loading: "Načítava sa…", unavailable: "Náhľad nie je dostupný", statsUnavailable: "Štatistiky nie sú dostupné", joined: "Členom od", message: "Poslať správu", report: "Nahlásiť používateľa", scripts: "Skripty", total: "Inštalácie", daily: "Denne" },
+        "ug": { loading: "يۈكلىنىۋاتىدۇ…", unavailable: "ئالدىن كۆرۈشنى ئىشلەتكىلى بولمايدۇ", statsUnavailable: "ستاتىستىكا يوق", joined: "قوشۇلغان ۋاقتى", message: "ئۇچۇر ئەۋەتىش", report: "ئىشلەتكۈچىنى پاش قىلىش", scripts: "قوليازمىلار", total: "قاچىلاش", daily: "ھەر كۈنى" },
+        "uk": { loading: "Завантаження…", unavailable: "Попередній перегляд недоступний", statsUnavailable: "Статистика недоступна", joined: "Дата реєстрації", message: "Надіслати повідомлення", report: "Поскаржитися на користувача", scripts: "Скрипти", total: "Встановлення", daily: "На день" },
+        "th": { loading: "กำลังโหลด…", unavailable: "ไม่สามารถแสดงตัวอย่าง", statsUnavailable: "ไม่มีข้อมูลสถิติ", joined: "เข้าร่วมเมื่อ", message: "ส่งข้อความ", report: "รายงานผู้ใช้", scripts: "สคริปต์", total: "การติดตั้ง", daily: "ต่อวัน" },
+        "tr": { loading: "Yükleniyor…", unavailable: "Önizleme kullanılamıyor", statsUnavailable: "İstatistikler kullanılamıyor", joined: "Katılım tarihi", message: "Mesaj gönder", report: "Kullanıcıyı bildir", scripts: "Betikler", total: "Yüklemeler", daily: "Günlük" },
+    };
+
+    const initUserProfilePreviews = () => {
+        const style = document.createElement('style');
+        style.textContent = `
+            .gf-user-preview {
+                position: absolute; z-index: 10000; width: min(330px, calc(100vw - 24px));
+                box-sizing: border-box; padding: 14px; border: 1px solid var(--content-border-color);
+                border-radius: 10px; background: var(--content-background-color);
+                color: var(--overall-text-color); box-shadow: 0 8px 24px rgba(0,0,0,.18);
+                font-size: .875rem; line-height: 1.45; overflow-wrap: anywhere;
+                max-height: calc(100vh - 24px); overflow-y: auto;
+                transition: none !important;
+            }
+            .gf-user-preview[hidden] { display: none; }
+            .gf-user-preview-header { display: flex; align-items: flex-start; justify-content: space-between; gap: .6rem; }
+            .gf-user-preview-name { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; min-width: 0; font-size: .96rem; font-weight: 700; }
+            .gf-user-preview-actions { display: flex; flex: none; gap: 2px; }
+            .gf-user-preview-actions a { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 7px; color: var(--overall-text-color); text-decoration: none; }
+            .gf-user-preview-actions a:hover { background: color-mix(in srgb, var(--link-color) 10%, transparent); color: var(--link-color); }
+            .gf-user-preview-actions a.gf-user-preview-report,
+            .gf-user-preview-actions a.gf-user-preview-report:hover { color: #d74747; }
+            html[data-theme="dark"] .gf-user-preview-actions a.gf-user-preview-report { color: #f08080; }
+            .gf-user-preview-actions a:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+            .gf-user-preview-actions svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+            .gf-user-preview-bio { margin: .5rem 0 0; white-space: pre-line; }
+            .gf-user-preview-joined { margin-top: .4rem; font-size: .78rem; opacity: .8; }
+            .gf-user-preview-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .5rem; margin-top: .75rem; }
+            .gf-user-preview-stat { min-width: 0; padding: .45rem; border-radius: 6px; background: color-mix(in srgb, var(--overall-text-color) 6%, var(--content-background-color)); }
+            .gf-user-preview-stat strong, .gf-user-preview-stat span { display: block; }
+            .gf-user-preview-stat span { font-size: .72rem; opacity: .8; }
+            .gf-user-preview-status { margin-top: .5rem; opacity: .8; }
+        `;
+        appendStyle(style);
+        const tooltip = document.createElement('div');
+        tooltip.id = 'gfplus-user-preview';
+        tooltip.className = 'gf-user-preview';
+        tooltip.setAttribute('role', 'dialog');
+        tooltip.hidden = true;
+        document.body.appendChild(tooltip);
+        const cache = new Map();
+        let activeLink = null;
+        let originalDescription = null;
+        let openTimer = 0;
+        let closeTimer = 0;
+        let token = 0;
+        let placement = null;
+        let suppressPreviewFocus = null;
+        const locale = getCurrentLocale();
+        const labels = USER_PREVIEW_I18N[locale] || USER_PREVIEW_I18N[locale.split('-')[0]] || USER_PREVIEW_I18N.en;
+        const getUser = (link) => {
+            if (!link?.matches?.('a[href]') || link.closest('#nav-user-info .user-profile-link, #mobile-nav .user-profile-link, #gf-mobile-user-meta .user-profile-link')) return null;
+            if (!link.matches('.user-link, [rel~="author"]') && !link.closest('dd.script-list-author, dd.script-show-author')) return null;
+            if (!link.textContent.trim()) return null;
+            const href = link.getAttribute('href')?.trim();
+            if (!href || href.startsWith('#') || href.startsWith('?')) return null;
+            try {
+                const url = new URL(link.href, location.href);
+                if (url.origin !== location.origin || url.search || url.hash) return null;
+                const match = url.pathname.match(/^\/(?:[a-z]{2,3}(?:-[a-z0-9]+)?\/)?users\/(\d+)(?:-[^/]*)?\/?$/i);
+                return match ? { id: match[1], url: new URL(`/${getCurrentLocale()}/users/${match[1]}`, location.origin) } : null;
+            } catch { return null; }
+        };
+        const position = () => {
+            if (!activeLink || tooltip.hidden) return;
+            const rect = activeLink.getBoundingClientRect();
+            const width = tooltip.offsetWidth;
+            const height = tooltip.offsetHeight;
+            const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+            const below = rect.bottom + 8;
+            if (!placement) placement = below + height <= window.innerHeight - 12 || rect.top < height + 12 ? 'below' : 'above';
+            const preferredTop = placement === 'below' ? below : rect.top - height - 8;
+            const top = Math.max(12, Math.min(preferredTop, window.innerHeight - height - 12));
+            tooltip.style.left = `${left + window.scrollX}px`;
+            tooltip.style.top = `${top + window.scrollY}px`;
+        };
+        const hide = () => {
+            clearTimeout(openTimer); clearTimeout(closeTimer); token++;
+            if (activeLink) {
+                if (originalDescription === null) activeLink.removeAttribute('aria-describedby');
+                else activeLink.setAttribute('aria-describedby', originalDescription);
+            }
+            activeLink = null; originalDescription = null; placement = null; tooltip.hidden = true;
+        };
+        const deferHide = () => {
+            clearTimeout(closeTimer);
+            closeTimer = window.setTimeout(() => {
+                if (!tooltip.contains(document.activeElement) && document.activeElement !== activeLink) hide();
+            }, 180);
+        };
+        const fetchPreview = (user) => {
+            const existing = cache.get(user.id);
+            if (existing && existing.expires > Date.now()) return existing.promise;
+            const request = async (url, type) => {
+                const controller = new AbortController();
+                const timeout = window.setTimeout(() => controller.abort(), 10000);
+                try {
+                    const response = await fetch(url, { credentials: 'omit', signal: controller.signal });
+                    const responseOrigin = new URL(response.url).origin;
+                    const apiOrigin = `${location.protocol}//api.${location.hostname}`;
+                    if (!response.ok || (responseOrigin !== location.origin && !(type === 'json' && responseOrigin === apiOrigin))) throw new Error('Profile unavailable');
+                    return await (type === 'json' ? response.json() : response.text());
+                } finally {
+                    clearTimeout(timeout);
+                }
+            };
+            const apiUrl = new URL(user.url); apiUrl.pathname += '.json';
+            const promise = Promise.allSettled([request(user.url, 'html'), request(apiUrl, 'json')]).then(([html, json]) => {
+                if (html.status === 'rejected' && json.status === 'rejected') throw new Error('Profile unavailable');
+                let bio = '';
+                let badges = [];
+                if (html.status === 'fulfilled') {
+                    const doc = new DOMParser().parseFromString(html.value, 'text/html');
+                    badges = Array.from(doc.querySelectorAll('#about-user > h2 .badge')).map((badge) => ({
+                        kind: ['author', 'moderator', 'banned'].find((kind) => badge.classList.contains(`badge-${kind}`)),
+                        text: badge.textContent.trim(),
+                        title: badge.getAttribute('title') || ''
+                    })).filter((badge) => badge.kind && badge.text);
+                    const profile = doc.querySelector('#about-user #user-profile');
+                    if (profile) {
+                        profile.querySelectorAll('script,style,template').forEach((node) => node.remove());
+                        bio = (profile.textContent || '').replace(/\s+/g, ' ').trim();
+                        if (bio.length > 220) bio = `${bio.slice(0, 217).trimEnd()}…`;
+                    }
+                }
+                const data = json.status === 'fulfilled' ? json.value : null;
+                const scripts = Array.isArray(data?.scripts) ? data.scripts.filter((item) => item && !item.deleted) : null;
+                const totals = scripts && ['daily_installs', 'total_installs'].every((key) => scripts.every((item) => Number.isFinite(item[key]) && item[key] >= 0))
+                    ? { count: scripts.length, daily: scripts.reduce((sum, item) => sum + item.daily_installs, 0), total: scripts.reduce((sum, item) => sum + item.total_installs, 0) } : null;
+                if (!bio && !totals && !badges.length) throw new Error('Profile unavailable');
+                return { bio, badges, totals, joined: typeof data?.created_at === 'string' ? data.created_at : '', name: typeof data?.name === 'string' ? data.name : '' };
+            }).catch((error) => { cache.delete(user.id); throw error; });
+            if (cache.size >= 100) cache.delete(cache.keys().next().value);
+            cache.set(user.id, { expires: Date.now() + 5 * 60 * 1000, promise });
+            return promise;
+        };
+        const show = async (link, user) => {
+            hide();
+            activeLink = link;
+            originalDescription = link.getAttribute('aria-describedby');
+            link.setAttribute('aria-describedby', [originalDescription, tooltip.id].filter(Boolean).join(' '));
+            const current = ++token;
+            tooltip.replaceChildren();
+            const name = document.createElement('div'); name.className = 'gf-user-preview-name';
+            const nameText = document.createElement('span'); nameText.textContent = link.textContent.trim(); name.appendChild(nameText);
+            const addBadge = (badge) => {
+                if (!badge?.kind || !badge.text || name.querySelector(`.badge-${badge.kind}`)) return;
+                const element = document.createElement('span'); element.className = `badge badge-${badge.kind}`;
+                element.textContent = badge.text;
+                if (badge.title) element.title = badge.title;
+                name.appendChild(element);
+            };
+            const adjacentBadge = link.nextElementSibling;
+            if (adjacentBadge?.classList.contains('badge')) {
+                const kind = ['author', 'moderator', 'banned'].find((item) => adjacentBadge.classList.contains(`badge-${item}`));
+                addBadge({ kind, text: adjacentBadge.textContent.trim(), title: adjacentBadge.getAttribute('title') || '' });
+            }
+            tooltip.setAttribute('aria-label', nameText.textContent);
+            const header = document.createElement('div'); header.className = 'gf-user-preview-header';
+            const actions = document.createElement('div'); actions.className = 'gf-user-preview-actions';
+            const createAction = (label, href, paths) => {
+                const action = document.createElement('a');
+                action.href = href; action.title = label; action.setAttribute('aria-label', label);
+                const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                icon.setAttribute('viewBox', '0 0 24 24'); icon.setAttribute('aria-hidden', 'true');
+                icon.innerHTML = paths; action.appendChild(icon); actions.appendChild(action);
+                return action;
+            };
+            const ownId = extractUserIdFromProfilePath(extractCurrentUserProfilePath());
+            let messageAction = null;
+            const updateMessageLink = (recipient) => {
+                if (!messageAction) return;
+                const url = new URL(`/${getCurrentLocale()}/users/${ownId}/conversations/new`, location.origin);
+                url.searchParams.set('other_user', recipient);
+                messageAction.href = url.href;
+            };
+            if (ownId && ownId !== user.id) {
+                messageAction = createAction(labels.message, '#', '<path d="M4 5h16v11H9l-5 4V5z"></path><path d="M8 9h8M8 12h6"></path>');
+                updateMessageLink(nameText.textContent);
+            }
+            const reportUrl = new URL(`/${getCurrentLocale()}/reports/new`, location.origin);
+            reportUrl.searchParams.set('item_class', 'user'); reportUrl.searchParams.set('item_id', user.id);
+            createAction(labels.report, reportUrl.href, '<path d="M5 21V4"></path><path d="M5 5c5-3 9 3 14 0v10c-5 3-9-3-14 0"></path>').classList.add('gf-user-preview-report');
+            header.append(name, actions);
+            const status = document.createElement('div'); status.className = 'gf-user-preview-status'; status.textContent = labels.loading;
+            tooltip.append(header, status); tooltip.hidden = false; position();
+            const openingScrollY = window.scrollY;
+            try {
+                const result = await fetchPreview(user);
+                if (token !== current || activeLink !== link) return;
+                nameText.textContent = result.name || nameText.textContent;
+                tooltip.setAttribute('aria-label', nameText.textContent);
+                updateMessageLink(nameText.textContent);
+                result.badges.forEach(addBadge);
+                status.remove();
+                if (result.bio) { const bio = document.createElement('p'); bio.className = 'gf-user-preview-bio'; bio.textContent = result.bio; tooltip.appendChild(bio); }
+                const joinedDate = result.joined ? new Date(result.joined) : null;
+                if (joinedDate && Number.isFinite(joinedDate.getTime())) {
+                    const joined = document.createElement('div'); joined.className = 'gf-user-preview-joined';
+                    try { joined.textContent = `${labels.joined} ${new Intl.DateTimeFormat(getCurrentLocale(), { dateStyle: 'long' }).format(joinedDate)}`; }
+                    catch { joined.textContent = `${labels.joined} ${new Intl.DateTimeFormat(undefined, { dateStyle: 'long' }).format(joinedDate)}`; }
+                    tooltip.appendChild(joined);
+                }
+                if (result.totals) {
+                    const stats = document.createElement('div'); stats.className = 'gf-user-preview-stats';
+                    const format = new Intl.NumberFormat(getCurrentLocale());
+                    [['count', labels.scripts], ['total', labels.total], ['daily', labels.daily]].forEach(([key, label]) => {
+                        const cell = document.createElement('div'); cell.className = 'gf-user-preview-stat';
+                        const number = document.createElement('strong'); number.textContent = format.format(result.totals[key]);
+                        const caption = document.createElement('span'); caption.textContent = label;
+                        cell.append(number, caption); stats.appendChild(cell);
+                    });
+                    tooltip.appendChild(stats);
+                } else {
+                    status.textContent = labels.statsUnavailable;
+                    tooltip.appendChild(status);
+                    cache.delete(user.id);
+                }
+            } catch {
+                if (token !== current || activeLink !== link) return;
+                status.textContent = labels.unavailable;
+            }
+            const top = Math.min(parseFloat(tooltip.style.top) || openingScrollY + 12, openingScrollY + Math.max(12, window.innerHeight - tooltip.offsetHeight - 12));
+            tooltip.style.top = `${top}px`;
+        };
+        const schedule = (link, delay) => {
+            const user = getUser(link); if (!user) return;
+            clearTimeout(closeTimer); clearTimeout(openTimer);
+            if (activeLink === link) return;
+            openTimer = window.setTimeout(() => show(link, user), delay);
+        };
+        document.addEventListener('pointerover', (event) => {
+            if (event.pointerType === 'touch') return;
+            if (tooltip.contains(event.target)) { clearTimeout(closeTimer); return; }
+            const link = event.target.closest?.('a[href]');
+            if (link && !link.contains(event.relatedTarget)) schedule(link, 400);
+        });
+        document.addEventListener('pointerout', (event) => {
+            if (tooltip.contains(event.target)) { if (!tooltip.contains(event.relatedTarget) && !activeLink?.contains(event.relatedTarget)) deferHide(); return; }
+            const link = event.target.closest?.('a[href]');
+            if (link && !link.contains(event.relatedTarget)) {
+                clearTimeout(openTimer);
+                if (link === activeLink && !tooltip.contains(event.relatedTarget)) deferHide();
+            }
+        });
+        document.addEventListener('focusin', (event) => {
+            if (event.target === suppressPreviewFocus) { suppressPreviewFocus = null; return; }
+            if (tooltip.contains(event.target)) { clearTimeout(closeTimer); return; }
+            const link = event.target.closest?.('a[href]'); if (link) schedule(link, 0);
+        });
+        document.addEventListener('focusout', (event) => {
+            if (getUser(event.target)) clearTimeout(openTimer);
+            if ((event.target === activeLink || tooltip.contains(event.target)) && !tooltip.contains(event.relatedTarget) && event.relatedTarget !== activeLink) deferHide();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (tooltip.hidden) return;
+            if (event.key === 'Tab' && !event.shiftKey && event.target === activeLink) {
+                const firstAction = tooltip.querySelector('.gf-user-preview-actions a');
+                if (firstAction) { event.preventDefault(); firstAction.focus(); }
+            } else if (event.key === 'Escape') {
+                const returnFocus = tooltip.contains(document.activeElement) ? activeLink : null;
+                hide();
+                if (returnFocus) { suppressPreviewFocus = returnFocus; returnFocus.focus(); }
+            }
+        });
+
+    };
+
     let uiInitialized = false;
     const initUi = () => {
         if (uiInitialized) {
@@ -10358,6 +12297,7 @@ License: BSD 3-Clause
             initCompactUserScriptSets();
             initScriptSetEditor();
             initHighlightJs();
+            initScriptCodeTools();
             initInstallStatsChartTheme();
             initLightboxScrollLock();
             initStandaloneImageLightboxes();
@@ -10365,6 +12305,7 @@ License: BSD 3-Clause
             initScriptDensityControls();
             initScriptLogos();
             initScriptCardActions();
+            initUserProfilePreviews();
             initUserNavigation();
             initMobileUserNavigation();
             initControlPanelEnhancements();
